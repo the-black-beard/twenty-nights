@@ -26,13 +26,16 @@ order is chronological order, so a sorted list of sessions reads as a plan.
 |--------|------|-------|
 | `TN-00 · Origin` | the first five playtests, and the plan for what follows | closed |
 | `TN-A1 · Repo and constitution` | git, CONTEXT.md, ADRs, CI | done |
-| `TN-A2 · Remote and automation` | GitHub remote, push, guardrails | **next** |
-| `TN-B1 · Grill: stakes and the gate` | the two decisions that reverse existing ADRs | after A2 |
-| `TN-B2 · Finalise v1` | failure screen, difficulty wiring | after B1 |
-| `TN-C1 · Prototype: chase control` | does tap-to-move evasion feel good? | after B2 |
-| `TN-D1 · Nether: grill and spec` | mechanics for ig-b-dynamix's maze | after C1 |
+| [`TN-A2 · Remote and automation`](threads/TN-A2.md) | remote, Pages, guardrails | **ready** |
+| [`TN-B1 · Grill: stakes and the gate`](threads/TN-B1.md) | the two decisions that reverse existing ADRs | **ready** |
+| `TN-B2 · Finalise v1` | failure screen, difficulty wiring | blocked by B1 |
+| [`TN-C1 · Prototype: chase control`](threads/TN-C1.md) | does tap-to-move evasion feel good? | **ready** |
+| `TN-D1 · Nether: grill and spec` | mechanics for ig-b-dynamix's maze | blocked by C1 |
 | `TN-D2…n` | one per ticket, context cleared between | after D1 |
 | `TN-E1 · Swarm: grill and spec` | designed with the hammer in hand | after D ships |
+
+**A2, B1 and C1 have no dependencies on each other and can run at the same
+time.** Everything else waits on one of them.
 
 ## Picking up TN-A2
 
