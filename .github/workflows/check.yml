@@ -1,0 +1,50 @@
+name: check
+
+# The gate. Green means the game is not broken — it does not mean the change is
+# any good. Only playing it decides that, which is why main is protected by a
+# playtest rather than by this workflow.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Assertions against a headless boot of the real game
+        run: node tools/tests.js
+
+      - name: Twenty-day playthrough
+        run: node tools/playthrough.js
+
+      - name: Everything rebuilds from index.html alone
+        run: node tools/build.js
+
+      - name: The artifact build is publishable
+        # ADR-0004: an inline <svg> in a data: URI makes the page unshareable.
+        run: |
+          node tools/build-artifact.js /tmp/artifact.html
+          node -e '
+            const h = require("fs").readFileSync("/tmp/artifact.html", "utf8");
+            for (const bad of ["<svg", "data:", "rel=\"icon\""])
+              if (h.includes(bad)) { console.error("artifact contains " + bad + " — see ADR-0004"); process.exit(1); }
+            new Function(h.split("<script>")[1].split("</" + "script>")[0]);
+            console.log("artifact clean and parses · " + (h.length / 1024).toFixed(0) + " KB");
+          '
+
+      - name: Upload the playable build
+        uses: actions/upload-artifact@v4
+        with:
+          name: twenty-nights
+          path: |
+            Twenty Nights.html
+            dist/
