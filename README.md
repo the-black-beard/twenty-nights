@@ -1,6 +1,6 @@
 # Twenty Nights
 
-A woods survival game, designed by ig-b-dynamix (7) with his dad.
+A woods survival game, designed by ig-b-dynamix (8) with his dad.
 
 You arrive in the woods one morning with sixteen oak planks, a stone sword and a
 map to the village. You have twenty nights. Build by day, hold the night, and

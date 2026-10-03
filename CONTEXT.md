@@ -1,6 +1,6 @@
 # Twenty Nights
 
-A woods survival game designed by ig-b-dynamix (7) with his dad. You arrive in the woods
+A woods survival game designed by ig-b-dynamix (8) with his dad. You arrive in the woods
 one morning, you have twenty nights to live through, and the only thing that
 truly matters is what happens to your Home.
 

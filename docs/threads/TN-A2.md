@@ -13,7 +13,7 @@ and automated committing has a safety net under it.
 2. **Create and push.** Public — decided deliberately, see "Why public" below.
    ```bash
    gh repo create the-black-beard/twenty-nights --public --source=. --push \
-     --description "Build by day, hold the night. A woods survival game by ig-b-dynamix (7) and his dad."
+     --description "Build by day, hold the night. A woods survival game by ig-b-dynamix (8) and his dad."
    ```
 3. **Confirm CI went green** on the first run (`gh run watch`). Four checks: the
    220 assertions, the twenty-day playthrough, a full rebuild from index.html
@@ -31,10 +31,12 @@ and automated committing has a safety net under it.
 
 No secrets in the repo, the account is pseudonymous, and Pages on the free tier
 gives a permanent sign-in-free URL — which is the thing six days of artifact
-sharing never managed. ig-b-dynamix's first name and age appear in the repo and in the
-game itself; that was already true of the artifact his friends have, and the
-credit matters more to him than the exposure costs. No surname, location, photo
-or contact details anywhere.
+sharing never managed. He is credited as ig-b-dynamix, the codename he chose himself; his
+real first name appears nowhere. No surname, location, photo or contact details
+appear either — but note that git AUTHOR METADATA is not file content and was
+initially missed: the first attempt set a pseudonymous commit email while
+leaving the real full name in `user.name`, so all seven commits carried it until
+the history was rebuilt. The repo-local identity is now "The Black Beard".
 
 ## Done when
 
