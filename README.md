@@ -8,8 +8,12 @@ look after your Home — it's the only thing you can really lose.
 
 ## Play it
 
-Open `index.html` in a browser. That's the whole thing: one file, no libraries,
-no build step, no internet. It works just as well AirDropped to a phone.
+**<https://the-black-beard.github.io/twenty-nights/>** — no account, no install,
+nothing to download. That is the link to send someone.
+
+Or open `index.html` in a browser. That's the whole thing: one file, no
+libraries, no build step, no internet. It works just as well AirDropped to a
+phone.
 
 ## Build the sendable copies
 
