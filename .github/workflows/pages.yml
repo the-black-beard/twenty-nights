@@ -1,0 +1,60 @@
+name: pages
+
+# The public URL. Everything here is rebuilt from index.html on every push to
+# main, so the page ig-b-dynamix's friends open is always exactly what main says.
+#
+# The game is checked before it is published, not after. dist/ is only built
+# once the assertions and the twenty-day playthrough have passed, so a push that
+# breaks the game fails here and leaves the last good copy serving.
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Read the code, write a Pages deployment, and prove who we are to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time, and never cancel one halfway — an interrupted
+# deploy would take the public URL down with it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Assertions against a headless boot of the real game
+        run: node tools/tests.js
+
+      - name: Twenty-day playthrough
+        run: node tools/playthrough.js
+
+      - name: Build dist/ from index.html
+        run: node tools/build.js
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
