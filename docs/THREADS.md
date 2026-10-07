@@ -27,10 +27,10 @@ order is chronological order, so a sorted list of sessions reads as a plan.
 | `TN-00 · Origin` | the first five playtests, and the plan for what follows | closed |
 | `TN-A1 · Repo and constitution` | git, CONTEXT.md, ADRs, CI | done |
 | [`TN-A2 · Remote and automation`](threads/TN-A2.md) | remote, Pages, guardrails | done |
-| [`TN-B1 · Grill: stakes and the gate`](threads/TN-B1.md) | the two decisions that reverse existing ADRs | **ready** |
-| `TN-B2 · Finalise v1` | failure screen, difficulty wiring | blocked by B1 |
-| [`TN-C1 · Prototype: chase control`](threads/TN-C1.md) | does tap-to-move evasion feel good? | **ready** |
-| `TN-D1 · Nether: grill and spec` | mechanics for ig-b-dynamix's maze | blocked by C1 |
+| [`TN-B1 · Grill: stakes and the gate`](threads/TN-B1.md) | the two decisions that reverse existing ADRs | done — [0007](adr/0007-home-can-be-lost.md), [0008](adr/0008-the-doorway.md) |
+| [`TN-B2 · Finalise v1`](threads/TN-B2.md) | Hearts, the failure screen, the Doorway | **ready** |
+| [`TN-C1 · Prototype: chase control`](threads/TN-C1.md) | does tap-to-move evasion feel good? | [answered](prototypes/TN-C1-chase-control.md) |
+| `TN-D1 · Nether: grill and spec` | mechanics for ig-b-dynamix's maze | **ready** |
 | `TN-D2…n` | one per ticket, context cleared between | after D1 |
 | `TN-E1 · Swarm: grill and spec` | designed with the hammer in hand | after D ships |
 
@@ -78,7 +78,7 @@ which was verified by wiping and rebuilding them byte-for-byte.
   carrying to the next thread, it belongs in `CONTEXT.md`, an ADR, or a ticket —
   not in conversation history.
 - **Prototypes get their own directory**, outside this repo, and hand their
-  findings back as a written file.
+  findings back as a written file in `docs/prototypes/`.
 
 ## Branches and tags
 

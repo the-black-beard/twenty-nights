@@ -37,3 +37,25 @@ Then two more questions while the harness exists, both cheap to add:
 
 A written answer: tap-to-move is fine, or it is not and here is what replaces
 it, plus the monster count the renderer can carry.
+
+## Outcome
+
+Answered. Findings: [`docs/prototypes/TN-C1-chase-control.md`](../prototypes/TN-C1-chase-control.md).
+Prototype at `~/DevelopmentProjects/tn-proto-chase`, its own git repository.
+
+Tap-to-move is not laggy — every scheme reverses in one frame. The authentic
+Pac-Man scheme measures *worse* than what we ship. The real cost is that a tapped
+route goes stale: a monster is standing on it 23% of the time. Holding the finger
+instead of tapping takes that to 15%, and a monster-cost field takes it to 19%,
+neither of which is a new control scheme.
+
+Two things the Nether must decide regardless: it needs its own speed table (at
+shipped speeds the hero is 3.4x a Chewer and there is no chase), and its monsters
+need four different ideas rather than four shortest paths.
+
+Renderer: about 500 monsters with a live face each before the frame rate halves,
+60fps past 900 with the faces baked into a sprite atlas. The AI never came close
+to mattering. Measured on one Mac — rerun the stress test on the device the game
+is actually played on.
+
+Still open, and now the whole decision: which one is more fun. That is his.
