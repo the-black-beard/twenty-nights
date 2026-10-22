@@ -273,34 +273,272 @@
     touch-action:manipulation}
   .pbtn.on{border-color:var(--gold);color:var(--gold);background:#3a2f14}
   #badge{font-size:.72rem}
-/* Local Nether trial UI, sharing the game's canvas and scene clock. */
+/* TN-D2 local playtest UI. Append after existing game styles; remove the old
+   "Local Nether trial UI" rules to avoid competing layout definitions. */
+:root {
+  --n-bg:#101b21;--n-panel:#18262d;--n-panel-raised:#21333a;--n-ink:#f4ecdc;
+  --n-muted:#b1c1bf;--n-line:#3b5155;--n-ember:#f3ac75;--n-ember-dark:#6c422f;
+  --n-teal:#8de0ce;--n-teal-dark:#193d3d;--n-red:#fa8e8b;--n-focus:#ffe5a1;
+}
+.nUi{font-family:var(--font);color:var(--n-ink);font-size:14px;line-height:1.45}
+.nUi *{box-sizing:border-box}
+.nUi .hidden,.nModal.hidden{display:none!important}
+.nUi h1,.nUi h2,.nUi h3,.nUi p{margin:0}
+.nUi button,.nUi input,.nUi textarea{font:inherit}
+.nUi button,.nUi label,.nUi summary{-webkit-tap-highlight-color:transparent}
+.nUi button{cursor:pointer}
+.nUi button:disabled{cursor:default;opacity:.55}
+.nUi button:focus-visible,.nUi summary:focus-visible,.nUi textarea:focus-visible,.nUi input:focus-visible{outline:3px solid var(--n-focus);outline-offset:4px}
+.nUi .nEyebrow{font-size:10px;font-weight:850;letter-spacing:.13em;line-height:1.4;color:var(--n-teal)}
+.nUi .nHint{font-size:12px;color:var(--n-muted);line-height:1.45}
+.nSrOnly{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.nButton{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:11px 18px;border:1px solid var(--n-line);border-radius:12px;background:var(--n-panel-raised);color:var(--n-ink);font-weight:800;text-align:center;line-height:1.2;text-decoration:none;box-shadow:0 2px 0 rgba(0,0,0,.13);transition:background .12s,border-color .12s,transform .12s;touch-action:manipulation}
+.nButton:hover{background:#2b4147;border-color:#718d8e}
+.nButton:active{transform:translateY(1px)}
+.nButtonPrimary{color:#231c19;background:var(--n-ember);border-color:var(--n-ember);box-shadow:0 3px 0 #815438}
+.nButtonPrimary:hover{background:#ffc495;border-color:#ffc495}
+.nButtonTeal{color:#102a29;background:var(--n-teal);border-color:var(--n-teal);box-shadow:0 3px 0 #39786c}
+.nButtonTeal:hover{background:#b1f5e5;border-color:#b1f5e5}
+.nButtonQuiet{background:transparent;box-shadow:none}
+.nButtonSmall{padding:10px 13px;font-size:12px}
+.nButtonIcon{width:44px;padding:0;flex:none;background:transparent;box-shadow:none;font-size:18px}
+/* Setup has its own scroll surface, including short landscape screens. */
+#title.nTitle{display:block;overflow:auto;padding:30px 20px 22px;background:radial-gradient(ellipse at 78% 0%,#294148 0,transparent 52%),radial-gradient(ellipse at 6% 25%,#382b25 0,transparent 40%),var(--n-bg);text-align:left}
+.nSetupShell{width:min(900px,100%);margin:0 auto}
+.nSetupHeader{display:grid;grid-template-columns:1fr 155px;gap:26px;align-items:center}
+#title.nTitle h1{font-size:clamp(30px,4.5vw,48px);line-height:1.06;letter-spacing:-.04em;margin:12px 0 15px;font-weight:900;color:var(--n-ink)}
+#title.nTitle h1 em{font-style:normal;color:var(--n-ember)}
+.nLead{max-width:560px;font-size:15px;color:#cad4cf;line-height:1.55}
+.nPortalMark{position:relative;height:158px;width:144px;justify-self:center;filter:drop-shadow(0 0 24px #58ad9940)}
+.nPortalCore{position:absolute;inset:14px 27px 19px;border:9px solid #527e76;border-radius:50% 50% 13px 13px;background:radial-gradient(ellipse at 50% 45%,#9edfc3 0,#568e7d 25%,#21443e 60%,#142e2b 80%);box-shadow:inset 0 0 0 3px #a7ebcb,0 0 0 2px #223f3a}
+.nPortalCore:after{content:"";position:absolute;inset:17px 13px 0;border:1px solid #cef8da;border-bottom:0;border-radius:50% 50% 0 0;opacity:.65}
+.nPortalStep{position:absolute;width:116px;height:15px;bottom:10px;left:14px;border-radius:5px;background:#3b5354;border-bottom:6px solid #24383a;box-shadow:0 7px 0 -2px #13262a}
+.nPortalSpark{position:absolute;width:7px;height:7px;background:var(--n-ember);transform:rotate(45deg)}
+.nSparkOne{top:29px;right:4px}.nSparkTwo{top:93px;left:6px;width:5px;height:5px}
+.nRules{display:flex;flex-wrap:wrap;gap:8px 22px;margin:20px 0 22px;padding:12px 0;border-top:1px solid var(--n-line);border-bottom:1px solid var(--n-line);color:#c8d1ca;font-size:12px}
+.nRules span{display:inline-flex;align-items:center;gap:6px}
+.nRules span+span:before{content:"";width:4px;height:4px;border-radius:50%;background:var(--n-ember);margin-right:6px}
+.nRules b{color:var(--n-red);font-size:16px;line-height:1}
+.nContinuePanel{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 16px;margin:0 0 22px;background:#1d3738;border:1px solid #4d7b72;border-radius:14px}
+.nContinuePanel b{color:var(--n-teal);font-size:14px}
+.nContinuePanel p{font-size:12px;color:var(--n-muted);margin-top:3px}
+.nContinuePanel button{flex-shrink:0}
+.nFieldset{min-width:0;margin:0;padding:0;border:0}
+.nFieldset legend{padding:0;font-size:15px;font-weight:850;margin-bottom:11px}
+.nStepTag{display:inline-block;color:var(--n-ember);font:700 10px var(--mono);margin-right:10px;vertical-align:1px}
+.nMapFieldset{margin-bottom:23px}
+.nMapChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nMapCard,.nPursuerCard{position:relative;display:block;cursor:pointer}
+.nMapCard input,.nPursuerCard input,.nSegmented input,.nFeelings input{position:absolute;opacity:0;width:1px;height:1px}
+.nMapCardBody{display:flex;flex-direction:column;height:100%;border:1px solid var(--n-line);border-radius:14px;padding:10px;background:linear-gradient(140deg,#223039,#19262c);transition:border-color .12s,background .12s}
+.nMapCard:hover .nMapCardBody{border-color:#8a998f}
+.nMapCard input:checked+.nMapCardBody{border:2px solid var(--n-ember);padding:9px;background:linear-gradient(140deg,#3b342e,#222a2a)}
+.nMapCard input:focus-visible+.nMapCardBody,.nPursuerCard input:focus-visible+.nPursuerCardBody,.nSegmented input:focus-visible+span,.nFeelings input:focus-visible+span{outline:3px solid var(--n-focus);outline-offset:4px}
+.nMapPreview{height:76px;display:flex;align-items:center;justify-content:center;background:#111f25;border-radius:7px;margin-bottom:11px;overflow:hidden}
+.nMapPreview svg{width:100%;height:100%;max-width:190px;stroke-linecap:square;stroke-linejoin:round}
+.nMapFixed{fill:none;stroke:#4b646a;stroke-width:6}
+.nMapBrick{fill:none;stroke:#d18a68;stroke-width:6;stroke-dasharray:7 3}
+.nMapPath{fill:none;stroke:#8de0ce;stroke-width:1.4;stroke-dasharray:3 4;opacity:.8}
+.nMapDot{fill:#e6d88f;stroke:#152b2c;stroke-width:1.5}
+.nMapVoid{fill:#4e3f69;stroke:#aa8dca;stroke-width:1.5}
+.nMapCardHeading{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:16px;font-weight:850;line-height:1.3;margin-bottom:5px}
+.nRecommended{color:#29201b;background:var(--n-ember);border-radius:5px;font-size:9px;font-weight:850;padding:3px 5px;white-space:nowrap}
+.nMapDescription{font-size:12px;color:#d2d9d1;line-height:1.4;min-height:34px}
+.nMapTrait{font-size:10px;color:var(--n-muted);border-top:1px solid #ffffff16;margin-top:10px;padding-top:8px}
+.nPursuerChoices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nPursuerCardBody{display:flex;align-items:center;gap:12px;min-height:76px;padding:13px;border:1px solid var(--n-line);border-radius:12px;background:#19282e}
+.nPursuerCard input:checked+.nPursuerCardBody{padding:12px;border:2px solid var(--n-teal);background:#213c3d}
+.nPursuerCardBody b{display:block;font-size:14px;line-height:1.3}
+.nPursuerCardBody small{display:block;color:var(--n-muted);font-size:11px;line-height:1.35;margin-top:3px}
+.nChoiceTick{margin-left:auto;color:var(--n-teal);opacity:0;font-size:18px}
+.nPursuerCard input:checked+.nPursuerCardBody .nChoiceTick{opacity:1}
+.nEnemyIcon{position:relative;display:inline-block;flex:none;width:33px;height:35px;border-radius:44% 44% 25% 25%;background:#b86764;box-shadow:inset 0 -7px 0 #8b494d}
+.nEnemyIcon:before,.nEnemyIcon:after{content:"";position:absolute;top:12px;width:5px;height:6px;background:#fff0bb;border-bottom:2px solid #351d29}
+.nEnemyIcon:before{left:8px}.nEnemyIcon:after{right:8px}
+.nRunnerIcon{background:#ce8b57;box-shadow:inset 0 -7px 0 #855341;border-radius:42% 42% 8% 8%;transform:skew(-8deg)}
+.nLaunchRow{display:flex;align-items:center;gap:12px;margin-top:24px}
+.nLaunchRow .nButtonPrimary{flex:1;min-height:50px;justify-content:space-between;font-size:16px;padding:13px 20px}
+.nFinePrint{margin-top:12px!important;font-size:11px;color:var(--n-muted)}
+.nWoodsDetails{margin-top:20px;border-top:1px solid var(--n-line);padding-top:6px}
+.nWoodsDetails summary{min-height:44px;display:list-item;padding:13px 0;cursor:pointer;font-size:12px;color:var(--n-muted)}
+.nWoodsDetails>div{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:10px}
+.nWoodsDetails .nButton{font-size:12px}
+.nLocalNote{font-size:10px;color:#8fa3a4;margin-top:10px!important}
+/* In-game layout: no flex-grown empty stage gaps on a phone. */
+body.nether-active{background:radial-gradient(ellipse at 50% 0,#283b40,transparent 64%),var(--n-bg);overflow-y:auto;justify-content:flex-start}
 .nether-active #top,.nether-active #bottom,.nether-active #actionRow,.nether-active #bark{display:none}
-.nether-active{background:radial-gradient(ellipse at top,#352437,#11131f 80%)}
-#nHud{width:100%;max-width:760px;padding:10px 14px 2px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between}
-#nHeading{font-size:1rem;color:#ffe393;letter-spacing:.04em;font-weight:800}
-#nMode{font-size:.75rem;color:#c0b5ce}
-#nStats{display:flex;gap:8px;flex-wrap:wrap;font-size:.8rem;width:100%;color:#e6d8d9}
-#nStats span{padding:4px 8px;border:1px solid #6c4a5a;border-radius:8px}
-#nControls{display:flex;gap:6px;flex-wrap:wrap}
-#nControls button,#nTitlePanel button{min-height:44px}
-.nether-active #stage{padding:4px;min-height:0}
-.nether-active #cv{width:min(94vw,calc(100dvh - 230px),640px);height:min(94vw,calc(100dvh - 230px),640px);max-height:none;max-width:none;border:1px solid #644455}
-#nHelp{width:100%;max-width:720px;padding:0 14px 10px;flex-shrink:0;font-size:.82rem;color:#d3c4d2;text-align:center}
-#nMessage{min-height:2.7em;margin:4px 0;font-weight:700;color:#fff0cf;line-height:1.35}
-#nHelp .nSmall{margin:4px 0;color:#b5abc2;font-size:.76rem;line-height:1.35}
-#nTitlePanel{max-width:510px;text-align:center;margin:0 12px 12px}
-#nTitlePanel p{font-size:.92rem;line-height:1.4;color:#cfc1cf;margin:8px 0}
-#nTitlePanel .bigbtn{background:#e6bd6e;color:#201a25;margin:8px}
-#nResume{display:block;margin:4px auto}
-#title{overflow-y:auto;padding:20px 10px}
-#title h1{font-size:clamp(2rem,8vw,3rem);margin:8px}
-#title #key,#title>.how{display:none}
-#title .sub{margin:3px 0 12px}
-#title>#startBtn,#title>#howBtn,#title>#fbBtn{font-size:.85rem;padding:7px 15px;min-height:36px;margin:3px}
-#nEnd{background:rgba(15,14,28,.94);gap:14px;text-align:center;padding:28px}
-#nEnd h1{font-size:clamp(2rem,7vw,3rem)}
-#nEnd p{max-width:480px;line-height:1.5}
-@media(max-width:420px){#nHud{gap:5px;font-size:.8rem}#nControls{gap:4px}#nControls .chip{font-size:.72rem;padding:6px}#nHeading{font-size:.9rem}#nStats{font-size:.7rem;gap:4px}}
+#nHud{width:min(760px,100%);padding:12px 12px 0;flex:none}
+.nHudTop{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nHudIdentity{min-width:0}
+#nHeading{font-size:20px;line-height:1.2;font-weight:900;letter-spacing:-.025em}
+#nMode{color:var(--n-muted);font-size:11px;margin-top:2px}
+.nHudButtons{display:flex;gap:6px}
+.nStatusRow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px}
+.nLifeBadge{color:var(--n-red);font-size:17px;font-weight:850;letter-spacing:2px;line-height:1.2;margin-right:3px}
+.nStatusBadge{display:inline-flex;align-items:center;min-height:26px;gap:5px;padding:4px 7px;border:1px solid #465c5f;border-radius:6px;color:#d5e0d7;font-size:10px;font-weight:700;line-height:1.2}
+.nThreatBadge:before{content:"";display:inline-block;height:5px;width:5px;border-radius:50%;background:#809795}
+.nThreatBadge[data-state="hunting"]{color:#ffc4a7;border-color:#8a5e49;background:#49352b}
+.nThreatBadge[data-state="hunting"]:before{background:#ffab7c}
+.nThreatBadge[data-state="warning"]{color:#ffe49e;border-color:#ccb56c;background:#493f25}
+.nThreatBadge[data-state="warning"]:before{background:#ffe49e}
+.nObjectives{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 0 9px;margin:0;list-style:none;border-bottom:1px solid #3a5155;color:#8fa8a8}
+.nObjectives li{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;line-height:1.2}
+.nObjectives li>span{display:inline-grid;place-items:center;width:17px;height:17px;border:1px solid #547171;border-radius:50%;font-size:9px;flex:none}
+.nObjectives li[data-state="current"]{color:#ffe4bd}
+.nObjectives li[data-state="current"]>span{background:var(--n-ember);border-color:var(--n-ember);color:#392719}
+.nObjectives li[data-state="done"]{color:var(--n-teal)}
+.nObjectives li[data-state="done"]>span{background:#214c43;border-color:#548c7e}
+.nether-active #stage{flex:0 0 auto;align-items:flex-start;min-height:0;padding:8px 6px 0}
+.nether-active #cv{width:min(calc(100vw - 20px),calc(100dvh - 260px),640px);height:min(calc(100vw - 20px),calc(100dvh - 260px),640px);max-height:none;max-width:none;border:1px solid #577572;border-radius:13px;box-shadow:0 16px 30px #07111355;background:#142027}
+#nHelp{width:min(760px,100%);text-align:center;padding:9px 12px 12px;flex:none}
+#nMessage{color:#ffe0b8;font-size:13px;font-weight:800;min-height:2.8em;line-height:1.35}
+.nBoardLegend{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 13px;font-size:10px;color:#bfd1cc;margin:5px 0 7px}
+.nBoardLegend span{display:inline-flex;align-items:center;gap:5px}
+.nBoardLegend i{display:inline-block;width:9px;height:9px;border-radius:2px}
+.nLegendRefuge{background:#6fc9ce;border:1px solid #b0f2ea}
+.nLegendBrick{background:#cc8b6d;border:1px solid #ffd3ac}
+.nLegendVoid{background:repeating-linear-gradient(45deg,#b99acb 0 1px,#372545 1px 4px);border:1px solid #b99acb}
+.nStorage{font-size:9px;color:#93aaa7;min-height:1.4em;margin-top:5px!important}
+.nStorage[data-state="error"]{color:#ffba9d}
+/* Paused, keyboard-operable dialogs. Root owns focus trap/restore and state. */
+.nModal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:18px;background:#08151be8;overflow:auto;backdrop-filter:blur(5px)}
+.nDialogCard{width:min(500px,100%);max-height:calc(100dvh - 36px);overflow-y:auto;padding:24px;border-radius:21px;background:linear-gradient(145deg,#24383f,#15262d);border:1px solid #536b6a;box-shadow:0 24px 90px #0007}
+.nDialogHeader{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:7px}
+.nDialogHeader h2{font-size:25px;line-height:1.12;letter-spacing:-.03em;margin-top:5px}
+.nSettingsCard>.nHint{margin-bottom:13px}
+.nSettingRow{display:flex;justify-content:space-between;align-items:center;gap:18px;min-height:65px;padding:11px 0;border-bottom:1px solid #ffffff15;cursor:pointer}
+.nSettingRow>span{min-width:0}
+.nSettingRow b{display:block;font-size:14px}
+.nSettingRow small{display:block;font-size:11px;color:var(--n-muted);margin-top:2px;line-height:1.35}
+.nSettingRow input[type="checkbox"]{appearance:none;-webkit-appearance:none;position:relative;flex:none;width:48px;height:29px;min-height:29px;border:1px solid #7c9695;border-radius:20px;background:#33484c;margin:0;cursor:pointer}
+.nSettingRow input[type="checkbox"]:after{content:"";position:absolute;left:4px;top:4px;width:19px;height:19px;border-radius:50%;background:#d4e0d5;box-shadow:0 1px 4px #0005;transition:transform .12s}
+.nSettingRow input[type="checkbox"]:checked{background:#74c5ae;border-color:#a3e3ca}
+.nSettingRow input[type="checkbox"]:checked:after{transform:translateX(19px);background:#123f36}
+.nCameraFieldset{padding:14px 0;border-bottom:1px solid #ffffff15}
+.nCameraFieldset legend{float:left;width:100%;font-size:14px;margin-bottom:9px}
+.nCameraFieldset:after{content:"";display:table;clear:both}
+.nSegmented{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#11252b;padding:5px;border:1px solid #3b555a;border-radius:12px;clear:both}
+.nSegmented label,.nFeelings label{position:relative;cursor:pointer}
+.nSegmented span{display:flex;align-items:center;justify-content:center;min-height:44px;border:1px solid transparent;border-radius:7px;font-size:12px;font-weight:750;color:var(--n-muted)}
+.nSegmented input:checked+span{background:#31524f;color:#d7ffea;border-color:#83bfa9}
+.nCameraFieldset .nHint{margin-top:8px}
+.nDialogActions{display:flex;gap:9px;margin-top:20px}
+.nDialogActions .nButtonPrimary{flex:1}
+.nReturnCard{text-align:center;max-width:420px;padding:26px}
+.nRefugeSymbol{display:inline-grid;place-items:center;width:70px;height:70px;background:#244e52;border:1px solid #6ca7a7;border-radius:23px;font-size:41px;line-height:1;color:var(--n-teal);margin:18px 0 16px}
+.nReturnCard h2,.nEndCard h2{font-size:30px;letter-spacing:-.035em;line-height:1.12;margin-bottom:11px}
+#nReturnLine,#nEndLine{font-size:14px;color:#ced8d1;line-height:1.5}
+.nReturnLives{font-size:28px;color:var(--n-red);margin:18px 0;letter-spacing:4px}
+.nReturnLives>span{color:#768e91}
+.nReturnLives small{display:block;font-size:12px;font-weight:750;letter-spacing:0;color:#d8e6d8}
+.nKeptBox{background:#183a38;border:1px solid #476f62;border-radius:12px;padding:12px;margin:13px 0}
+.nKeptBox b{font-size:12px;color:var(--n-teal)}
+.nKeptBox p{font-size:12px;margin-top:4px}
+.nReturnCard>.nButton{width:100%;margin-top:20px}
+.nEndCard{text-align:center}
+.nEndEmblem{display:inline-grid;place-items:center;width:66px;height:66px;border:1px solid #bb9560;border-radius:20px;background:#493e2c;color:#ffdb94;font-size:37px;margin:15px 0}
+#nEnd[data-outcome="lost"] .nEndEmblem{background:#4d3231;border-color:#a76b64;color:#ffc0a8}
+.nEndStats{margin:16px 0!important;padding:11px;border-top:1px solid #ffffff20;border-bottom:1px solid #ffffff20;font-size:12px;font-weight:700;color:var(--n-teal)}
+.nEndActions{display:flex;gap:9px}
+.nEndActions .nButton{flex:1;font-size:12px}
+.nFeedback{text-align:left;margin-top:24px;padding-top:20px;border-top:1px solid #4a6263}
+.nFeedback legend{font-size:15px}
+.nFeelings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nFeelings span{display:flex;justify-content:center;align-items:center;min-height:44px;border:1px solid #68827f;border-radius:10px;font-size:12px;font-weight:800;color:#d5e2d9;background:#1b3036}
+.nFeelings input:checked+span{background:#4e4231;border-color:var(--n-ember);color:#ffe0b9}
+.nNoteLabel{display:block;font-size:12px;font-weight:750;margin:14px 0 7px}
+.nNoteLabel span{font-weight:400;color:var(--n-muted)}
+#nFeedbackNote{display:block;resize:vertical;width:100%;min-height:70px;max-height:160px;border:1px solid #708884;border-radius:10px;padding:10px;background:#10242b;color:var(--n-ink);font-size:14px;line-height:1.4;user-select:text;-webkit-user-select:text;touch-action:auto}
+#nFeedbackNote::placeholder{color:#91aaa7}
+.nFeedbackFooter{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.nFeedbackFooter>span{font-size:10px;color:var(--n-muted)}
+.nFeedbackFooter button{flex:none}
+/* User preference classes apply only to this independent Nether UI. */
+body.nHighContrast{--n-line:#9aafac;--n-muted:#e0e8df;--n-ink:#fff9e9}
+body.nHighContrast .nStatusBadge,body.nHighContrast .nObjectives{border-color:#a9c0bb}
+body.nHighContrast .nMapPreview{background:#051015}
+body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion .nUi *:after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.nUi *,.nUi *:before,.nUi *:after{animation:none!important;transition:none!important}}
+@media(max-width:620px){
+  #title.nTitle{padding:22px 14px 18px}
+  .nSetupHeader{grid-template-columns:1fr 74px;gap:12px}
+  #title.nTitle h1{font-size:32px;margin:9px 0 12px}
+  .nLead{font-size:13px}
+  .nPortalMark{transform:scale(.6);transform-origin:center right;width:110px;margin-left:-36px}
+  .nRules{font-size:11px;gap:8px 11px;margin:17px 0 18px;padding:10px 0}
+  .nRules span+span:before{margin-right:0}
+  .nMapChoices{gap:8px}
+  .nMapCardBody{padding:7px;border-radius:10px}
+  .nMapCard input:checked+.nMapCardBody{padding:6px}
+  .nMapPreview{height:53px;margin-bottom:8px}
+  .nMapCardHeading{display:block;font-size:13px}
+  .nRecommended{display:table;font-size:8px;margin-top:4px}
+  .nMapDescription{font-size:10px;line-height:1.35;min-height:41px}
+  .nMapTrait{display:none}
+  .nPursuerChoices{gap:8px}
+  .nPursuerCardBody{padding:10px;gap:8px;min-height:84px}
+  .nPursuerCard input:checked+.nPursuerCardBody{padding:9px}
+  .nPursuerCardBody b{font-size:12px}
+  .nPursuerCardBody small{font-size:10px}
+  .nEnemyIcon{width:25px;height:29px}
+  .nEnemyIcon:before{left:5px}.nEnemyIcon:after{right:5px}
+  .nChoiceTick{display:none}
+  .nLaunchRow{flex-wrap:wrap;gap:9px;margin-top:20px}
+  .nLaunchRow .nButtonPrimary{flex-basis:100%}
+  .nLaunchRow .nButtonQuiet{width:100%;font-size:12px}
+  .nContinuePanel{align-items:stretch;flex-direction:column;gap:10px;padding:12px}
+  .nContinuePanel .nButton{font-size:13px}
+  #nHud{padding:10px 10px 0}
+  #nHeading{font-size:18px}
+  .nHudIdentity .nEyebrow{font-size:8px;letter-spacing:.12em}
+  .nHudButtons{gap:5px}
+  .nHudButtons .nButton{padding:9px 10px;font-size:11px}
+  .nStatusRow{gap:4px;margin-top:8px}
+  .nStatusBadge{font-size:9px;padding:4px 5px;min-height:25px}
+  .nLifeBadge{font-size:14px;letter-spacing:0;margin-right:2px}
+  .nObjectives{gap:5px;padding:9px 0}
+  .nObjectives li{font-size:8px;gap:3px}
+  .nObjectives li>span{width:15px;height:15px;font-size:8px}
+  #nHelp{padding:8px 10px 12px}
+  #nMessage{font-size:12px;min-height:2.7em}
+  .nBoardLegend{gap:4px 9px;font-size:9px}
+  #nControlHint{font-size:10px}
+  .nModal{padding:12px}
+  .nDialogCard{padding:20px;max-height:calc(100dvh - 24px);border-radius:17px}
+  .nDialogHeader h2{font-size:23px}
+  .nDialogHeader{gap:10px}
+}
+@media(max-width:360px){
+  #nHeading{font-size:16px}
+  #nMode{font-size:9px}
+  .nHudButtons .nButton{padding:9px 8px}
+  .nObjectives li{font-size:7px}
+  .nMapChoices{grid-template-columns:1fr}
+  .nMapCardBody{display:grid;grid-template-columns:95px 1fr;column-gap:10px;padding:9px}
+  .nMapCard input:checked+.nMapCardBody{padding:8px}
+  .nMapPreview{grid-row:1/3;height:63px;margin:0}
+  .nMapCardHeading{margin:3px 0}
+  .nRecommended{display:inline-block}
+  .nMapDescription{min-height:0;font-size:11px}
+  .nPursuerChoices{grid-template-columns:1fr}
+  .nPursuerCardBody{min-height:65px}
+}
+@media(max-height:540px) and (orientation:landscape){
+  body.nether-active{display:grid;grid-template-columns:minmax(210px,1fr) minmax(240px,1.25fr);grid-template-rows:auto 1fr;align-items:start;justify-items:center;column-gap:10px;padding:8px 12px;overflow-y:auto}
+  .nether-active #nHud{grid-column:1;grid-row:1;padding:0;width:100%}
+  .nether-active .nHudTop{align-items:flex-start;flex-direction:column;gap:7px}
+  .nether-active .nHudButtons{width:100%}
+  .nether-active .nHudButtons .nButton{flex:1}
+  .nether-active .nObjectives{flex-wrap:wrap;justify-content:flex-start;gap:8px}
+  .nether-active #stage{grid-column:2;grid-row:1/3;width:100%;padding:0}
+  .nether-active #cv{width:min(calc(100dvh - 26px),calc(55vw - 22px),640px);height:min(calc(100dvh - 26px),calc(55vw - 22px),640px)}
+  .nether-active #nHelp{grid-column:1;grid-row:2;width:100%;padding:12px 0 0}
+  .nether-active .nBoardLegend{justify-content:flex-start}
+  .nModal{padding:9px}
+  .nDialogCard{max-height:calc(100dvh - 18px)}
+}
+
+#nHud .nHudButtons{flex-wrap:wrap} .nMapPreview canvas{width:100%;height:100%;object-fit:contain} #cv:focus{outline:none}
 
 </style>
 </head>
@@ -313,10 +551,23 @@
   <button class="chip" id="optBtn" aria-label="Settings" style="padding:.35em .55em">⚙️</button>
 </div>
 
-<header id="nHud" class="hidden">
-  <div><div id="nHeading">THE NETHER · FIRST LAYER</div><div id="nMode"></div></div>
-  <div id="nControls"><button class="chip" id="nPause">Pause</button><button class="chip" id="nSound">Sound on</button><button class="chip" id="nMenu">Save &amp; menu</button></div>
-  <div id="nStats"><span id="nLives">3 / 3 lives</span><span id="nTool">Find the upgrade</span><span id="nThreat">Pursuer contained</span></div>
+<header id="nHud" class="nUi hidden">
+  <div class="nHudTop">
+    <div class="nHudIdentity"><span class="nEyebrow">TWENTY NIGHTS</span><h1 id="nHeading">Into the Nether</h1><p id="nMode">Ember Loop · Steady hunter</p></div>
+    <div class="nHudButtons"><button id="nPause" class="nButton nButtonSmall" type="button">Pause</button><button id="nCameraToggle" class="nButton nButtonSmall nButtonQuiet" type="button" aria-label="Zoom in on the board" aria-pressed="false">Zoom</button><button id="nSettingsOpen" class="nButton nButtonSmall nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Settings</button></div>
+  </div>
+  <div class="nStatusRow" aria-label="Attempt status">
+    <span id="nLives" class="nLifeBadge" aria-label="3 of 3 lives"><span aria-hidden="true">♥ ♥ ♥</span><span class="nSrOnly">3 of 3 lives</span></span>
+    <span id="nTool" class="nStatusBadge">Pickaxe needed</span>
+    <span id="nBeacons" class="nStatusBadge">0 / 2 seal beacons</span>
+    <span id="nThreat" class="nStatusBadge nThreatBadge" data-state="contained">Hunter contained</span>
+  </div>
+  <ol id="nObjectives" class="nObjectives" aria-label="Your route through the Nether">
+    <li id="nObjectiveTool" data-state="current"><span aria-hidden="true">1</span>Upgrade</li>
+    <li id="nObjectiveBreach" data-state="waiting"><span aria-hidden="true">2</span>Break through</li>
+    <li id="nObjectiveBeacons" data-state="waiting"><span aria-hidden="true">3</span>Light beacons</li>
+    <li id="nObjectiveExit" data-state="waiting"><span aria-hidden="true">4</span>Escape</li>
+  </ol>
 </header>
 
 <div id="stage">
@@ -350,10 +601,11 @@
   </div>
 </div>
 
-<section id="nHelp" class="hidden" aria-label="Nether trial guidance">
-  <p id="nMessage" aria-live="polite"></p>
-  <p class="nSmall">Hold &amp; drag to move; lifting finishes the route. Dodge is on.<br>Tap red brick to walk over and mine; tap ground to cancel. Reach the green EXIT.</p>
-  <p class="nSmall">Blue refuge is safe. Purple void costs one life. Arrow keys / WASD also work.<br><span id="nStorage" role="status"></span></p>
+<section id="nHelp" class="nUi hidden" aria-label="What to do next">
+  <p id="nMessage" role="status" aria-live="polite">Find the golden pickaxe. Choose your way through.</p>
+  <div class="nBoardLegend" aria-label="Board legend"><span><i class="nLegendRefuge" aria-hidden="true"></i>Safe refuge</span><span><i class="nLegendBrick" aria-hidden="true"></i>Breakable wall</span><span><i class="nLegendVoid" aria-hidden="true"></i>Void: lose a life</span></div>
+  <p id="nControlHint" class="nHint">Drag to move · tap a wall to mine · move to cancel</p>
+  <p id="nStorage" class="nStorage" role="status"></p>
 </section>
 
 <div id="bottom">
@@ -371,30 +623,44 @@
   <button class="chip" id="muteBtn" aria-label="Sound on or off">🔊</button>
 </div>
 
-<div class="overlay" id="title">
-  <h1>Twenty <span class="n">Nights</span></h1>
-  <p class="sub">First Nether layer · local playtest</p>
-  <div id="key" aria-label="How to play">
-    <div class="kc"><span>🌲</span><b>tap</b><span>🪵</span></div>
-    <div class="kc"><span>🪨</span><b>tap</b><span>🪨</span></div>
-    <div class="kc"><span>🐷</span><b>tap</b><span>🍗</span></div>
-    <div class="kc"><span>🧱</span><b>build</b><span>walls</span></div>
-    <div class="kc"><span>🕯️</span><b>light</b><span>they hate</span></div>
-    <div class="kc"><span>♥</span><b>keep</b><span>safe</span></div>
-    <div class="kc"><span>🌙</span><b>survive</b><span>20</span></div>
+<section id="title" class="overlay nTitle nUi" aria-labelledby="nTitleHeading">
+  <div class="nSetupShell">
+    <header class="nSetupHeader">
+      <div><p class="nEyebrow">TWENTY NIGHTS · THE NETHER</p><h1 id="nTitleHeading">Choose your descent.<br><em>Make your escape.</em></h1><p class="nLead">Upgrade your pickaxe, light two seal beacons and reach the portal. Your opening lets the monster through too.</p></div>
+      <div class="nPortalMark" aria-hidden="true"><span class="nPortalCore"></span><span class="nPortalSpark nSparkOne"></span><span class="nPortalSpark nSparkTwo"></span><span class="nPortalStep"></span></div>
+    </header>
+    <div class="nRules" aria-label="Rules shared by every challenge"><span><b>3</b> lives</span><span>Keep what you earn</span><span>No countdown</span></div>
+    <div id="nContinuePanel" class="nContinuePanel hidden"><div><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p></div><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button></div>
+    <fieldset class="nFieldset nMapFieldset">
+      <legend><span class="nStepTag">01</span> Choose a maze</legend>
+      <div class="nMapChoices">
+        <label class="nMapCard">
+          <input type="radio" name="nMap" id="nMapEmber" value="ember" checked>
+          <span class="nMapCardBody"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-ember" width="160" height="80"></canvas></span><span class="nMapCardHeading">Ember Loop <span class="nRecommended">Start here</span></span><span class="nMapDescription">Open routes. Choose where to break in.</span><span class="nMapTrait">Room to read the chase</span></span>
+        </label>
+        <label class="nMapCard">
+          <input type="radio" name="nMap" id="nMapForge" value="forge">
+          <span class="nMapCardBody"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-forge" width="160" height="80"></canvas></span><span class="nMapCardHeading">Split Forge</span><span class="nMapDescription">Two sides. Choose what to open first.</span><span class="nMapTrait">Keep an escape route in mind</span></span>
+        </label>
+        <label class="nMapCard">
+          <input type="radio" name="nMap" id="nMapSwitchback" value="switchback">
+          <span class="nMapCardBody"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-switchback" width="160" height="80"></canvas></span><span class="nMapCardHeading">Switchback</span><span class="nMapDescription">Tight turns. Watch your footing.</span><span class="nMapTrait">Escape routes with an edge</span></span>
+        </label>
+      </div>
+    </fieldset>
+    <fieldset class="nFieldset">
+      <legend><span class="nStepTag">02</span> Pick your pursuer</legend>
+      <div class="nPursuerChoices">
+        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerHunter" value="hunter" checked><span class="nPursuerCardBody"><span class="nEnemyIcon nHunterIcon" aria-hidden="true"></span><span><b>Steady hunter</b><small>Keeps coming. Make room to escape.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
+        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerRunner" value="runner"><span class="nPursuerCardBody"><span class="nEnemyIcon nRunnerIcon" aria-hidden="true"></span><span><b>Burst runner</b><small>Watch the warning. Dodge the dash.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
+      </div>
+    </fieldset>
+    <div class="nLaunchRow"><button id="nStart" class="nButton nButtonPrimary" type="button">Start this adventure <span aria-hidden="true">↗</span></button><button id="nSetupSettings" class="nButton nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Controls &amp; display</button></div>
+    <p id="nTitleNote" class="nFinePrint">A new adventure starts with three lives and replaces the current saved attempt.</p>
+    <details class="nWoodsDetails"><summary>Visit the woods</summary><div><button class="nButton nButtonQuiet" id="startBtn" type="button">Play the original woods</button><button class="nButton nButtonQuiet hidden" id="contBtn" type="button">Continue Day <span id="contDay"></span></button><button class="nButton nButtonQuiet" id="howBtn" type="button">How the woods work</button><button class="nButton nButtonQuiet" id="fbBtn" type="button">Woods feedback</button></div></details>
+    <p class="nLocalNote">One Nether layer · your feedback shapes what comes next</p>
   </div>
-  <p class="how">Everything else you'll find out.</p>
-  <div id="nTitlePanel">
-  <p>One Nether layer to try: find the golden upgrade, choose a wall to break, and escape the pursuer.</p>
-  <button class="bigbtn" id="nStart">Play the Nether layer</button>
-  <button class="ghostbtn hidden" id="nResume">Continue saved Nether trial</button>
-  <p id="nTitleNote">Three lives · keep upgrades and openings on a return · no countdown.<br>Local trial. Direct play skips the woods; no hammer or Swarm yet.</p>
-</div>
-<button class="ghostbtn" id="startBtn">Play the original woods</button>
-  <button class="ghostbtn hidden" id="contBtn">Continue Day <span id="contDay"></span></button>
-  <button class="ghostbtn" id="howBtn">❓ How to play</button>
-  <button class="ghostbtn" id="fbBtn">💬 Tell us what you think</button>
-</div>
+</section>
 
 <div class="overlay hidden" id="intro">
   <button class="ghostbtn" id="introSkip">Skip</button>
@@ -455,19 +721,51 @@
   </div>
 </div>
 
-<div class="overlay hidden" id="nEnd" role="dialog" aria-labelledby="nEndTitle">
-  <h1 id="nEndTitle"></h1><p id="nEndLine"></p><p id="nEndStats"></p>
-  <button class="bigbtn" id="nReplay">New three-life attempt</button><button class="ghostbtn" id="nEndMenu">Save &amp; menu</button>
-</div>
+<section id="nSettings" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nSettingsTitle">
+  <div class="nDialogCard nSettingsCard">
+    <header class="nDialogHeader"><div><p class="nEyebrow">MAKE IT FEEL RIGHT</p><h2 id="nSettingsTitle">Controls &amp; display</h2></div><button id="nSettingsClose" class="nButton nButtonIcon" type="button" aria-label="Close settings">✕</button></header>
+    <p id="nSettingsStatus" class="nHint">The chase is paused while this is open.</p>
+    <label class="nSettingRow"><span><b>Dodge assist</b><small>Your route tries to go around nearby danger.</small></span><input id="nDodge" type="checkbox" role="switch" checked></label>
+    <label class="nSettingRow"><span><b>Show my route</b><small>A dotted line shows where you are going.</small></span><input id="nRoute" type="checkbox" role="switch" checked></label>
+    <fieldset class="nFieldset nCameraFieldset"><legend>Board view</legend><div class="nSegmented"><label><input id="nCameraWhole" name="nCamera" value="whole" type="radio" checked><span>Whole maze</span></label><label><input id="nCameraClose" name="nCamera" value="close" type="radio"><span>Close camera</span></label></div><p class="nHint">Close camera makes you and the tiles bigger.</p></fieldset>
+    <label class="nSettingRow"><span><b>High contrast</b><small>Stronger outlines for walls, hazards and characters.</small></span><input id="nContrast" type="checkbox" role="switch"></label>
+    <label class="nSettingRow"><span><b>Reduced motion</b><small>Fewer flashes and moving decorations.</small></span><input id="nReducedMotion" type="checkbox" role="switch"></label>
+    <div class="nSettingRow"><span><b>Game sounds</b><small>Visual warnings are always shown.</small></span><button id="nSound" class="nButton nButtonSmall" type="button" aria-pressed="true">Sound on</button></div>
+    <footer class="nDialogActions"><button id="nSettingsDone" class="nButton nButtonPrimary" type="button">Done</button><button id="nMenu" class="nButton nButtonQuiet" type="button">Save &amp; menu</button></footer>
+  </div>
+</section>
+<section id="nReturn" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nReturnTitle">
+  <div class="nDialogCard nReturnCard">
+    <p class="nEyebrow">BACK IN THE REFUGE</p><div class="nRefugeSymbol" aria-hidden="true">⌂</div>
+    <h2 id="nReturnTitle">Caught. Still in the game.</h2><p id="nReturnLine">Take a breath. Choose your next way through.</p>
+    <div id="nReturnLives" class="nReturnLives">♥ ♥ <span>♡</span><small>2 lives left</small></div>
+    <div class="nKeptBox"><b>You kept what you earned</b><p id="nReturnKept">Pickaxe · 1 opening · 1 beacon</p></div>
+    <p class="nHint">The opening is still there. So is your pursuer.</p>
+    <button id="nReturnContinue" class="nButton nButtonTeal" type="button">Continue from refuge</button>
+  </div>
+</section>
+<section id="nEnd" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nEndTitle" data-outcome="won">
+  <div class="nDialogCard nEndCard">
+    <p id="nEndEyebrow" class="nEyebrow">YOUR ADVENTURE</p><div class="nEndEmblem" aria-hidden="true">✦</div>
+    <h2 id="nEndTitle">You made it through.</h2><p id="nEndLine">Two beacons lit. A path you made yourself.</p>
+    <p id="nEndStats" class="nEndStats">Ember Loop · Steady hunter · 2 lives left</p>
+    <div class="nEndActions"><button id="nReplay" class="nButton nButtonPrimary" type="button">Retry this challenge</button><button id="nEndMenu" class="nButton nButtonQuiet" type="button">Choose another</button></div>
+    <form id="nFeedback" class="nFeedback">
+      <fieldset class="nFieldset"><legend>Igby, how did that feel?</legend><div class="nFeelings"><label><input id="nFeelFun" name="nFeeling" type="radio" value="fun"><span>Fun</span></label><label><input id="nFeelTense" name="nFeeling" type="radio" value="tense"><span>Tense</span></label><label><input id="nFeelUnfair" name="nFeeling" type="radio" value="unfair"><span>Unfair</span></label></div></fieldset>
+      <label class="nNoteLabel" for="nFeedbackNote">One thing you would change <span>(optional)</span></label><textarea id="nFeedbackNote" rows="2" maxlength="500" placeholder="The part where…"></textarea>
+      <div class="nFeedbackFooter"><span id="nFeedbackStatus" role="status">Stays here. Nothing is sent.</span><button id="nDownloadNotes" class="nButton nButtonSmall" type="button">Download notes</button></div>
+    </form>
+  </div>
+</section>
 
 <script>
 "use strict";
 /* ═══════════════ 1 · CONSTANTS & STATE ═══════════════ */
 const SAFE_MODE = false;   /*SAFE_FLAG*/              // flipped by tools/build-artifact.js --safe
 const store = {                                        // localStorage that can never crash the game
-  get(k){ try{ return localStorage.getItem("tn.d2." + k); }catch(e){ return null; } },
-  set(k,v){ try{ localStorage.setItem("tn.d2." + k,v); }catch(e){} },
-  del(k){ try{ localStorage.removeItem("tn.d2." + k); }catch(e){} },
+  get(k){ try{ return localStorage.getItem("tn.d2lab." + k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem("tn.d2lab." + k,v); }catch(e){} },
+  del(k){ try{ localStorage.removeItem("tn.d2lab." + k); }catch(e){} },
 };
 const TEST = new URLSearchParams(location.search).has("test")
           || location.hash === "#test"
@@ -4308,30 +4606,98 @@ window.addEventListener("keydown", e => {
 });
 
 /* TN-D2: the first Nether layer. Kept inside the real single-file game. */
+/* TN-D2 local play lab. One simulation, authored maps, saved attempt choices. */
 const NetherTrial = (() => {
-  const START = {x:2, y:16}, UPGRADE = {x:3, y:3}, GOAL = {x:10, y:12};
-  const SAVE_KEY = 'tn.d2.nether.v1';
-  const HERO_SPEED = 4.6, CHASE_SPEED = 3.68, MINE_TIME = 1.8;
-  const initialMap = () => {
-    const map = Array(N*N).fill('.');
-    for (let y=0;y<N;y++) for(let x=0;x<N;x++)
-      if(x===0 || y===0 || x===N-1 || y===N-1) map[idx(x,y)]='#';
-    for(let a=5;a<=14;a++) for(const [x,y] of [[a,5],[a,14],[5,a],[14,a]]) map[idx(x,y)]='b';
-    for(const [x,y] of [[8,8],[9,8],[8,9],[9,9],[11,10],[12,10],[11,11],[12,11],
-                        [2,7],[3,7],[16,10],[17,10],[8,2],[8,3]]) map[idx(x,y)]='#';
-    for(const [x,y] of [[16,5],[17,5],[16,6],[17,6]]) map[idx(x,y)]='v';
-    return map;
+/* Authored first-layer choices. Geometry only: the real game owns all simulation.
+ * Copy into NetherTrial; layoutOptions() supplies setup-card metadata.
+ * Coordinates are zero-based cell centres. Each call returns fresh mutable data.
+ */
+const NETHER_LAYOUT_CATALOGUE = [
+  {
+    id:'ember', name:'Ember Loop', subtitle:'Lure, circle, escape',
+    description:'A broad loop around the central rock. Light both beacons, draw the pursuer around one side, then take the other.',
+    hint:'The rock in the middle can separate you from the pursuer. Watch which side it chooses.',
+    rocks:[[8,8,11,11]], seams:[],
+    beacons:[{x:6,y:6,label:'West beacon'},{x:13,y:13,label:'East beacon'}],
+    enemy:{x:10,y:7}, goal:{x:10,y:6},
+    suggestedBreaches:[{x:4,y:6},{x:10,y:15},{x:15,y:12}],
+  },
+  {
+    id:'forge', name:'Split Forge', subtitle:'Choose a side',
+    description:'Two rock pillars split the chamber. Cross the middle or loop around an end to change sides while the pursuer follows.',
+    hint:'You can change sides above, between, or below the pillars. The nearest crossing is not always the safest.',
+    rocks:[[9,7,10,8],[9,11,10,12]], seams:[],
+    beacons:[{x:6,y:7,label:'West beacon'},{x:13,y:12,label:'East beacon'}],
+    enemy:{x:12,y:6}, goal:{x:13,y:6},
+    suggestedBreaches:[{x:4,y:7},{x:12,y:15},{x:15,y:10}],
+  },
+  {
+    id:'switchback', name:'Switchback', subtitle:'Make your own escape',
+    description:'Two long rock ledges turn the route back and forth. Brick seams offer extra shortcuts, but every new opening also helps the pursuer.',
+    hint:'A second opening can be an escape route. The two brick seams can shorten the long way around.',
+    rocks:[[5,8,11,8],[8,11,14,11]],
+    seams:[{x:7,y:8},{x:12,y:11}],
+    beacons:[{x:6,y:6,label:'Upper beacon'},{x:13,y:13,label:'Lower beacon'}],
+    enemy:{x:13,y:6}, goal:{x:12,y:9},
+    suggestedBreaches:[{x:4,y:6},{x:15,y:10},{x:6,y:15}],
+  },
+];
+
+function layoutOptions() {
+  return NETHER_LAYOUT_CATALOGUE.map(({id,name,subtitle,description,hint}) =>
+    ({id,name,subtitle,description,hint,recommended:id==='ember'}));
+}
+
+function layout(id='ember') {
+  const chosen=NETHER_LAYOUT_CATALOGUE.find(choice=>choice.id===id);
+  if(!chosen)throw new Error('Unknown Nether layout: '+id);
+  const map=Array(400).fill('.');
+  const cell=(x,y)=>y*20+x;
+  for(let a=0;a<20;a++)for(const [x,y] of [[a,0],[a,19],[0,a],[19,a]])map[cell(x,y)]='#';
+  for(let a=4;a<=15;a++)for(const [x,y] of [[a,4],[a,15],[4,a],[15,a]])map[cell(x,y)]='b';
+  // Corners cannot produce a diagonal passage: show them as fixed rock instead.
+  for(const [x,y] of [[4,4],[15,4],[4,15],[15,15]])map[cell(x,y)]='#';
+  // Outer landmarks preserve a broad approach and two separate refuge escapes.
+  for(const [x,y] of [[2,7],[8,2],[9,2],[17,11],[17,12]])map[cell(x,y)]='#';
+  for(const [x,y] of [[16,6],[17,6],[16,7],[17,7]])map[cell(x,y)]='v';
+  for(const [x0,y0,x1,y1] of chosen.rocks)
+    for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)map[cell(x,y)]='#';
+  for(const {x,y} of chosen.seams)map[cell(x,y)]='b';
+  return {
+    id:chosen.id,name:chosen.name,subtitle:chosen.subtitle,
+    description:chosen.description,hint:chosen.hint,map,
+    start:{x:2,y:16},upgrade:{x:3,y:3},goal:{...chosen.goal},
+    enemy:{...chosen.enemy},
+    beacons:chosen.beacons.map(beacon=>({...beacon})),
+    suggestedBreaches:chosen.suggestedBreaches.map(point=>({...point})),
+    refuge:{x1:1,y1:15,x2:3,y2:18},
+    refugeWait:{x:6,y:17},
+    recoveryExits:[{x:2,y:14},{x:4,y:17}],
   };
-  let state = null, active = false, storageOK = true;
-  const inRefuge = (x,y) => x>=1 && x<=3 && y>=15 && y<=18;
-  const view = () => state ? JSON.parse(JSON.stringify(state)) : null;
-  const walkableCell = (x,y,monster=false,voidTarget=null) => {
-    if(!Number.isInteger(x) || !Number.isInteger(y) || !inB(x,y)) return false;
-    if(monster && inRefuge(x,y)) return false;
-    return state.map[idx(x,y)]==='.' || (!monster && voidTarget===idx(x,y) && state.map[idx(x,y)]==='v');
+}
+
+
+  const SAVE_KEY='tn.d2.lab.v2', PREF_KEY='tn.d2.lab.preferences.v1';
+  const HERO_SPEED=4.6, MINE_TIME=1.8, BEACON_TIME=1;
+  const PURSUERS=[
+    {id:'hunter',name:'Hunter',description:'A steady chase. Use the rocks and your openings to lead it around.'},
+    {id:'runner',name:'Runner',description:'Watch the warning ring. It winds up, rushes, then catches its breath.'}
+  ];
+  const defaults={dodge:true,showRoute:true,closeView:false,highContrast:false,reducedMotion:!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches};
+  let prefs={...defaults};
+  try{const saved=JSON.parse(localStorage.getItem(PREF_KEY));for(const k of Object.keys(defaults))if(typeof saved?.[k]==='boolean')prefs[k]=saved[k];}catch(error){}
+  let state=null,active=false,storageOK=true,scene=layout('ember');
+  let START=scene.start,UPGRADE=scene.upgrade,GOAL=scene.goal;
+  let replan=0,saveClock=0,pointerId=null,lastPointer=null;
+  const view=()=>state?JSON.parse(JSON.stringify(state)):null;
+  const preferences=()=>({...prefs});
+  const options=()=>({layouts:NETHER_LAYOUT_CATALOGUE.map(l=>layout(l.id)),pursuers:PURSUERS.map(p=>({...p}))});
+  function chooseScene(id){scene=layout(id);START=scene.start;UPGRADE=scene.upgrade;GOAL=scene.goal;}
+  const inRefuge=(x,y)=>x>=scene.refuge.x1-.5 && x<scene.refuge.x2+.5 && y>=scene.refuge.y1-.5 && y<scene.refuge.y2+.5;
+  const walkableCell=(x,y,monster=false,voidTarget=null)=>{
+    if(!Number.isInteger(x)||!Number.isInteger(y)||!inB(x,y)||(monster&&inRefuge(x,y)))return false;
+    return state.map[idx(x,y)]==='.'||(!monster&&voidTarget===idx(x,y)&&state.map[idx(x,y)]==='v');
   };
-  // Route from either end of the current grid edge, so a new aim can reverse now.
-  // Include the remaining fraction of the chosen anchor; an empty BFS never stops short.
   function route(entity,tx,ty,monster=false) {
     const end=idx(tx,ty), targetVoid=!monster && state.map[end]==='v' ? end : null;
     if(!walkableCell(tx,ty,monster,targetVoid)) return null;
@@ -4352,7 +4718,7 @@ const NetherTrial = (() => {
         for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
           const nx=x+dx,ny=y+dy;if(!walkableCell(nx,ny,monster,targetVoid))continue;
           const j=idx(nx,ny);let extra=0;
-          if(!monster && state.enemy.released){
+          if(!monster && prefs.dodge && state.enemy.released){
             const gap=Math.hypot(nx-state.enemy.x,ny-state.enemy.y);
             extra=gap<1 ? 10 : gap<2 ? 3 : 0;
           }
@@ -4369,266 +4735,474 @@ const NetherTrial = (() => {
     }
     return best;
   }
-  function aim(x,y) {
-    if(!active || state.status!=='playing' || state.paused || state.recovery>0 || !inB(x,y))return false;
-    if(!Number.isInteger(x) || !Number.isInteger(y))return false;
-    const cell=idx(x,y), tile=state.map[cell];
+
+  function aim(x,y){
+    if(!active||state.status!=='playing'||state.paused||state.awaitingReturn||state.recovery>0||!Number.isInteger(x)||!Number.isInteger(y)||!inB(x,y))return false;
+    const cell=idx(x,y),tile=state.map[cell];
     if(tile==='b'){
-      if(!state.upgrade){state.message='This brick needs the golden pickaxe upgrade. Find it first.';syncUI();return false;}
+      if(!state.upgrade){state.message='Find the golden pickaxe first. Red brick needs its upgrade.';syncUI();return false;}
       if(inRefuge(state.hero.x,state.hero.y)){state.message='Step out of the blue refuge before mining.';syncUI();return false;}
-      if(state.mining && state.mining.cell===cell)return true;
+      if(state.mining?.cell===cell)return true;
       let chosen=null;
       for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
-        const p=route(state.hero,x+dx,y+dy);if(p && (!chosen || p.length<chosen.length))chosen=p;
+        const p=route(state.hero,x+dx,y+dy);if(p&&(!chosen||p.length<chosen.length))chosen=p;
       }
-      if(!chosen){state.message='No reachable side of that brick yet.';syncUI();return false;}
+      if(!chosen){state.message='No reachable side of that brick. Try another approach.';syncUI();return false;}
       state.mining={cell,progress:0};state.hero.path=chosen;state.target=null;
-      state.message='Mining takes a moment. Tap the floor to cancel and escape.';
-    } else {
-      const path=route(state.hero,x,y);if(!path)return false;
-      state.mining=null;state.target={x,y};state.hero.path=path;
-      if(tile==='v')state.message='Purple void! Stepping into it costs one life.';
+      state.message='Opening this wall helps both of you. Tap the floor to cancel.';
+    }else{
+      const p=route(state.hero,x,y);
+      if(!p){if(tile==='#'){state.message='Dark basalt is fixed. Only red brick can be opened.';syncUI();}return false;}
+      state.mining=null;state.target={x,y};state.hero.path=p;
+      if(tile==='v')state.message='Purple void costs a life. Choose safe ground to turn back.';
+      else if(x===GOAL.x&&y===GOAL.y&&!state.beacons.every(b=>b.lit))state.message='Light both beacons to open the exit. Stand on each for a moment.';
     }
     syncUI();return true;
   }
-  function move(entity,dt,speed) {
+  function move(entity,dt,speed){
     let left=dt*speed;
-    while(entity.path.length && left>0){
+    while(entity.path.length&&left>0){
       const cell=entity.path[0],x=cell%N,y=Math.floor(cell/N),gap=Math.hypot(x-entity.x,y-entity.y);
       if(gap<=left){entity.x=x;entity.y=y;entity.path.shift();left-=gap;}
       else{entity.x+=(x-entity.x)/gap*left;entity.y+=(y-entity.y)/gap*left;left=0;}
     }
   }
-  function lose(reason) {
-    if(state.status!=='playing' || state.recovery>0 || (reason==='caught' && inRefuge(state.hero.x,state.hero.y)))return;
+  function lose(reason){
+    if(state.status!=='playing'||state.awaitingReturn||state.recovery>0||(reason==='caught'&&inRefuge(state.hero.x,state.hero.y)))return;
+    state.losses.push({cause:reason,x:state.hero.x,y:state.hero.y,time:Math.round(state.elapsed*10)/10});
     state.lives--;state.returns++;state.lastLoss=reason;
     state.mining=null;state.target=null;state.hero.path=[];pointerId=null;
-    if(state.lives===0){state.status='lost';state.message='Three lives used. Your next attempt starts fresh; the woods stay completed.';}
+    state.beacons.forEach(b=>{if(!b.lit)b.charge=0;});
+    if(state.lives===0){state.status='lost';state.message='Three lives used. Try another route or another maze.';}
     else{
-      state.hero.x=START.x;state.hero.y=START.y;state.recovery=.75;
-      state.message=(reason==='void' ? 'Void fall.' : 'Caught.')+' Back at the refuge. Your upgrade and openings stay; so does the pursuer.';
+      state.hero.x=START.x;state.hero.y=START.y;state.recovery=.75;state.awaitingReturn=true;
+      state.message=(reason==='void'?'Void fall.':'Caught.')+' Your progress stays. Take a breath, then choose your next route.';
     }
     persist();syncUI();
   }
-  function updatePursuer(dt,repath) {
+  function resumeRecovery(){
+    if(!active||!state.awaitingReturn||state.status!=='playing')return false;
+    state.awaitingReturn=false;state.paused=false;
+    state.message='You are safe inside the blue refuge. Watch the pursuer and choose an exit.';
+    persist();syncUI();return true;
+  }
+  function updatePursuer(dt,repath){
     const h=state.hero,e=state.enemy;
-    const target=inRefuge(h.x,h.y) ? {x:4,y:14} : {x:Math.round(h.x),y:Math.round(h.y)};
-    if(!e.released || repath){
-      const path=route(e,target.x,target.y,true);
-      if(path){e.path=path;e.released=true;}
+    const target=inRefuge(h.x,h.y)?scene.refugeWait:{x:Math.round(h.x),y:Math.round(h.y)};
+    if(!e.released){
+      const p=route(e,target.x,target.y,true);
+      if(p){e.path=p;e.released=true;e.wake=.85;state.message='The opening wakes the pursuer. Light both beacons, then escape!';saveClock=1;snd.nope();}
     }
     if(!e.released)return;
-    if(!inRefuge(h.x,h.y) && Math.hypot(h.x-e.x,h.y-e.y)<.55){lose('caught');return;}
-    move(e,dt,CHASE_SPEED);
-    if(!inRefuge(h.x,h.y) && Math.hypot(h.x-e.x,h.y-e.y)<.55)lose('caught');
+    if(e.wake>0){e.wake=Math.max(0,e.wake-dt);return;}
+    let speed=4.15;
+    if(state.pursuer==='runner'){
+      e.phaseTime-=dt;
+      if(e.phaseTime<=0){
+        const next={stalk:['windup',.7],windup:['burst',1.1],burst:['rest',1.3],rest:['stalk',2.4]}[e.phase];
+        e.phase=next[0];e.phaseTime=next[1];
+        if(e.phase==='windup')e.path=route(e,target.x,target.y,true)||[];
+      }
+      speed={stalk:3.7,windup:0,burst:4.9,rest:2.4}[e.phase];
+    }
+    // The runner commits its route during the visible wind-up and rush.
+    if(repath&&e.phase!=='windup'&&e.phase!=='burst')e.path=route(e,target.x,target.y,true)||[];
+    if(!inRefuge(h.x,h.y)&&Math.hypot(h.x-e.x,h.y-e.y)<.55){lose('caught');return;}
+    move(e,dt,speed);
+    if(!inRefuge(h.x,h.y)&&Math.hypot(h.x-e.x,h.y-e.y)<.55)lose('caught');
   }
-
-  let replan=0, saveClock=0;
-  function step(dt) {
-    if(!active || !state || state.status!=='playing' || state.paused || !Number.isFinite(dt) || dt<=0)return;
+  function step(dt){
+    if(!active||!state||state.status!=='playing'||state.paused||state.awaitingReturn||!Number.isFinite(dt)||dt<=0)return;
     dt=Math.min(.05,dt);state.elapsed+=dt;
     if(state.recovery>0){state.recovery=Math.max(0,state.recovery-dt);return;}
     replan-=dt;const repath=replan<=0;
-    if(repath){
-      replan=.1;
-      if(state.target && state.hero.path.length)state.hero.path=route(state.hero,state.target.x,state.target.y)||[];
-    }
+    if(repath){replan=.12;if(state.target&&state.hero.path.length)state.hero.path=route(state.hero,state.target.x,state.target.y)||[];}
     move(state.hero,dt,HERO_SPEED);
     if(state.map[idx(Math.round(state.hero.x),Math.round(state.hero.y))]==='v'){lose('void');return;}
-    if(!state.upgrade && Math.hypot(state.hero.x-UPGRADE.x,state.hero.y-UPGRADE.y)<.2){
-      state.upgrade=1;state.message='Upgrade found! Choose any red brick to make a permanent opening.';saveClock=1;snd.gem();
+    if(!state.upgrade&&Math.hypot(state.hero.x-UPGRADE.x,state.hero.y-UPGRADE.y)<.2){
+      state.upgrade=1;state.message='Pickaxe upgraded. Choose red brick and make your own way in.';saveClock=1;snd.gem();
     }
-    if(state.mining && !state.hero.path.length){
+    if(state.mining&&!state.hero.path.length){
       const cell=state.mining.cell,x=cell%N,y=Math.floor(cell/N);
       if(Math.hypot(x-state.hero.x,y-state.hero.y)<=1.01){
         state.mining.progress+=dt;
-        if(state.mining.progress>=MINE_TIME){state.map[cell]='.';state.mining=null;state.message='Opening made. Now the pursuer can follow you!';saveClock=1;snd.crumble();}
+        if(state.mining.progress>=MINE_TIME){
+          state.map[cell]='.';state.mining=null;state.breaches++;
+          state.message=state.enemy.released?'Another opening. The pursuer can use it too.':'Brick opened. The pursuer is still sealed away.';
+          saveClock=1;snd.crumble();
+        }
       }
     }
     updatePursuer(dt,repath);
-    if(state.status==='playing' && state.recovery===0 && Math.hypot(state.hero.x-GOAL.x,state.hero.y-GOAL.y)<.2){
-      state.status='won';state.message='First layer complete! The deeper layers and lightning hammer come next.';state.hero.path=[];state.target=null;saveClock=1;
+    if(state.status!=='playing'||state.awaitingReturn)return;
+    for(const b of state.beacons){
+      if(b.lit)continue;
+      if(Math.hypot(state.hero.x-b.x,state.hero.y-b.y)<.2&&!state.hero.path.length){
+        b.charge=Math.min(BEACON_TIME,b.charge+dt);
+        if(b.charge>=BEACON_TIME){b.lit=true;saveClock=1;snd.gem();state.message=state.beacons.every(v=>v.lit)?'Both beacons lit! Reach the green exit.':'One beacon lit. Keep moving and light the other.';}
+      }else b.charge=0;
+    }
+    if(state.beacons.every(b=>b.lit)&&Math.hypot(state.hero.x-GOAL.x,state.hero.y-GOAL.y)<.2){
+      state.status='won';state.message='First layer escaped! Which maze would you choose next?';state.hero.path=[];state.target=null;saveClock=1;snd.gem();
     }
     saveClock+=dt;if(saveClock>=1){persist();saveClock=0;}
     syncUI();
   }
-
-  function persist() {
+  function persist(){
     if(!state)return false;
-    try {localStorage.setItem(SAVE_KEY,JSON.stringify(state));storageOK=true;return true;}
-    catch(error){storageOK=false;return false;}
+    try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));storageOK=true;return true;}catch(error){storageOK=false;return false;}
   }
-  function validAttempt(v) {
-    if(!v || v.version!==1 || !['practice','woods'].includes(v.origin) || !['playing','won','lost'].includes(v.status)
-       || !Number.isInteger(v.lives) || v.lives<0 || v.lives>3 || ![0,1].includes(v.upgrade)
-       || (v.status==='lost')!==(v.lives===0) || !Array.isArray(v.map) || v.map.length!==N*N)return false;
-    const original=initialMap();
-    if(v.map.some((t,i)=>t!==original[i] && !(original[i]==='b' && t==='.')))return false;
-    if(!v.upgrade && v.map.some((t,i)=>t==='.' && original[i]==='b'))return false;
-    const point=p=>p && Number.isFinite(p.x) && Number.isFinite(p.y) && p.x>=1 && p.x<=18 && p.y>=1 && p.y<=18;
-    const path=p=>Array.isArray(p) && p.length<=N*N && p.every(i=>Number.isInteger(i) && i>=0 && i<N*N);
-    if(!point(v.hero) || !point(v.enemy) || !path(v.hero.path) || !path(v.enemy.path) || typeof v.enemy.released!=='boolean')return false;
-    if(!Number.isFinite(v.recovery) || v.recovery<0 || v.recovery>.75 || !Number.isFinite(v.elapsed) || v.elapsed<0
-       || !Number.isInteger(v.returns) || v.returns!==3-v.lives || typeof v.message!=='string')return false;
-    for(const p of [v.hero,v.enemy]){
-      const tile=v.map[idx(Math.round(p.x),Math.round(p.y))];
-      if(tile!=='.' && !(v.status==='lost' && p===v.hero && tile==='v'))return false;
-    }
-    if(v.target && (!point(v.target) || !Number.isInteger(v.target.x) || !Number.isInteger(v.target.y)))return false;
-    if(v.mining && (!v.upgrade || !Number.isInteger(v.mining.cell) || v.map[v.mining.cell]!=='b'
-       || !Number.isFinite(v.mining.progress) || v.mining.progress<0 || v.mining.progress>MINE_TIME))return false;
+  function validAttempt(v){
+    if(!v||v.version!==2||!NETHER_LAYOUT_CATALOGUE.some(l=>l.id===v.layout)||!PURSUERS.some(p=>p.id===v.pursuer)
+      ||!['practice','woods'].includes(v.origin)||!['playing','won','lost'].includes(v.status)
+      ||!Number.isInteger(v.lives)||v.lives<0||v.lives>3||![0,1].includes(v.upgrade)||(v.status==='lost')!==(v.lives===0)
+      ||!Array.isArray(v.map)||v.map.length!==N*N)return false;
+    const original=layout(v.layout);
+    if(v.map.some((t,i)=>t!==original.map[i]&&!(original.map[i]==='b'&&t==='.')))return false;
+    if(!v.upgrade&&v.map.some((t,i)=>t==='.'&&original.map[i]==='b'))return false;
+    const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=1&&p.x<=18&&p.y>=1&&p.y<=18;
+    const path=p=>Array.isArray(p)&&p.length<=N*N&&p.every(i=>Number.isInteger(i)&&i>=0&&i<N*N);
+    if(!point(v.hero)||!point(v.enemy)||!path(v.hero.path)||!path(v.enemy.path)||typeof v.enemy.released!=='boolean')return false;
+    if(!Number.isFinite(v.recovery)||v.recovery<0||v.recovery>.75||!Number.isFinite(v.elapsed)||v.elapsed<0
+      ||!Number.isInteger(v.returns)||v.returns!==3-v.lives||typeof v.message!=='string'||typeof v.awaitingReturn!=='boolean')return false;
+    if(v.awaitingReturn&&(v.status!=='playing'||v.lives>=3||v.recovery<=0||v.hero.x!==original.start.x||v.hero.y!==original.start.y))return false;
+    if(!['stalk','windup','burst','rest'].includes(v.enemy.phase)||!Number.isFinite(v.enemy.phaseTime)||v.enemy.phaseTime<0||v.enemy.phaseTime>3
+      ||!Number.isFinite(v.enemy.wake)||v.enemy.wake<0||v.enemy.wake>.85)return false;
+    if(!Array.isArray(v.beacons)||v.beacons.length!==original.beacons.length||v.beacons.some((b,i)=>b.x!==original.beacons[i].x||b.y!==original.beacons[i].y||typeof b.lit!=='boolean'||!Number.isFinite(b.charge)||b.charge<0||b.charge>1))return false;
+    if(v.status==='won'&&!v.beacons.every(b=>b.lit))return false;
+    if(!Array.isArray(v.losses)||v.losses.length!==v.returns||v.losses.some(l=>!point(l)||!['caught','void'].includes(l.cause)||!Number.isFinite(l.time)))return false;
+    if(!Number.isInteger(v.breaches)||v.breaches<0||v.breaches!==v.map.filter((t,i)=>t==='.'&&original.map[i]==='b').length)return false;
+    if(!v.preferences||Object.keys(defaults).some(k=>typeof v.preferences[k]!=='boolean'))return false;
+    for(const p of [v.hero,v.enemy]){const t=v.map[idx(Math.round(p.x),Math.round(p.y))];if(t!=='.'&&!(v.status==='lost'&&p===v.hero&&t==='v'))return false;}
+    if(v.target&&(!point(v.target)||!Number.isInteger(v.target.x)||!Number.isInteger(v.target.y)))return false;
+    if(v.mining&&(!v.upgrade||!Number.isInteger(v.mining.cell)||v.map[v.mining.cell]!=='b'||!Number.isFinite(v.mining.progress)||v.mining.progress<0||v.mining.progress>MINE_TIME))return false;
     return true;
   }
-  function resume() {
-    let saved;
-    try {saved=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(error){return false;}
-    if(!validAttempt(saved))return false;
-    state=saved;state.paused=true;active=true;S.running=false;replan=0;syncUI();return true;
+  function savedAttempt(){try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));return validAttempt(saved)?saved:null;}catch(error){return null;}}
+  function resume(){
+    const saved=savedAttempt();if(!saved)return false;
+    state=saved;chooseScene(state.layout);prefs={...state.preferences};state.paused=true;active=true;S.running=false;replan=0;pointerId=null;syncUI();return true;
   }
-  function leave() {persist();active=false;S.running=false;syncUI();}
-  function replay() {return start(state ? state.origin : 'practice');}
-  function setPaused(value) {if(!active || !state)return;state.paused=!!value;persist();syncUI();}
-
-  function syncUI() {
+  function leave(){persist();active=false;S.running=false;pointerId=null;syncUI();}
+  function replay(){return start(state?state.origin:'practice',state?{layout:state.layout,pursuer:state.pursuer}:{});}
+  function setPaused(value){if(!active||!state)return;state.paused=!!value;pointerId=null;persist();syncUI();}
+  function setPreferences(changes){
+    for(const k of Object.keys(defaults))if(typeof changes?.[k]==='boolean')prefs[k]=changes[k];
+    if(state){state.preferences={...prefs};if(active)persist();}
+    try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(error){}
+    syncUI();return preferences();
+  }
+  function exportNotes(feedback={}){
+    return JSON.stringify({game:'Twenty Nights — Nether play lab',version:2,build:'TN-D2-play-lab-2026-10-20',
+      attempt:state?{layout:state.layout,pursuer:state.pursuer,status:state.status,lives:state.lives,upgrade:state.upgrade,
+        beacons:state.beacons.filter(b=>b.lit).length,breaches:state.breaches,losses:state.losses,
+        openings:state.map.flatMap((tile,i)=>tile==='.'&&scene.map[i]==='b'?[{x:i%20,y:Math.floor(i/20)}]:[]),
+        beaconStates:state.beacons.map(({x,y,lit})=>({x,y,lit})),
+        elapsed:Math.round(state.elapsed),preferences:state.preferences}:null,feedback},null,2);
+  }
+  function start(origin='practice',selection={}){
+    const mapId=NETHER_LAYOUT_CATALOGUE.some(l=>l.id===selection.layout)?selection.layout:'ember';
+    const pursuer=PURSUERS.some(p=>p.id===selection.pursuer)?selection.pursuer:'hunter';chooseScene(mapId);
+    state={version:2,origin,status:'playing',layout:mapId,pursuer,lives:3,upgrade:0,map:scene.map.slice(),preferences:{...prefs},
+      hero:{...START,path:[]},enemy:{...scene.enemy,path:[],released:false,wake:0,phase:'stalk',phaseTime:2.4},
+      beacons:scene.beacons.map(b=>({...b,lit:false,charge:0})),breaches:0,losses:[],
+      mining:null,target:null,paused:false,recovery:0,awaitingReturn:false,elapsed:0,returns:0,
+      message:'Find the golden pickaxe, choose an opening, then light both beacons.'};
+    active=true;S.running=false;replan=0;saveClock=0;pointerId=null;persist();syncUI();return view();
+  }
+  function enterFromWoods(){const day=S.day;S.day=20;save();S.day=day;store.set('tn.woods-complete',store.get('tn.save'));return start('woods');}
+  const hasSaved=()=>!!savedAttempt();
+  let settingsOpen=false,settingsWasPaused=false,focusBack=null,lastModal=null;
+  const put=(id,value)=>{if($(id).textContent!==value)$(id).textContent=value;};
+  function topModal(){return settingsOpen?'nSettings':active&&state.awaitingReturn?'nReturn':active&&state.status!=='playing'?'nEnd':null;}
+  function syncFocus(){
+    const current=topModal();
+    const setup=!active&&!$('title').classList.contains('hidden');
+    for(const id of ['nHud','nHelp','stage','title','nSettings','nReturn','nEnd'])$(id).inert=!!current&&id!==current;
+    for(const id of ['top','bottom','actionRow','stage'])$(id).inert=!!current||setup;
+    if(current!==lastModal){
+      lastModal=current;
+      const target={nSettings:'nSettingsClose',nReturn:'nReturnContinue',nEnd:'nReplay'}[current];
+      if(target)$(target).focus?.();
+    }
+  }
+  function prepareWoods(){
+    if(active)leave();
+    $('title').classList.add('hidden');
+    for(const id of ['top','bottom','actionRow','stage'])$(id).inert=false;
+  }
+  function syncUI(){
     document.body.classList.toggle('nether-active',active);
+    document.body.classList.toggle('nHighContrast',prefs.highContrast);
+    document.body.classList.toggle('nReducedMotion',prefs.reducedMotion);
     $('nHud').classList.toggle('hidden',!active);$('nHelp').classList.toggle('hidden',!active);
-    $('nEnd').classList.toggle('hidden',!active || state.status==='playing');
-    if(!active){$('title').classList.remove('hidden');$('nResume').classList.toggle('hidden',!hasSaved());return;}
+    $('nSettings').classList.toggle('hidden',!settingsOpen);
+    $('nReturn').classList.toggle('hidden',!active||!state.awaitingReturn);
+    $('nEnd').classList.toggle('hidden',!active||state.status==='playing');
+    $('nMenu').classList.toggle('hidden',!active);
+    put('nSound',muted?'Sound off':'Sound on');$('nSound').setAttribute('aria-pressed',String(!muted));
+    for(const [id,key] of [['nDodge','dodge'],['nRoute','showRoute'],['nContrast','highContrast'],['nReducedMotion','reducedMotion']])$(id).checked=prefs[key];
+    $('nCameraWhole').checked=!prefs.closeView;$('nCameraClose').checked=prefs.closeView;
+    put('nSettingsStatus',active?'The chase is paused while this is open.':'Choose the controls and display you like. Every challenge keeps three lives.');
+    if(!active){
+      $('title').classList.remove('hidden');const saved=savedAttempt();
+      $('nContinuePanel').classList.toggle('hidden',!saved);$('nResume').classList.toggle('hidden',!saved);
+      if(saved){const l=layout(saved.layout),p=PURSUERS.find(v=>v.id===saved.pursuer);
+        put('nSavedSummary',l.name+' · '+p.name+' · '+saved.lives+' lives left · '+saved.beacons.filter(b=>b.lit).length+'/2 beacons');
+        put('nResume',saved.status==='playing'?'Continue adventure':'Review last adventure');}
+      put('nTitleNote',storageOK?'A new adventure starts with three lives and replaces the current saved attempt.':'Saving is unavailable here. Keep this tab open to keep your adventure.');
+      syncFocus();return;
+    }
     $('title').classList.add('hidden');$('intro').classList.add('hidden');$('win').classList.add('hidden');$('opts').classList.add('hidden');
-    const put=(id,value)=>{if($(id).textContent!==value)$(id).textContent=value;};
-    put('nLives',state.lives+' / 3 lives');
-    put('nTool',state.upgrade ? 'Pickaxe upgraded' : 'Find the upgrade');
-    put('nThreat',state.enemy.released ? 'Pursuer released' : 'Pursuer contained');
-    put('nMessage',state.paused ? 'Paused. Your attempt is saved when storage is available.' : state.message);
-    put('nPause',state.paused ? 'Resume chase' : 'Pause');put('nSound',muted ? 'Sound off' : 'Sound on');
-    put('nMode',state.origin==='practice' ? 'Direct test · woods skipped' : 'After Night 20 · woods preserved');
-    put('nEndTitle',state.status==='won' ? 'First layer cleared!' : 'Three lives used');
-    put('nEndLine',state.status==='won'
-      ? 'You found the way through. The deeper maze and lightning hammer are the next build.'
-      : 'Your upgrade helped, but the openings also helped your pursuer. Try a different place to break through.');
-    put('nEndStats',state.returns+' '+(state.returns===1?'life':'lives')+' used · '+Math.round(state.elapsed)+' seconds played');
-    put('nStorage',storageOK ? 'Autosave is available in this browser.' : 'Save unavailable — keep this tab open.');
+    const lit=state.beacons.filter(b=>b.lit).length,e=state.enemy;
+    put('nMode',scene.name+' · '+PURSUERS.find(p=>p.id===state.pursuer).name+(state.origin==='woods'?' · After Night 20':''));
+    put('nLives','♥'.repeat(state.lives)+'♡'.repeat(3-state.lives)+'  '+state.lives+'/3');$('nLives').setAttribute('aria-label',state.lives+' of 3 lives');
+    put('nTool',state.upgrade?'Pickaxe upgraded':'Pickaxe needed');put('nBeacons',lit===2?'2/2 · Exit open':lit+'/2 beacons');
+    const threat=!e.released?'Contained':e.wake>0?'Waking up':e.phase==='windup'?'Winding up!':e.phase==='burst'?'Rushing!':e.phase==='rest'?'Catching breath':'Hunting';
+    put('nThreat',threat);$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
+    const stages=[!!state.upgrade,e.released,lit===2,state.status==='won'];let first=true;
+    ['nObjectiveTool','nObjectiveBreach','nObjectiveBeacons','nObjectiveExit'].forEach((id,i)=>{
+      $(id).dataset.state=stages[i]?'done':first?'current':'waiting';if(!stages[i])first=false;
+    });
+    put('nMessage',state.paused&&!settingsOpen?'Paused. Resume when you are ready.':state.message);
+    put('nPause',state.paused?'Resume':'Pause');put('nCameraToggle',prefs.closeView?'Overview':'Zoom');
+    $('nCameraToggle').setAttribute('aria-pressed',String(prefs.closeView));
+    $('nCameraToggle').setAttribute('aria-label',prefs.closeView?'Show the whole maze':'Zoom in on the board');
+    put('nControlHint','Drag or tap to move · tap brick to mine · stand on a beacon to light it'+(prefs.dodge?' · Dodge on':''));
+    put('nStorage',storageOK?'Autosaved on this browser.':'Saving unavailable — keep this tab open.');$('nStorage').dataset.state=storageOK?'ok':'error';
+    if(state.awaitingReturn){
+      put('nReturnTitle',state.lastLoss==='void'?'A fall. Another chance.':'Caught. Still in the game.');
+      put('nReturnLine',state.lastLoss==='void'?'Purple cracks mark the void. Your next route can go around it.':'Watch where the pursuer waits. The blue refuge gives you time to plan.');
+      put('nReturnLives','♥'.repeat(state.lives)+'♡'.repeat(3-state.lives)+' · '+state.lives+' lives left');
+      put('nReturnKept',(state.upgrade?'Upgraded pickaxe':'Pickaxe still to find')+' · '+state.breaches+' openings · '+lit+'/2 beacons');
+    }
+    if(state.status!=='playing'){
+      $('nEnd').dataset.outcome=state.status;
+      put('nEndTitle',state.status==='won'?'You made it through.':'Three lives. One more idea?');
+      put('nEndLine',state.status==='won'?'Two beacons lit. An escape through the opening you chose.':scene.hint);
+      put('nEndStats',scene.name+' · '+PURSUERS.find(p=>p.id===state.pursuer).name+' · '+state.lives+' lives left · '+state.breaches+' openings · '+Math.round(state.elapsed)+'s played');
+    }
+    syncFocus();
   }
-  function hasSaved() {
-    try{return validAttempt(JSON.parse(localStorage.getItem(SAVE_KEY)));}catch(error){return false;}
-  }
-  function draw() {
-    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,SIZE,SIZE);
-    const t=state.elapsed;
-    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
-      const tile=state.map[idx(x,y)],px=x*TILE,py=y*TILE;
-      ctx.fillStyle=((x+y)%2) ? '#2c2330' : '#302633';ctx.fillRect(px,py,TILE,TILE);
-      if(inRefuge(x,y)){
-        ctx.fillStyle=((x+y)%2)?'#194a60':'#1d5366';ctx.fillRect(px,py,TILE,TILE);
-      }
-      if(tile==='#'){
-        ctx.fillStyle='#161c29';ctx.fillRect(px,py,TILE,TILE);
-        ctx.fillStyle='#354052';ctx.fillRect(px+2,py+2,TILE-4,5);
-        ctx.fillStyle='#28303f';ctx.fillRect(px+3,py+9,TILE-6,TILE-12);
-      }
-      if(tile==='b'){
-        ctx.fillStyle=state.upgrade?'#b36151':'#78423f';ctx.fillRect(px,py,TILE,TILE);
-        ctx.strokeStyle='#442731';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px,py+16);ctx.lineTo(px+32,py+16);
-        ctx.moveTo(px+16,py);ctx.lineTo(px+16,py+16);ctx.moveTo(px+8,py+16);ctx.lineTo(px+8,py+32);ctx.stroke();
-        ctx.fillStyle='#dc9880';ctx.fillRect(px+2,py+2,27,2);
-        if(!state.upgrade && (x+y)%3===0){ctx.fillStyle='#eec3a0';ctx.font='bold 11px system-ui';ctx.fillText('1',px+13,py+13);}
-      }
-      if(tile==='v'){
-        ctx.fillStyle='#130c25';ctx.fillRect(px,py,TILE,TILE);
-        ctx.strokeStyle='#9756d7';ctx.lineWidth=2;ctx.beginPath();
-        ctx.moveTo(px+3,py+10+Math.sin(t*2+x)*3);ctx.lineTo(px+15,py+18);ctx.lineTo(px+29,py+13);ctx.stroke();
-      }
-    }
-    ctx.font='bold 11px system-ui';ctx.fillStyle='#9adff7';ctx.textAlign='center';
-    ctx.fillText('REFUGE',2.5*TILE,18.4*TILE);ctx.textAlign='left';
-    // The route is a promise, so make it visible and update it as danger moves.
-    if(state.hero.path.length){
-      ctx.strokeStyle='rgba(150,226,234,.45)';ctx.lineWidth=2;ctx.setLineDash([3,5]);ctx.beginPath();
-      ctx.moveTo((state.hero.x+.5)*TILE,(state.hero.y+.5)*TILE);
-      for(const p of state.hero.path)ctx.lineTo((p%N+.5)*TILE,(Math.floor(p/N)+.5)*TILE);
-      ctx.stroke();ctx.setLineDash([]);
-    }
-    const gx=(GOAL.x+.5)*TILE,gy=(GOAL.y+.5)*TILE;
-    ctx.strokeStyle='#77e0bd';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(gx,gy,11,15,0,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle='#b9f8df';ctx.font='bold 10px system-ui';ctx.fillText('EXIT',gx-11,gy+28);
-    if(!state.upgrade){
-      const x=(UPGRADE.x+.5)*TILE,y=(UPGRADE.y+.5)*TILE;
-      ctx.fillStyle='#6b5124';ctx.beginPath();ctx.arc(x,y,15+Math.sin(t*3),0,Math.PI*2);ctx.fill();
-      ctx.save();ctx.translate(x,y);ctx.rotate(-.6);
-      ctx.fillStyle='#d8a26b';ctx.fillRect(-2,-2,4,15);ctx.fillStyle='#ffe182';ctx.fillRect(-10,-7,20,6);ctx.restore();
-    }
-    if(state.mining){
-      const p=state.mining.cell,x=(p%N)*TILE,y=Math.floor(p/N)*TILE;
-      ctx.strokeStyle='#ffe393';ctx.lineWidth=3;ctx.strokeRect(x+2,y+2,TILE-4,TILE-4);
-      ctx.fillStyle='#291f25';ctx.fillRect(x,y+TILE-6,TILE,6);
-      ctx.fillStyle='#ffe393';ctx.fillRect(x,y+TILE-6,TILE*Math.min(1,state.mining.progress/MINE_TIME),6);
-    }
-    function character(entity,hero) {
-      const x=(entity.x+.5)*TILE,y=(entity.y+.5)*TILE;
-      ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(x,y+11,11,5,0,0,Math.PI*2);ctx.fill();
-      if(hero){
-        ctx.fillStyle='#62bdd6';ctx.fillRect(x-8,y-1,16,13);ctx.fillStyle='#e7ba98';ctx.fillRect(x-8,y-12,16,13);
-        ctx.fillStyle='#5a372a';ctx.fillRect(x-9,y-14,18,5);
-        face(x,y-6,3,1.3,{x:state.enemy.x-entity.x,y:state.enemy.y-entity.y},state.recovery>0?2:0,1);
-        if(state.upgrade){ctx.fillStyle='#ffe393';ctx.fillRect(x+10,y-3,3,13);ctx.fillRect(x+7,y-5,9,3);}
-      }else{
-        ctx.fillStyle=state.enemy.released?'#c45c73':'#89536c';ctx.beginPath();ctx.ellipse(x,y,12,13,0,0,Math.PI*2);ctx.fill();
-        face(x,y-2,4,2,{x:state.hero.x-entity.x,y:state.hero.y-entity.y},3,4,'#ffe8af');
-      }
-    }
-    character(state.enemy,false);character(state.hero,true);
-    if(state.paused || state.recovery>0){
-      ctx.fillStyle='rgba(12,18,32,.5)';ctx.fillRect(0,0,SIZE,SIZE);
-      ctx.fillStyle='#e9f5ff';ctx.font='bold 24px system-ui';ctx.textAlign='center';
-      ctx.fillText(state.paused?'Paused — use Resume chase':'Back at the refuge',SIZE/2,SIZE/2);ctx.textAlign='left';
+  function openSettings(){focusBack=document.activeElement;settingsWasPaused=!!state?.paused;settingsOpen=true;if(active)setPaused(true);syncUI();}
+  function closeSettings(){settingsOpen=false;if(active&&!state.awaitingReturn)setPaused(settingsWasPaused);syncUI();focusBack?.focus?.();}
+  function selected(name,fallback){return document.querySelector('input[name="'+name+'"]:checked')?.value||fallback;}
+  function resetFeedback(){for(const id of ['nFeelFun','nFeelTense','nFeelUnfair'])$(id).checked=false;$('nFeedbackNote').value='';put('nFeedbackStatus','Stays here. Nothing is sent.');}
+  function renderPreviews(){
+    for(const entry of NETHER_LAYOUT_CATALOGUE){
+      const canvas=$('nPreview-'+entry.id),c=canvas.getContext('2d');if(!c)continue;
+      const s=layout(entry.id),scale=4,ox=40,oy=0;c.clearRect(0,0,160,80);
+      for(let i=0;i<400;i++){c.fillStyle={'#':'#64747c',b:'#dc986f',v:'#b291dd','.':'#26383e'}[s.map[i]];c.fillRect(ox+(i%20)*scale,oy+Math.floor(i/20)*scale,scale-1,scale-1);}
+      for(const [p,color] of [[s.start,'#9ef1df'],[s.upgrade,'#ffe29b'],[s.goal,'#7eefac'],[s.enemy,'#f68c90'],...s.beacons.map(b=>[b,'#fff0c1'])]){c.fillStyle=color;c.fillRect(ox+p.x*scale,oy+p.y*scale,4,4);}
     }
   }
-  let pointerId=null;
-  function pointer(kind,event) {
+  function bindUI(){
+    $('nStart').addEventListener('click',()=>{audioInit();closeIntro();resetFeedback();start('practice',{layout:selected('nMap','ember'),pursuer:selected('nPursuer','hunter')});cv.focus?.();});
+    $('nResume').addEventListener('click',()=>{audioInit();closeIntro();if(!resume())put('nTitleNote','The saved adventure could not be loaded. Choose a fresh challenge.');});
+    $('nPause').addEventListener('click',()=>setPaused(!state.paused));
+    for(const id of ['nSettingsOpen','nSetupSettings'])$(id).addEventListener('click',openSettings);
+    for(const id of ['nSettingsClose','nSettingsDone'])$(id).addEventListener('click',closeSettings);
+    for(const id of ['nMenu','nEndMenu'])$(id).addEventListener('click',()=>{settingsOpen=false;leave();$('nStart').focus?.();});
+    $('nReplay').addEventListener('click',()=>{resetFeedback();replay();cv.focus?.();});
+    $('nReturnContinue').addEventListener('click',()=>{resumeRecovery();cv.focus?.();});
+    $('nCameraToggle').addEventListener('click',()=>setPreferences({closeView:!prefs.closeView}));
+    $('nSound').addEventListener('click',()=>{muted=!muted;store.set('tn.mute',muted?'1':'0');audioInit();syncUI();});
+    for(const [id,key] of [['nDodge','dodge'],['nRoute','showRoute'],['nContrast','highContrast'],['nReducedMotion','reducedMotion']])$(id).addEventListener('change',()=>setPreferences({[key]:$(id).checked}));
+    for(const id of ['nCameraWhole','nCameraClose'])$(id).addEventListener('change',()=>setPreferences({closeView:$('nCameraClose').checked}));
+    $('nFeedback').addEventListener('submit',event=>event.preventDefault());
+    $('nDownloadNotes').addEventListener('click',()=>{
+      const json=exportNotes({feeling:selected('nFeeling',''),note:$('nFeedbackNote').value});
+      const a=document.createElement('a'),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+      a.href=url;a.download='nether-'+state.layout+'-'+state.pursuer+'-notes.json';a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);put('nFeedbackStatus','Notes downloaded. Nothing was sent.');
+    });
+    window.addEventListener('blur',()=>{if(active)setPaused(true);});
+    document.addEventListener('visibilitychange',()=>{if(active&&document.hidden)setPaused(true);});
+    window.addEventListener('pagehide',()=>{if(active)persist();});
+    document.addEventListener('keydown',event=>{if(settingsOpen&&!active)key(event);});
+    cv.setAttribute('tabindex','0');renderPreviews();syncUI();
+  }
+
+/* World-only art: 32px cells, no camera/DOM/global game helpers or external art. */
+function drawNetherWorld(ctx,state,scene,prefs={}) {
+  const T=32, size=640, hi=!!prefs.highContrast, time=prefs.reducedMotion?0:(state.elapsed||0);
+  const ink='#10131d', pale='#f6edda', gold='#ffe28b', teal='#91f3db';
+  const rect=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h);};
+  const poly=(points,color,edge=null)=>{ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=color;ctx.fill();if(edge){ctx.strokeStyle=edge;ctx.lineWidth=2;ctx.stroke();}};
+  const line=(points,color,width=2)=>{ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();};
+  const ring=(x,y,r,color,width=2,start=0,end=Math.PI*2)=>{ctx.beginPath();ctx.arc(x,y,r,start,end);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();};
+  const label=(value,x,y,color=pale,size=10)=>{ctx.font='bold '+size+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=3;ctx.strokeStyle=ink;ctx.strokeText(value,x,y);ctx.fillStyle=color;ctx.fillText(value,x,y);};
+  const point=p=>({x:(p.x+.5)*T,y:(p.y+.5)*T});
+  const refuge=scene.refuge, safe=(x,y)=>x>=refuge.x1&&x<=refuge.x2&&y>=refuge.y1&&y<=refuge.y2;
+  ctx.save();ctx.lineJoin='round';ctx.lineCap='round';rect(0,0,size,size,'#201d29');
+  for(let y=0;y<20;y++)for(let x=0;x<20;x++){
+    const i=y*20+x, tile=state.map[i], px=x*T, py=y*T, grain=(x*19+y*31)%17;
+    rect(px,py,T,T,(x+y)%2?(hi?'#292b35':'#322a35'):(hi?'#23252e':'#2d2632'));
+    rect(px+3,py+3,T-6,1,'rgba(185,155,161,.08)');
+    rect(px+6+grain,py+20+(grain%5),4,1,'rgba(206,179,162,.12)');
+    if(safe(x,y)){
+      rect(px,py,T,T,(x+y)%2?'#205b65':'#1c505d');
+      rect(px+5,py+5,22,1,'rgba(145,243,219,.12)');
+    }
+    if(tile==='#'){
+      rect(px,py,T,T,ink);
+      poly([[px+2,py+3],[px+26,py+1],[px+30,py+8],[px+28,py+29],[px+3,py+30]],hi?'#637b90':'#334252');
+      poly([[px+3,py+3],[px+25,py+2],[px+28,py+7],[px+5,py+9]],hi?'#91aabd':'#566575');
+      poly([[px+5,py+10],[px+28,py+8],[px+27,py+25],[px+6,py+28]],hi?'#4e657c':'#2c3748');
+      line([[px+12,py+10],[px+10,py+18],[px+15,py+22]],'#202b3b',1);
+      rect(px+6,py+28,21,2,'#1d2635');
+    }else if(tile==='b'){
+      rect(px,py,T,T,'#3a2329');
+      rect(px+1,py+2,30,13,hi?'#e78d62':'#a75845');
+      rect(px+1,py+17,30,13,hi?'#ca6c50':'#87473f');
+      rect(px+3,py+3,26,2,state.upgrade?'#ecad78':'#cb8763');
+      rect(px+3,py+18,26,2,'#b97157');
+      rect(px+15,py+2,2,13,'#4b2a2c');rect(px+7,py+17,2,13,'#47282c');
+      rect(px+29,py+3,2,11,'#6c3933');rect(px+29,py+18,2,11,'#61342f');
+      if(!state.upgrade&&(x+y)%3===0){rect(px+12,py+6,6,6,'#482a2c');label('1',px+15,py+9,'#ffd59b',8);}
+    }else if(tile==='v'){
+      rect(px,py,T,T,'#100c1f');rect(px+4,py+5,24,25,'#191029');
+      const edge=hi?'#d2a4ff':'#a273d1';
+      line([[px+2,py+3],[px+12,py+8],[px+20,py+4],[px+30,py+10]],edge,2);
+      line([[px+4,py+24],[px+12,py+19],[px+18,py+27],[px+30,py+23]],'#70429a',2);
+      line([[px+13,py+10],[px+16,py+15],[px+12,py+20]],'#4a285e',1);
+    }else if(scene.map[i]==='b'){
+      rect(px+2,py+3,5,3,'#a8614f');rect(px+24,py+24,5,4,'#895348');
+      rect(px+3,py+25,3,3,'#b27457');rect(px+25,py+4,4,3,'#b27457');
+      line([[px+9,py+17],[px+13,py+19],[px+19,py+15]],'#58404a',1);
+    }
+  }
+  // A clean boundary and two escape arrows teach the safe region without prose.
+  const rx=refuge.x1*T, ry=refuge.y1*T, rw=(refuge.x2-refuge.x1+1)*T, rh=(refuge.y2-refuge.y1+1)*T;
+  ctx.strokeStyle=teal;ctx.lineWidth=2;ctx.strokeRect(rx+2,ry+2,rw-4,rh-4);
+  for(const [x,y] of [[rx+2,ry+2],[rx+rw-6,ry+2],[rx+2,ry+rh-6],[rx+rw-6,ry+rh-6]])rect(x,y,4,4,teal);
+  label('SAFE',rx+rw/2,ry+rh-14,'#b6fff0',10);
+  for(const exit of scene.recoveryExits){
+    const p=point(exit), north=exit.y<refuge.y1;
+    if(north)line([[p.x-5,p.y+3],[p.x,p.y-3],[p.x+5,p.y+3]],teal,2);
+    else line([[p.x-3,p.y-5],[p.x+3,p.y],[p.x-3,p.y+5]],teal,2);
+  }
+  // This uses the real planned route, never a second simulation of it.
+  if(prefs.showRoute&&state.hero.path.length){
+    ctx.setLineDash([2,6]);const p=point(state.hero), path=[[p.x,p.y],...state.hero.path.map(i=>[(i%20+.5)*T,(Math.floor(i/20)+.5)*T])];
+    line(path,'rgba(113,229,232,.6)',2);ctx.setLineDash([]);
+  }
+  if(prefs.showRoute&&state.target){const p=point(state.target);ring(p.x,p.y,8,'#b2ffff',2);rect(p.x-2,p.y-2,4,4,'#b2ffff');}
+  const beacons=state.beacons||scene.beacons, unlocked=beacons.length>0&&beacons.every(b=>b.lit);
+  for(let index=0;index<beacons.length;index++){
+    const b=beacons[index], p=point(b), color=b.lit?gold:(index?'#a5dce7':'#dbbc8b'), charge=Math.max(0,Math.min(1,b.charge||0));
+    ctx.beginPath();ctx.ellipse(p.x,p.y+9,14,7,0,0,Math.PI*2);ctx.fillStyle='#171c28';ctx.fill();
+    poly([[p.x-13,p.y+2],[p.x,p.y-8],[p.x+13,p.y+2],[p.x,p.y+12]],b.lit?'#756333':'#414552',ink);
+    if(index===0){poly([[p.x,p.y-7],[p.x+7,p.y],[p.x,p.y+7],[p.x-7,p.y]],b.lit?'#fff1b4':'#a8875c');rect(p.x-2,p.y-3,4,6,ink);}
+    else{line([[p.x-6,p.y+4],[p.x-6,p.y-4],[p.x+6,p.y-4],[p.x+6,p.y+4]],color,2);line([[p.x,p.y-6],[p.x,p.y+5]],color,2);}
+    ring(p.x,p.y,14,b.lit?'#ffe8a0':'#6f7180',1);
+    if(charge>0&&!b.lit)ring(p.x,p.y,15,teal,3,-Math.PI/2,-Math.PI/2+charge*Math.PI*2);
+    if(b.lit){line([[p.x-4,p.y-17],[p.x-1,p.y-14],[p.x+5,p.y-20]],'#fff1b4',2);}
+    else label(index?'II':'I',p.x,p.y+22,color,9);
+  }
+  const gp=point(scene.goal);
+  ctx.beginPath();ctx.ellipse(gp.x,gp.y+11,15,7,0,0,Math.PI*2);ctx.fillStyle=unlocked?'#174d45':'#242e35';ctx.fill();
+  ctx.beginPath();ctx.ellipse(gp.x,gp.y,12,16,0,0,Math.PI*2);ctx.fillStyle=unlocked?'#113c34':'#202c32';ctx.fill();ctx.strokeStyle=unlocked?'#98ffd0':'#69867c';ctx.lineWidth=3;ctx.stroke();
+  if(unlocked){ctx.beginPath();ctx.ellipse(gp.x,gp.y,7,11,0,0,Math.PI*2);ctx.strokeStyle='#3d9e7b';ctx.lineWidth=2;ctx.stroke();line([[gp.x-4,gp.y],[gp.x+3,gp.y],[gp.x,gp.y-4],[gp.x+4,gp.y],[gp.x,gp.y+4]],'#b8ffe0',2);}
+  else{line([[gp.x-5,gp.y-2],[gp.x-5,gp.y-7],[gp.x+5,gp.y-7],[gp.x+5,gp.y-2]],'#bbcab6',2);rect(gp.x-7,gp.y-2,14,10,'#99a99b');rect(gp.x-1,gp.y+1,2,5,'#263a35');}
+  label('EXIT',gp.x,gp.y+26,unlocked?'#b6ffdc':'#bac8bd',9);
+  if(!state.upgrade){
+    const p=point(scene.upgrade);ctx.beginPath();ctx.ellipse(p.x,p.y+9,17,8,0,0,Math.PI*2);ctx.fillStyle='rgba(237,186,76,.16)';ctx.fill();
+    ring(p.x,p.y,17,'#8b7040',1);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-.4);
+    rect(-3,-2,6,20,ink);rect(-2,-2,4,18,'#bc7f47');
+    poly([[-13,-8],[5,-11],[14,-4],[12,1],[4,-4],[-10,-2]],gold,ink);line([[-9,-7],[4,-8],[11,-4]],'#fff6c8',2);ctx.restore();
+    const twinkle=prefs.reducedMotion?1:.7+Math.sin(time*2)*.3;
+    line([[p.x+21,p.y-13],[p.x+21,p.y-7]],'rgba(255,231,156,'+twinkle+')',1);line([[p.x+18,p.y-10],[p.x+24,p.y-10]],gold,1);
+  }
+  if(state.mining){
+    const m=state.mining, x=(m.cell%20)*T,y=Math.floor(m.cell/20)*T, amount=Math.max(0,Math.min(1,(m.progress||0)/1.8));
+    ctx.strokeStyle=gold;ctx.lineWidth=2;ctx.strokeRect(x+1,y+1,30,30);
+    if(amount>0){line([[x+17,y+5],[x+13,y+14],[x+20,y+18],[x+14,y+28]],'#f8d3a6',2);line([[x+13,y+14],[x+6,y+11]],'#f8d3a6',1);}
+    rect(x+2,y+26,28,4,ink);rect(x+2,y+26,28*amount,4,gold);
+  }
+  function shadow(p,width=12){ctx.beginPath();ctx.ellipse(p.x,p.y+12,width,5,0,0,Math.PI*2);ctx.fillStyle='rgba(5,9,17,.5)';ctx.fill();}
+  const enemy=state.enemy, ep=point(enemy), windup=enemy.phase==='windup', burst=enemy.phase==='burst', rest=enemy.phase==='rest';
+  shadow(ep,14);
+  if(windup||enemy.wake>0){ring(ep.x,ep.y,21,windup?'#ffdc82':'#e9b4dc',2);ring(ep.x,ep.y,25,'rgba(255,220,130,.3)',1);for(const dx of [-1,1])line([[ep.x+dx*27,ep.y-4],[ep.x+dx*31,ep.y],[ep.x+dx*27,ep.y+4]],'#ffdc82',2);}
+  if(burst){const dx=state.hero.x-enemy.x,dy=state.hero.y-enemy.y,d=Math.max(.1,Math.hypot(dx,dy));for(let i=-1;i<=1;i++)line([[ep.x-dx/d*17-dy/d*i*5,ep.y-dy/d*17+dx/d*i*5],[ep.x-dx/d*26-dy/d*i*5,ep.y-dy/d*26+dx/d*i*5]],'#e49a78',2);}
+  const body=enemy.released?(burst?'#bd5d68':'#944c65'):'#67485f';
+  poly([[ep.x-11,ep.y+10],[ep.x-14,ep.y-3],[ep.x-10,ep.y-13],[ep.x-4,ep.y-11],[ep.x+4,ep.y-12],[ep.x+12,ep.y-8],[ep.x+14,ep.y+7],[ep.x+9,ep.y+13]],body,ink);
+  poly([[ep.x-10,ep.y-10],[ep.x-12,ep.y-20],[ep.x-3,ep.y-12]],rest?'#a48a82':'#d6afa0',ink);
+  poly([[ep.x+5,ep.y-11],[ep.x+11,ep.y-19],[ep.x+12,ep.y-7]],rest?'#a48a82':'#d6afa0',ink);
+  rect(ep.x-10,ep.y+10,7,5,'#3b263a');rect(ep.x+4,ep.y+10,7,5,'#3b263a');
+  rect(ep.x-9,ep.y-6,18,8,'#302238');const eyes=burst?'#fff5d3':windup?'#ffe28b':rest?'#c19a96':'#ffbd99';
+  rect(ep.x-7,ep.y-4,5,rest?2:4,eyes);rect(ep.x+3,ep.y-4,5,rest?2:4,eyes);line([[ep.x-3,ep.y+6],[ep.x+3,ep.y+5]],'#d89b96',1);
+  const hp=point(state.hero);shadow(hp,11);
+  poly([[hp.x-7,hp.y-4],[hp.x+8,hp.y-4],[hp.x+11,hp.y+13],[hp.x+2,hp.y+10],[hp.x-8,hp.y+14]],'#40aeca',ink);
+  rect(hp.x-7,hp.y+9,5,7,'#182d40');rect(hp.x+3,hp.y+9,5,7,'#182d40');
+  rect(hp.x-7,hp.y-3,14,14,'#28566d');rect(hp.x-5,hp.y-2,3,12,'#8ad5dc');rect(hp.x-7,hp.y+7,14,3,'#b39056');
+  rect(hp.x-8,hp.y-15,16,14,ink);rect(hp.x-7,hp.y-14,14,12,'#edc39d');
+  poly([[hp.x-9,hp.y-13],[hp.x-8,hp.y-18],[hp.x+7,hp.y-18],[hp.x+9,hp.y-10],[hp.x+4,hp.y-12],[hp.x-3,hp.y-11]],'#69402e',ink);
+  const gaze=Math.sign(enemy.x-state.hero.x);rect(hp.x-4+gaze,hp.y-8,2,3,'#263344');rect(hp.x+3+gaze,hp.y-8,2,3,'#263344');
+  if(state.upgrade){rect(hp.x+10,hp.y-3,4,17,ink);rect(hp.x+11,hp.y-3,2,15,'#c08e50');poly([[hp.x+5,hp.y-7],[hp.x+14,hp.y-9],[hp.x+20,hp.y-4],[hp.x+18,hp.y],[hp.x+13,hp.y-4],[hp.x+6,hp.y-2]],gold,ink);}
+  ctx.restore();
+}
+
+
+  function camera(){
+    const zoom=prefs.closeView?1.75:1,size=SIZE/zoom;
+    return {zoom,x:Math.max(0,Math.min(SIZE-size,(state.hero.x+.5)*TILE-size/2)),y:Math.max(0,Math.min(SIZE-size,(state.hero.y+.5)*TILE-size/2))};
+  }
+  function draw(){
+    const c=camera();ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,SIZE,SIZE);
+    ctx.save();ctx.scale(c.zoom,c.zoom);ctx.translate(-c.x,-c.y);drawNetherWorld(ctx,state,scene,prefs);ctx.restore();
+    if(prefs.closeView){
+      const ox=SIZE-116,oy=12,scale=5;ctx.fillStyle='rgba(9,20,27,.93)';ctx.fillRect(ox-5,oy-5,110,110);
+      for(let i=0;i<400;i++){ctx.fillStyle={'#':'#607283',b:'#bd7860',v:'#ac7ad1','.':'#263941'}[state.map[i]];ctx.fillRect(ox+(i%20)*scale,oy+Math.floor(i/20)*scale,scale-1,scale-1);}
+      for(const [p,color] of [[state.hero,'#c0fff1'],[state.enemy,'#ff9d93'],[GOAL,'#84efb1'],...state.beacons.map(b=>[b,b.lit?'#ffe394':'#c4cece'])]){ctx.fillStyle=color;ctx.fillRect(ox+p.x*scale,oy+p.y*scale,5,5);}
+      ctx.strokeStyle='#d6f4e6';ctx.lineWidth=1;ctx.strokeRect(ox+c.x/TILE*scale,oy+c.y/TILE*scale,SIZE/c.zoom/TILE*scale,SIZE/c.zoom/TILE*scale);
+    }
+    if(state.paused&&!settingsOpen&&!state.awaitingReturn&&state.status==='playing'){
+      ctx.fillStyle='rgba(8,18,25,.5)';ctx.fillRect(0,0,SIZE,SIZE);ctx.fillStyle='#f9edda';ctx.font='bold 26px system-ui';ctx.textAlign='center';ctx.fillText('Paused · take your time',SIZE/2,SIZE/2);ctx.textAlign='left';
+    }
+  }
+  function pointer(kind,event){
+    if(topModal())return;
     if(kind==='down'){
-      if(event.button!==undefined && event.button!==0)return;
-      audioInit();event.preventDefault();pointerId=event.pointerId;
+      if(event.button!==undefined&&event.button!==0)return;
+      audioInit();event.preventDefault();pointerId=event.pointerId;lastPointer=null;
       try{cv.setPointerCapture(pointerId);}catch(error){}
     }else if(event.pointerId!==pointerId)return;
-    if(kind==='up' || kind==='cancel'){
-      pointerId=null;
-      if(kind==='cancel')setPaused(true);
+    if(kind==='up'||kind==='cancel'){
+      pointerId=null;lastPointer=null;if(kind==='cancel')setPaused(true);return;
+    }
+    const bounds=cv.getBoundingClientRect();if(!bounds.width||!bounds.height)return;
+    const px=(event.clientX-bounds.left)*SIZE/bounds.width,py=(event.clientY-bounds.top)*SIZE/bounds.height;
+    if(px<0||py<0||px>=SIZE||py>=SIZE)return;
+    // The overview is an explicit camera control, not a tiny accidental walk target.
+    if(prefs.closeView&&px>=SIZE-121&&py<122){if(kind==='down')setPreferences({closeView:false});return;}
+    if(lastPointer&&kind==='move'&&Math.hypot(event.clientX-lastPointer.x,event.clientY-lastPointer.y)<(event.pointerType==='touch'?9:4))return;
+    const c=camera(),x=Math.floor((px/c.zoom+c.x)/TILE),y=Math.floor((py/c.zoom+c.y)/TILE);
+    if(lastPointer&&kind==='move'&&lastPointer.cell===idx(x,y))return;
+    if(aim(x,y))lastPointer={x:event.clientX,y:event.clientY,cell:idx(x,y)};
+  }
+  function key(event){
+    const modal=topModal();
+    if(modal){
+      if(event.key==='Escape'&&settingsOpen){event.preventDefault();closeSettings();return;}
+      if(event.key==='Tab'){
+        const focusable=[...$(modal).querySelectorAll('button,input,textarea,select,[tabindex="0"]')].filter(el=>!el.disabled&&el.offsetParent!==null);
+        if(focusable.length){const first=focusable[0],last=focusable[focusable.length-1];
+          if(event.shiftKey&&(document.activeElement===first||!$(modal).contains(document.activeElement))){event.preventDefault();last.focus();}
+          else if(!event.shiftKey&&(document.activeElement===last||!$(modal).contains(document.activeElement))){event.preventDefault();first.focus();}}
+      }
       return;
     }
-    const c=canvasCell(event);if(c)aim(c.x,c.y);
-  }
-  function key(event) {
-    if(event.key===' ' || event.key==='Escape'){event.preventDefault();setPaused(!state.paused);return;}
+    if(event.target?.closest?.('button,input,textarea,select,[contenteditable="true"]'))return;
+    if(event.key===' '||event.key==='Escape'){event.preventDefault();setPaused(!state.paused);return;}
     const d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],a:[-1,0],s:[0,1],d:[1,0]}[event.key];
     if(d){event.preventDefault();aim(Math.round(state.hero.x)+d[0],Math.round(state.hero.y)+d[1]);}
   }
-  function bindUI() {
-    $('nStart').addEventListener('click',()=>{audioInit();closeIntro();start();});
-    $('nResume').addEventListener('click',()=>{audioInit();closeIntro();if(!resume())$('nTitleNote').textContent='That saved trial could not be loaded. Start a new trial.';});
-    $('nPause').addEventListener('click',()=>setPaused(!state.paused));
-    for(const id of ['nMenu','nEndMenu'])$(id).addEventListener('click',leave);
-    $('nReplay').addEventListener('click',replay);
-    $('nSound').addEventListener('click',()=>{muted=!muted;store.set('tn.mute',muted?'1':'0');audioInit();syncUI();});
-    window.addEventListener('blur',()=>{if(active)setPaused(true);});
-    document.addEventListener('visibilitychange',()=>{if(active && document.hidden)setPaused(true);});
-    window.addEventListener('pagehide',()=>{if(active)persist();});
-    $('nResume').classList.toggle('hidden',!hasSaved());
-  }
 
-  function start(origin='practice') {
-    state = {version:1, origin, status:'playing', lives:3, upgrade:0, map:initialMap(),
-      hero:{x:START.x,y:START.y,path:[]}, enemy:{x:11,y:8,path:[],released:false},
-      mining:null, target:null, paused:false, recovery:0, elapsed:0, returns:0,
-      message:'Find the golden pickaxe upgrade. Then choose a red brick wall to open.'};
-    active = true; S.running = false; replan=0;saveClock=0;pointerId=null;persist();syncUI(); return view();
-  }
-  function enterFromWoods() {
-    const day = S.day; S.day = 20; save(); S.day = day;
-    store.set('tn.woods-complete', store.get('tn.save'));
-    return start('woods');
-  }
-  return {start, enterFromWoods, view, aim, step, persist, resume, leave, replay, setPaused, draw, pointer, key, bindUI, isActive:()=>active};
+  return {start,enterFromWoods,view,aim,step,persist,resume,leave,replay,setPaused,draw,pointer,key,bindUI,isActive:()=>active,
+    options,preferences,setPreferences,resumeRecovery,exportNotes,prepareWoods};
 })();
+
 
 /* ═══════════════ 13 · GAME LOOP & BOOT ═══════════════ */
 let last = null;
@@ -4725,7 +5299,7 @@ function frame(ts){
   requestAnimationFrame(frame);
 }
 function newGame(){
-  if(NetherTrial.isActive())NetherTrial.leave();
+  NetherTrial.prepareWoods();
   buildMap(); computeField();
   S.day = 1; S.wood = 16; S.stone = 0; S.food = 6; S.stoneSeen = false;
   S.pips = Array(20).fill(0);
@@ -4758,6 +5332,7 @@ function newGame(){
   refreshHUD();
 }
 function continueGame(){
+  NetherTrial.prepareWoods();
   S.heartHP = 3; S.monsters.length = 0; S.pigs.length = 0; S.items.length = 0;
   S.phase = "day"; S.t = 0; S.midDrain = false; S.hungryBarked = false;
   S.nestSmashed = false; S.tonightCount = 0; S.towerCd = {}; S.tracers.length = 0;
