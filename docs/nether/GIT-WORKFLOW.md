@@ -30,4 +30,4 @@ Reverse changes with a reviewed revert commit, preserving history. For a merge, 
 
 Latest recovered HTML is Fourfold Maze candidate 2, SHA-256 `ba8f623bd3da9aa1bae1d2afe935f0291a6021f2008400503caf282e4c5591c6`. Its separately deployed Site source commit is `593b849ec383c195b32a54ba66bb6daf5c49e55f`. Physical iPad acceptance remains pending.
 
-`checkpoints.json` records exact recovery commits, tags, hashes and validation. The remote destination was pending during recovery: do not claim these source branches were pushed without remote verification.
+`checkpoints.json` records exact recovery commits, tags, hashes and validation. The user selected the recommended original repository on 2026-10-23. Recovery branches and checkpoint tags were pushed to `https://github.com/the-black-beard/twenty-nights.git`; verify remote SHAs when reporting later delivery. See `PLAY-COMPARISON.md` for playable locations and continuing Git authority.

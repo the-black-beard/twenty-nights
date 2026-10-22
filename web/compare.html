@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101525">
+<title>Nether — Choose your maze</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#101525;color:#f5f3ea}*{box-sizing:border-box}body{margin:0;min-height:100svh;background:radial-gradient(ellipse at top,#30304e,transparent 70%);padding: max(28px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left))}main{max-width:920px;margin:5vh auto}.eyebrow{color:#ffc777;text-transform:uppercase;letter-spacing:.18em;font-size:.8rem;font-weight:750}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;margin:.4em 0}p{color:#c7cada;line-height:1.6}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin:32px 0}article{background:#1b2235;border:1px solid #47516d;border-radius:22px;padding:26px;display:flex;flex-direction:column}h2{font-size:1.55rem;margin:.5em 0}.badge{color:#c2c9e6;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}.maze{height:110px;width:100%;margin:12px 0;color:#ffca7f}.two{color:#a6d6ff}.play{display:block;text-align:center;padding:17px 20px;background:#ffcc85;color:#1b1720;text-decoration:none;font-weight:800;border-radius:13px;min-height:56px;margin-top:auto}.second{background:#a6d6ff}a:focus-visible{outline:4px solid white;outline-offset:5px}.hint{font-size:.9rem}footer{border-top:1px solid #47516d;padding-top:12px}@media(max-width:600px){main{margin:0 auto}.choices{grid-template-columns:1fr}article{padding:22px}.maze{height:80px}}
+</style>
+<main>
+<p class="eyebrow">Twenty Nights · Nether play lab</p>
+<h1>Choose your maze.</h1>
+<p>Play both. Which chase would you choose for the next adventure?</p>
+<div class="choices">
+<article>
+<span class="badge">A · Current version</span><h2>Four layers</h2>
+<svg class="maze" viewBox="0 0 240 110" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4"><path d="M133 5H5V105H235V5H153M116 19H22V91H218V19H136M98 34H40V76H200V34H118M120 47H57V63H183V47H140"/></svg>
+<p>Four rectangular layers. Stronger walls, four upgrades, and more monsters as you break through.</p>
+<a class="play" href="index.html">Play four layers</a>
+</article>
+<article>
+<span class="badge">B · Two-layer candidate</span><h2>Two layers</h2>
+<svg class="maze two" viewBox="0 0 240 110" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4"><path d="M133 5H5V105H235V5H153M98 30H35V80H205V30H118"/></svg>
+<p>The preserved two-layer trial. Try its route and chase, then decide which version feels better.</p>
+<a class="play second" href="two-layer.html">Play two layers</a>
+</article>
+</div>
+<p class="hint">Use Safari’s Back button to return here. Each version keeps its own progress. For a fair comparison, choose the same monster setting in both.</p>
+<footer><p>After playing: Which was more fun? Where did you feel trapped? Was the chase too easy, too hard, or just right?</p></footer>
+</main>
+</html>
