@@ -652,7 +652,7 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
       <legend><span class="nStepTag">02</span> Pick your pursuer</legend>
       <div class="nPursuerChoices">
         <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerHunter" value="hunter" checked><span class="nPursuerCardBody"><span class="nEnemyIcon nHunterIcon" aria-hidden="true"></span><span><b>Steady hunter</b><small>Keeps coming. Make room to escape.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
-        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerRunner" value="runner"><span class="nPursuerCardBody"><span class="nEnemyIcon nRunnerIcon" aria-hidden="true"></span><span><b>Burst runner</b><small>Watch the warning. Dodge the dash.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
+        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerRunner" value="runner"><span class="nPursuerCardBody"><span class="nEnemyIcon nRunnerIcon" aria-hidden="true"></span><span><b>Burst runner</b><small>Faster than you in a rush. Turn early.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
       </div>
     </fieldset>
     <div class="nLaunchRow"><button id="nStart" class="nButton nButtonPrimary" type="button">Start this adventure <span aria-hidden="true">↗</span></button><button id="nSetupSettings" class="nButton nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Controls &amp; display</button></div>
@@ -4681,7 +4681,7 @@ function layout(id='ember') {
   const HERO_SPEED=4.6, MINE_TIME=1.8, BEACON_TIME=1;
   const PURSUERS=[
     {id:'hunter',name:'Hunter',description:'A steady chase. Use the rocks and your openings to lead it around.'},
-    {id:'runner',name:'Runner',description:'Watch the warning ring. It winds up, rushes, then catches its breath.'}
+    {id:'runner',name:'Runner',description:'Its rush is much faster than you. Watch the warning, turn early, then use its recovery.'}
   ];
   const defaults={dodge:true,showRoute:true,closeView:false,highContrast:false,reducedMotion:!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches};
   let prefs={...defaults};
@@ -4801,12 +4801,13 @@ function layout(id='ember') {
       if(e.phaseTime<=0){
         const next={stalk:['windup',.7],windup:['burst',1.1],burst:['rest',1.3],rest:['stalk',2.4]}[e.phase];
         e.phase=next[0];e.phaseTime=next[1];
-        if(e.phase==='windup')e.path=route(e,target.x,target.y,true)||[];
+        if(e.phase==='burst')e.path=route(e,target.x,target.y,true)||[];
       }
-      speed={stalk:3.7,windup:0,burst:4.9,rest:2.4}[e.phase];
+      speed={stalk:3.7,windup:0,burst:8.2,rest:2.4}[e.phase];
     }
-    // The runner commits its route during the visible wind-up and rush.
-    if(repath&&e.phase!=='windup'&&e.phase!=='burst')e.path=route(e,target.x,target.y,true)||[];
+    // The warning gives time to turn. The rush follows the moving player,
+    // including beyond the position they occupied at the start of the warning.
+    if(repath&&e.phase!=='windup')e.path=route(e,target.x,target.y,true)||[];
     if(!inRefuge(h.x,h.y)&&Math.hypot(h.x-e.x,h.y-e.y)<.55){lose('caught');return;}
     move(e,dt,speed);
     if(!inRefuge(h.x,h.y)&&Math.hypot(h.x-e.x,h.y-e.y)<.55)lose('caught');
@@ -4893,7 +4894,7 @@ function layout(id='ember') {
     syncUI();return preferences();
   }
   function exportNotes(feedback={}){
-    return JSON.stringify({game:'Twenty Nights — Nether play lab',version:2,build:'TN-D2-play-lab-2026-10-20',
+    return JSON.stringify({game:'Twenty Nights — Nether play lab',version:2,build:'TN-D2-play-lab-2026-10-22-rush',
       attempt:state?{layout:state.layout,pursuer:state.pursuer,status:state.status,lives:state.lives,upgrade:state.upgrade,
         beacons:state.beacons.filter(b=>b.lit).length,breaches:state.breaches,losses:state.losses,
         openings:state.map.flatMap((tile,i)=>tile==='.'&&scene.map[i]==='b'?[{x:i%20,y:Math.floor(i/20)}]:[]),
@@ -5132,13 +5133,26 @@ function drawNetherWorld(ctx,state,scene,prefs={}) {
   rect(ep.x-10,ep.y+10,7,5,'#3b263a');rect(ep.x+4,ep.y+10,7,5,'#3b263a');
   rect(ep.x-9,ep.y-6,18,8,'#302238');const eyes=burst?'#fff5d3':windup?'#ffe28b':rest?'#c19a96':'#ffbd99';
   rect(ep.x-7,ep.y-4,5,rest?2:4,eyes);rect(ep.x+3,ep.y-4,5,rest?2:4,eyes);line([[ep.x-3,ep.y+6],[ep.x+3,ep.y+5]],'#d89b96',1);
+  // Match the main game's Steve: bright-blue rounded body, brow, expressive eyes.
   const hp=point(state.hero);shadow(hp,11);
-  poly([[hp.x-7,hp.y-4],[hp.x+8,hp.y-4],[hp.x+11,hp.y+13],[hp.x+2,hp.y+10],[hp.x-8,hp.y+14]],'#40aeca',ink);
-  rect(hp.x-7,hp.y+9,5,7,'#182d40');rect(hp.x+3,hp.y+9,5,7,'#182d40');
-  rect(hp.x-7,hp.y-3,14,14,'#28566d');rect(hp.x-5,hp.y-2,3,12,'#8ad5dc');rect(hp.x-7,hp.y+7,14,3,'#b39056');
-  rect(hp.x-8,hp.y-15,16,14,ink);rect(hp.x-7,hp.y-14,14,12,'#edc39d');
-  poly([[hp.x-9,hp.y-13],[hp.x-8,hp.y-18],[hp.x+7,hp.y-18],[hp.x+9,hp.y-10],[hp.x+4,hp.y-12],[hp.x-3,hp.y-11]],'#69402e',ink);
-  const gaze=Math.sign(enemy.x-state.hero.x);rect(hp.x-4+gaze,hp.y-8,2,3,'#263344');rect(hp.x+3+gaze,hp.y-8,2,3,'#263344');
+  hp.y+=Math.sin(time*2.2)*1.2;
+  const hs=.68*T, radius=7, x=hp.x-hs/2, y=hp.y-hs/2;
+  ctx.beginPath();ctx.moveTo(x+radius,y);
+  ctx.arcTo(x+hs,y,x+hs,y+hs,radius);ctx.arcTo(x+hs,y+hs,x,y+hs,radius);
+  ctx.arcTo(x,y+hs,x,y,radius);ctx.arcTo(x,y,x+hs,y,radius);ctx.closePath();
+  ctx.fillStyle='#2c7be5';ctx.fill();
+  if(hi){ctx.strokeStyle='#c6e4ff';ctx.lineWidth=1.5;ctx.stroke();}
+  rect(x+3,y+4,hs-6,4.5,'rgba(0,0,0,.30)');
+  const next=state.hero.path[0], look=next!==undefined?{x:next%20,y:Math.floor(next/20)}:enemy;
+  const dx=look.x-state.hero.x,dy=look.y-state.hero.y,d=Math.hypot(dx,dy)||1;
+  const gx=dx/d*1.5,gy=dy/d*1.25;
+  if(!prefs.reducedMotion&&time%3.4<.11){
+    for(const sign of [-1,1])line([[hp.x+sign*hs*.17-2.5,hp.y],[hp.x+sign*hs*.17+2.5,hp.y]],'#11131a',1.6);
+  }else for(const sign of [-1,1]){
+    const ex=hp.x+sign*hs*.17+gx,ey=hp.y+gy;
+    ctx.beginPath();ctx.arc(ex,ey,2.5,0,Math.PI*2);ctx.fillStyle='#11131a';ctx.fill();
+    ctx.beginPath();ctx.arc(ex-.8,ey-.9,.75,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
+  }
   if(state.upgrade){rect(hp.x+10,hp.y-3,4,17,ink);rect(hp.x+11,hp.y-3,2,15,'#c08e50');poly([[hp.x+5,hp.y-7],[hp.x+14,hp.y-9],[hp.x+20,hp.y-4],[hp.x+18,hp.y],[hp.x+13,hp.y-4],[hp.x+6,hp.y-2]],gold,ink);}
   ctx.restore();
 }
