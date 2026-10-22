@@ -177,18 +177,33 @@ test('exported local play notes preserve the child wording and do not mutate or 
 test('touching the exit with zero or one beacon cannot win; both beacons unlock a real escape', () => {
   const layout = layoutFor('ember');
   n.setPreferences({ dodge: true });
-  n.start('practice', { layout: layout.id, pursuer: 'runner' });
+  n.start('practice', { layout: layout.id, pursuer: 'hunter' });
   collectUpgrade(layout);
   mine(layout.suggestedBreaches[0]);
-  walkTo({ x: layout.start.x, y: layout.start.y + 1 }, 'lure the runner toward the refuge');
+  walkTo({ x: layout.start.x, y: layout.start.y + 1 }, 'lure the pursuer toward the refuge');
   walkTo(layout.goal, 'physically reach the exit before lighting any beacon');
   assert.equal(n.view().beacons.filter(beacon => beacon.lit).length, 0);
   assert.equal(n.view().status, 'playing', 'an exit visit with zero beacons is not a win');
-  lightBeacon(layout.beacons[1]);
-  walkTo(layout.goal, 'physically revisit the exit with one lit beacon');
+  // The stronger chase can cost a life. Exercise the real retained-progress
+  // recovery instead of depending on the former slow Runner's exact timing.
+  function reachWithReturns(point, done) {
+    for(let tries=0;tries<3;tries++){
+      if(n.view().awaitingReturn){
+        n.resumeRecovery();
+        advanceUntil(v=>Math.hypot(v.enemy.x-layout.refugeWait.x,v.enemy.y-layout.refugeWait.y)<.02,'wait safely before leaving refuge');
+      }
+      assert.equal(n.aim(point.x,point.y),true);
+      advanceUntil(v=>done(v)||v.awaitingReturn,'reach objective or take retained return');
+      if(done(n.view()))return;
+    }
+    assert.fail('objective must be reachable within the three-life budget');
+  }
+  reachWithReturns(layout.beacons[1],v=>v.beacons[1].lit);
+  reachWithReturns(layout.goal,v=>Math.hypot(v.hero.x-layout.goal.x,v.hero.y-layout.goal.y)<.02);
   assert.equal(n.view().beacons.filter(beacon => beacon.lit).length, 1);
   assert.equal(n.view().status, 'playing', 'an exit visit with only one beacon is not a win');
-  const caught = advanceUntil(state => state.awaitingReturn, 'a lit beacon survives the next real catch');
+  const spent=n.view().losses.length;
+  const caught = advanceUntil(state => state.losses.length>spent, 'a lit beacon survives the next real catch');
   assert.equal(caught.beacons[1].lit, true);
   n.persist(); n.leave();
   assert.equal(n.resume(), true);
@@ -198,11 +213,10 @@ test('touching the exit with zero or one beacon cannot win; both beacons unlock 
   n.start('practice', { layout: layout.id, pursuer: 'runner' });
   collectUpgrade(layout);
   mine(layout.suggestedBreaches[0]);
-  lightBeacon(layout.beacons[0]);
-  lightBeacon(layout.beacons[1]);
+  reachWithReturns(layout.beacons[0],v=>v.beacons[0].lit);
+  reachWithReturns(layout.beacons[1],v=>v.beacons[1].lit);
   assert.equal(n.view().beacons.every(beacon => beacon.lit), true);
-  assert.equal(n.aim(layout.goal.x, layout.goal.y), true);
-  advanceUntil(state => state.status === 'won', 'escape after both earned beacons');
+  reachWithReturns(layout.goal,v=>v.status==='won');
   assert.ok(n.view().lives > 0);
 });
 
