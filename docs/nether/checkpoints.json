@@ -1,0 +1,240 @@
+[
+  {
+    "name": "tn-d2-first-layer",
+    "archive": "outputs/TN-D2-local-source.zip",
+    "archive_sha256": "1e37bfe11609ebb3e2f3cb6edc622bd9c97de8aa274f03f58b58739c4588d0dc",
+    "html_sha256": "39ce0b9560b146d7d8776f535a6bc6a1b7ebeac700e3e8660621dc6c0b612bd4",
+    "merge_to_integration": true,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d2-first-layer",
+    "tag": "checkpoint/tn-d2-first-layer",
+    "commit": "4a3103c6312f35bcd47a8200dc992ea3e0f45f27",
+    "integration_merge": "c4c05802cdef4638c44cf2ff93ff551cc1d7be26"
+  },
+  {
+    "name": "tn-d2-play-lab",
+    "archive": "outputs/versions/2026-10-20/TN-D2-play-lab-source.zip",
+    "archive_sha256": "ca3afff1bd056980b44de1f82e7d8b7bae837cf41436edce763df013e37b9603",
+    "html_sha256": "ac3859ba8859fc6b499e2ac30cc1bbc587b05b4f35deaa1749deea593832dbc6",
+    "merge_to_integration": true,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d2-play-lab",
+    "tag": "checkpoint/tn-d2-play-lab",
+    "commit": "e2d9fdefaa5bf2c70a188f7f6635547c2df8afdb",
+    "integration_merge": "3c84402263c59b1c90fec293c477e7b1ca72a366"
+  },
+  {
+    "name": "tn-d2-steve-rush",
+    "archive": "outputs/TN-D2-play-lab-source.zip",
+    "archive_sha256": "bb0de63a72d66ffa7d551d0ea2a877dcd0069b271a168e3fc12d2d013d6c093e",
+    "html_sha256": "7e802f11f94655b6ecab94bd98c1a16dea7e3d8006a00a9a62ba8316164b4eb5",
+    "merge_to_integration": true,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d2-steve-rush",
+    "tag": "checkpoint/tn-d2-steve-rush",
+    "commit": "5f538ecd497d9019ed04be9379fbc76ac00557db",
+    "integration_merge": "ed3242efd8f6f1c271e8c219103673af99da24ff"
+  },
+  {
+    "name": "tn-d3-two-layer-candidate-1",
+    "archive": "outputs/TN-D3-01/source.zip",
+    "archive_sha256": "e022e2c29bc81018afa8b315b9eae63be8262f4edae07c00027e3af13b5eb536",
+    "html_sha256": "25e310e67e1e674c9f01fd55873d1ab46b2b44f4b6b22a4639954bf94b9864fc",
+    "merge_to_integration": false,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d3-two-layer-candidate-1",
+    "tag": "checkpoint/tn-d3-two-layer-candidate-1",
+    "commit": "e07fe614ee27352b41d264c6f8d87514fbf12139",
+    "integration_merge": null
+  },
+  {
+    "name": "tn-d3-two-layer-candidate-2",
+    "archive": "outputs/TN-D3-01/versions/candidate-2/source.zip",
+    "archive_sha256": "ff251cfad5c3f5a7a50f8bd3f30c03a977b9588fedb8ad65cdc3ac74b69878f6",
+    "html_sha256": "d5fe4ebd5d7f3172e864c18160652d9ff020ce8978c809d5d533a09a088e5f43",
+    "merge_to_integration": true,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d3-two-layer-candidate-2",
+    "tag": "checkpoint/tn-d3-two-layer-candidate-2",
+    "commit": "25e98d9dca3b7e6273c218a7b67ed9a6d0ae92f8",
+    "integration_merge": "4abde5ca8edd2b90a74f1a97646b58ce837a0a0a"
+  },
+  {
+    "name": "tn-d4-rectangular-candidate-1",
+    "archive": "outputs/TN-D4-rectangular/source.zip",
+    "archive_sha256": "56d000604bb6af723f4748a6463a23d896fc3074b0e3bc5c5bc78968160f8e8f",
+    "html_sha256": "98d2add5633234f56c655c19dc416b58e3124e48938f601e48647cf6161fdf69",
+    "merge_to_integration": false,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d4-rectangular-candidate-1",
+    "tag": "checkpoint/tn-d4-rectangular-candidate-1",
+    "commit": "979b5afd807178cae6097b76ef1222b864484d40",
+    "integration_merge": null
+  },
+  {
+    "name": "tn-d4-rectangular-candidate-2",
+    "archive": "outputs/TN-D4-rectangular/versions/candidate-2/source.zip",
+    "archive_sha256": "8c6db29628edadfeae3dc7fcfdbc29c20db4d45b76d520a868c2553a562fb735",
+    "html_sha256": "ba8f623bd3da9aa1bae1d2afe935f0291a6021f2008400503caf282e4c5591c6",
+    "merge_to_integration": true,
+    "checks": [
+      {
+        "command": [
+          "node",
+          "tools/tests.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/playthrough.js"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "node",
+          "tools/build.js"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "branch": "prototype/tn-d4-rectangular-candidate-2",
+    "tag": "checkpoint/tn-d4-rectangular-candidate-2",
+    "commit": "5cc21e578a891bb01b8e92e8877baa2bc7e804c7",
+    "integration_merge": "f0852e8a317f82d7389a6e817daf7bc08ae92217"
+  }
+]
