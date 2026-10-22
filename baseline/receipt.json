@@ -1,0 +1,6 @@
+{
+  "source": "../tn-d2-polish/index.html",
+  "sha256": "7e802f11f94655b6ecab94bd98c1a16dea7e3d8006a00a9a62ba8316164b4eb5",
+  "build": "TN-D2-play-lab-2026-10-22-rush",
+  "purpose": "Preserved baseline for TN-D3-01; no deployment"
+}

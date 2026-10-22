@@ -1,0 +1,98 @@
+<!-- NETHER FRAGMENT: HUD — replace the existing #nHud, before #stage. -->
+<header id="nHud" class="nUi hidden">
+  <div class="nHudTop">
+    <div class="nHudIdentity"><span class="nEyebrow">TWENTY NIGHTS</span><h1 id="nHeading">Into the Nether</h1><p id="nMode">The Double Descent · Goofy regular</p></div>
+    <div class="nHudButtons"><button id="nPause" class="nButton nButtonSmall" type="button">Pause</button><button id="nCameraToggle" class="nButton nButtonSmall nButtonQuiet" type="button" aria-label="Zoom in on the board" aria-pressed="false">Zoom</button><button id="nSettingsOpen" class="nButton nButtonSmall nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Settings</button></div>
+  </div>
+  <div class="nStatusRow" aria-label="Attempt status">
+    <span id="nLives" class="nLifeBadge" aria-label="3 of 3 lives"><span aria-hidden="true">♥ ♥ ♥</span><span class="nSrOnly">3 of 3 lives</span></span>
+    <span id="nTool" class="nStatusBadge">Pickaxe needed</span>
+    <span id="nBeacons" class="nStatusBadge">0 / 2 cores</span>
+    <span id="nThreat" class="nStatusBadge nThreatBadge" data-state="contained">Hunter contained</span>
+  </div>
+  <ol id="nObjectives" class="nObjectives" aria-label="Your route through the Nether">
+    <li id="nObjectiveTool" data-state="current"><span aria-hidden="true">1</span>Upgrade</li>
+    <li id="nObjectiveBreach" data-state="waiting"><span aria-hidden="true">2</span>Upgrade again</li>
+    <li id="nObjectiveBeacons" data-state="waiting"><span aria-hidden="true">3</span>Collect cores</li>
+    <li id="nObjectiveExit" data-state="waiting"><span aria-hidden="true">4</span>Escape</li>
+  </ol>
+</header>
+
+<!-- NETHER FRAGMENT: GUIDANCE — replace #nHelp, immediately after #stage. -->
+<section id="nHelp" class="nUi hidden" aria-label="What to do next">
+  <p id="nMessage" role="status" aria-live="polite">Find the golden pickaxe. Choose your way through.</p>
+  <div class="nBoardLegend" aria-label="Board legend"><span><i class="nLegendRefuge" aria-hidden="true"></i>Safe refuge</span><span><i class="nLegendBrick" aria-hidden="true"></i>1 · Copper wall</span><span><i class="nLegendVoid" aria-hidden="true"></i>2 · Crystal wall</span><span>Cracked purple floor · void</span></div>
+  <p id="nControlHint" class="nHint">Drag to move · tap a wall to mine · move to cancel</p>
+  <p id="nStorage" class="nStorage" role="status"></p>
+</section>
+
+<!-- NETHER FRAGMENT: TITLE — replace the complete existing #title overlay.
+     Keep the original woods bindings: startBtn, contBtn, contDay, howBtn, fbBtn. -->
+<section id="title" class="overlay nTitle nUi" aria-labelledby="nTitleHeading">
+  <div class="nSetupShell">
+    <header class="nSetupHeader">
+      <div><p class="nEyebrow">TWENTY NIGHTS · THE NETHER</p><h1 id="nTitleHeading">Choose your descent.<br><em>Make your escape.</em></h1><p class="nLead">Upgrade your pickaxe, collect two cores and reach the portal. Your opening lets the monsters through too.</p></div>
+      <div class="nPortalMark" aria-hidden="true"><span class="nPortalCore"></span><span class="nPortalSpark nSparkOne"></span><span class="nPortalSpark nSparkTwo"></span><span class="nPortalStep"></span></div>
+    </header>
+    <div class="nRules" aria-label="Rules shared by every challenge"><span><b>3</b> lives</span><span>Keep what you earn</span><span>No countdown</span></div>
+    <div id="nContinuePanel" class="nContinuePanel hidden"><div><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p></div><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button></div>
+    <section class="nFieldset nMapFieldset" aria-label="Your fixed maze">
+      <div class="nCombinedMap"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-nested-loops-v1" width="160" height="80"></canvas></span><div><h2>The Double Descent</h2><p>Copper walls first. Crystal walls deeper in. Each opened layer releases another monster.</p><p class="nHint">The same maze, cores and two monsters in both chase choices. All three lives keep your progress.</p></div></div>
+    </section>
+    <fieldset class="nFieldset">
+      <legend> Choose a chase</legend>
+      <div class="nPursuerChoices">
+        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerHunter" value="goofy" checked><span class="nPursuerCardBody"><span class="nEnemyIcon nHunterIcon" aria-hidden="true"></span><span><b>Goofy regular</b><small>Quick feet, late turns. Sometimes the wrong way.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
+        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerRunner" value="runner"><span class="nPursuerCardBody"><span class="nEnemyIcon nRunnerIcon" aria-hidden="true"></span><span><b>Tracking rush</b><small>Much faster than you in a rush. Turn early.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
+      </div>
+    </fieldset>
+    <div class="nLaunchRow"><button id="nStart" class="nButton nButtonPrimary" type="button">Start this adventure <span aria-hidden="true">↗</span></button><button id="nSetupSettings" class="nButton nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Controls &amp; display</button></div>
+    <p id="nTitleNote" class="nFinePrint">A new adventure starts with three lives and replaces the current saved attempt.</p>
+    <details class="nWoodsDetails"><summary>Visit the woods</summary><div><button class="nButton nButtonQuiet" id="startBtn" type="button">Play the original woods</button><button class="nButton nButtonQuiet hidden" id="contBtn" type="button">Continue Day <span id="contDay"></span></button><button class="nButton nButtonQuiet" id="howBtn" type="button">How the woods work</button><button class="nButton nButtonQuiet" id="fbBtn" type="button">Woods feedback</button></div></details>
+    <p class="nLocalNote">Two-layer trial · one reusable pickaxe · your choices shape what comes next</p>
+  </div>
+</section>
+
+<!-- NETHER FRAGMENT: SETTINGS — new sibling of #title. Opening pauses active play.
+     All .hidden panels must remain hidden with display:none, not opacity alone. -->
+<section id="nSettings" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nSettingsTitle">
+  <div class="nDialogCard nSettingsCard">
+    <header class="nDialogHeader"><div><p class="nEyebrow">MAKE IT FEEL RIGHT</p><h2 id="nSettingsTitle">Controls &amp; display</h2></div><button id="nSettingsClose" class="nButton nButtonIcon" type="button" aria-label="Close settings">✕</button></header>
+    <p id="nSettingsStatus" class="nHint">The chase is paused while this is open.</p>
+    <label class="nSettingRow"><span><b>Dodge assist</b><small>Your route tries to go around nearby danger.</small></span><input id="nDodge" type="checkbox" role="switch" checked></label>
+    <label class="nSettingRow"><span><b>Show my route</b><small>A dotted line shows where you are going.</small></span><input id="nRoute" type="checkbox" role="switch" checked></label>
+    <fieldset class="nFieldset nCameraFieldset"><legend>Board view</legend><div class="nSegmented"><label><input id="nCameraWhole" name="nCamera" value="whole" type="radio" checked><span>Whole maze</span></label><label><input id="nCameraClose" name="nCamera" value="close" type="radio"><span>Close camera</span></label></div><p class="nHint">Close camera makes you and the tiles bigger.</p></fieldset>
+    <label class="nSettingRow"><span><b>High contrast</b><small>Stronger outlines for walls, hazards and characters.</small></span><input id="nContrast" type="checkbox" role="switch"></label>
+    <label class="nSettingRow"><span><b>Reduced motion</b><small>Fewer flashes and moving decorations.</small></span><input id="nReducedMotion" type="checkbox" role="switch"></label>
+    <div class="nSettingRow"><span><b>Game sounds</b><small>Visual warnings are always shown.</small></span><button id="nSound" class="nButton nButtonSmall" type="button" aria-pressed="true">Sound on</button></div>
+    <footer class="nDialogActions"><button id="nSettingsDone" class="nButton nButtonPrimary" type="button">Done</button><button id="nMenu" class="nButton nButtonQuiet" type="button">Save &amp; menu</button></footer>
+  </div>
+</section>
+
+<!-- NETHER FRAGMENT: RETURN — new sibling overlay. Preserve attempt state.
+     Show only for a non-terminal loss, then dismiss with nReturnContinue. -->
+<section id="nReturn" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nReturnTitle">
+  <div class="nDialogCard nReturnCard">
+    <p class="nEyebrow">BACK IN THE REFUGE</p><div class="nRefugeSymbol" aria-hidden="true">⌂</div>
+    <h2 id="nReturnTitle">Caught. Still in the game.</h2><p id="nReturnLine">Take a breath. Choose your next way through.</p>
+    <div id="nReturnLives" class="nReturnLives">♥ ♥ <span>♡</span><small>2 lives left</small></div>
+    <div class="nKeptBox"><b>You kept what you earned</b><p id="nReturnKept">Pickaxe · 1 opening · 1 core</p></div>
+    <p class="nHint">The opening is still there. So are the monsters.</p>
+    <button id="nReturnContinue" class="nButton nButtonTeal" type="button">Continue from refuge</button>
+  </div>
+</section>
+
+<!-- NETHER FRAGMENT: END — replace existing #nEnd. Root controls won/lost data-outcome. -->
+<section id="nEnd" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nEndTitle" data-outcome="won">
+  <div class="nDialogCard nEndCard">
+    <p id="nEndEyebrow" class="nEyebrow">YOUR ADVENTURE</p><div class="nEndEmblem" aria-hidden="true">✦</div>
+    <h2 id="nEndTitle">You made it through.</h2><p id="nEndLine">Two cores carried out. A path you made yourself.</p>
+    <p id="nEndStats" class="nEndStats">The Double Descent · Goofy regular · 2 lives left</p>
+    <div class="nEndActions"><button id="nReplay" class="nButton nButtonPrimary" type="button">Retry this challenge</button><button id="nEndMenu" class="nButton nButtonQuiet" type="button">Compare chase choices</button></div>
+    <form id="nFeedback" class="nFeedback">
+      <fieldset class="nFieldset"><legend>Did opening the deeper wall make the chase exciting, or did it feel unfair?</legend><div class="nFeelings"><label><input id="nFeelFun" name="nFeeling" type="radio" value="fun"><span>Fun</span></label><label><input id="nFeelTense" name="nFeeling" type="radio" value="tense"><span>Tense</span></label><label><input id="nFeelUnfair" name="nFeeling" type="radio" value="unfair"><span>Unfair</span></label></div></fieldset>
+      <label class="nNoteLabel" for="nFeedbackNote">Tell us about one moment <span>(optional)</span></label><textarea id="nFeedbackNote" rows="2" maxlength="500" placeholder="The part where…"></textarea>
+      <div class="nFeedbackFooter"><span id="nFeedbackStatus" role="status">Stays here. Nothing is sent.</span><button id="nDownloadNotes" class="nButton nButtonSmall" type="button">Download notes</button></div>
+    </form>
+  </div>
+</section>
