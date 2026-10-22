@@ -216,3 +216,22 @@ test('the incompatible maze save preserves prior games and rejects malformed geo
     assert.equal(n.resume(),false);assert.equal(global.localStorage.getItem(SAVE_KEY),json,'invalid save must remain available for recovery');
   }
 });
+
+test('the signalled patrol window changes routing without releasing enemies or resetting progress, and pauses/continues with the attempt',()=>{
+  const fixture=connectedFixture('goofy');fixture.hero={x:3,y:3,path:[]};fixture.elapsed=12;
+  fixture.enemies.forEach(e=>{e.wake=0;e.notice=0;});restoreFixture(fixture);
+  tick(.05);let state=n.view();
+  assert.match(global.document.getElementById('nThreat').textContent,/Patrolling/);
+  assert.equal(state.enemies[0].path.at(-1),46,'first monster patrols its corner rather than the hero');
+  assert.equal(state.lives,3);assert.equal(state.breaches,4);assert.equal(state.cores.filter(c=>c.collected).length,4);
+  assert.equal(state.enemies.filter(e=>e.released).length,10);
+  n.setPaused(true);const elapsed=n.view().elapsed;tick(4);assert.equal(n.view().elapsed,elapsed);
+  n.persist();n.leave();assert.equal(n.resume(),true);assert.equal(n.view().elapsed,elapsed);
+  assert.match(global.document.getElementById('nThreat').textContent,/Patrolling/);
+  state=n.view();state.elapsed=16;state.enemies[0].notice=0;restoreFixture(state);tick(.05);
+  assert.equal(n.view().enemies[0].path.at(-1),138,'chase resumes toward hero at 3,3');
+  assert.doesNotMatch(global.document.getElementById('nThreat').textContent,/Patrolling/);
+  assert.deepEqual(JSON.parse(n.exportNotes()).trialDefaults.patrolCycle,{chaseSeconds:12,patrolSeconds:4});
+  const closed=launch('goofy');closed.elapsed=12;restoreFixture(closed);tick(.05);
+  assert.equal(n.view().enemies.filter(e=>e.released).length,0,'patrol is not a timed release mechanism');
+});

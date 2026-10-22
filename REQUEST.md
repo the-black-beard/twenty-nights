@@ -7,3 +7,5 @@ One bounded local implementation; parent D3 candidate2 and original woods remain
 Use existing public NetherTrial API, storage/reload and actual UI controls as established verification seams. New save namespace for incompatible geometry; old saves untouched. The HTML must remain offline/self-contained. Local development uses FAST_DEVELOPMENT; preserved sources and any later publication retain their separate authority/evidence boundary. No commit, push, publication or original-game edits in this ticket.
 
 Output: independent testable HTML, reproducible source ZIP, focused simulation/geometry/performance checks and two-axis review. Physical iPad/Igby acceptance remains distinct. New publication is a separate final delivery step.
+
+Balance refinement: uninterrupted crowds repeatedly blocked deeper preparation in action auditions. Candidate2 adds a visible 12-second chase / 4-second patrol cycle (movement only, not a countdown or timed release), retaining all speeds, roster, lives and progress. This gives deliberate mining windows without weakening the rush.

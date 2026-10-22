@@ -46,7 +46,7 @@
     put('nTool',state.upgrade?'Pickaxe '+state.upgrade+'/4':'Pickaxe needed');put('nBeacons',lit===4?'4/4 · Exit open':lit+'/4 cores');
     const released=state.enemies.filter(e=>e.released).length;
     const threat=!e.released?'All contained':e.wake>0?'Waking up':e.phase==='windup'?'Winding up!':e.phase==='burst'?'Rushing!':e.phase==='rest'?'Catching breath':'Hunting';
-    put('nThreat',released+'/10 awake · '+(state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
+    put('nThreat',released+'/10 awake · '+(released&&state.elapsed%16>=12?'Patrolling · make an opening':state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
     const stages=[state.upgrade>=1,state.upgrade===4,lit===4,state.status==='won'];let first=true;
     ['nObjectiveTool','nObjectiveBreach','nObjectiveBeacons','nObjectiveExit'].forEach((id,i)=>{
       $(id).dataset.state=stages[i]?'done':first?'current':'waiting';if(!stages[i])first=false;

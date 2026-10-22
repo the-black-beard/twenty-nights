@@ -3,7 +3,7 @@ const NetherTrial = (() => {
   const N=45, ROWS=37, CELL_COUNT=N*ROWS, TILE=32;
   const idx=(x,y)=>y*N+x, inB=(x,y)=>x>=0&&y>=0&&x<N&&y<ROWS;
   /* NETHER_MAPS */
-  const BUILD='TN-D4-2026-10-22-rectangular-1';
+  const BUILD='TN-D4-2026-10-22-rectangular-2';
   const SAVE_KEY='tn.d4.rectangular.v1',PREF_KEY='tn.d4.rectangular.preferences.v1';
   const HERO_SPEED=4.6,MINE_TIME=1.8;
   const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'},d:{tier:3,name:'iron block'},e:{tier:4,name:'obsidian slab'}};
@@ -87,7 +87,7 @@ const NetherTrial = (() => {
       const order=scene.enemies.findIndex(v=>v.id===e.id);
       // Distinct targets stop the crowd becoming one identical train. Scatter
       // is periodic movement only: no timed monster releases or speed growth.
-      const scattering=e.role==='roamer'&&(state.elapsed+order*2)%14<4;
+      const scattering=state.elapsed%16>=12||(e.role==='roamer'&&(state.elapsed+order*2)%14<4);
       const ahead=e.role==='flanker'&&h.path.length?h.path[Math.min(7,h.path.length-1)]:null;
       const target=inRefuge(h.x,h.y)||scattering?patrol[order%patrol.length]:ahead!==null?{x:ahead%N,y:Math.floor(ahead/N)}:{x:Math.round(h.x),y:Math.round(h.y)};
       let speed=4.85;
@@ -190,7 +190,7 @@ const NetherTrial = (() => {
   function notesFor(attempt,feedback={},recordedAs=null){
     return JSON.stringify({game:'Twenty Nights — Fourfold Maze',version:4,build:BUILD,
       question:'Which layer had the best chase? Was ten monsters exciting or too crowded?',
-      trialDefaults:{layers:4,monsters:10,cores:4,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
+      trialDefaults:{layers:4,monsters:10,cores:4,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,patrolCycle:{chaseSeconds:12,patrolSeconds:4},goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
       comparison:'Same authored map, goals and roster. Chase package changes; this is not a pure speed comparison.',
       attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,pursuer:attempt.pursuer,status:attempt.status,
         recordedAs:recordedAs||(attempt.status==='won'?'escaped-on-foot':attempt.status==='lost'?'three-lives-used':'in-progress'),

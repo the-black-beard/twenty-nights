@@ -910,7 +910,7 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
     <div class="nRules" aria-label="Rules shared by every challenge"><span><b>3</b> lives</span><span>Keep what you earn</span><span>No countdown</span></div>
     <div id="nContinuePanel" class="nContinuePanel hidden"><div class="nSavedDetails"><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p><label for="nSavedMoment">One moment to remember <span>(optional)</span></label><textarea id="nSavedMoment" rows="2" maxlength="500" placeholder="The part where…"></textarea><p id="nSavedExportStatus" role="status">Download notes before trying another chase. Nothing is sent.</p></div><div class="nSavedActions"><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button><button id="nSavedDownloadNotes" class="nButton nButtonQuiet" type="button">Download notes for this adventure</button></div></div>
     <section class="nFieldset nMapFieldset" aria-label="Your fixed maze">
-      <div class="nCombinedMap"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-rectangular-descent-v1" width="160" height="124"></canvas></span><div><h2>The Fourfold Maze</h2><p>Four rectangular layers. Narrow loops and forked corridors. Copper → crystal → iron → obsidian.</p><p class="nHint">Open the layers to face 2 → 4 → 7 → 10 monsters. Earlier monsters stay loose. All three lives keep your progress.</p><p class="nHint">Before entering the deepest layer, open two ways through. Use Overview to plan, then zoom in to steer.</p></div></div>
+      <div class="nCombinedMap"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-rectangular-descent-v1" width="160" height="124"></canvas></span><div><h2>The Fourfold Maze</h2><p>Four rectangular layers. Narrow loops and forked corridors. Copper → crystal → iron → obsidian.</p><p class="nHint">Open the layers to face 2 → 4 → 7 → 10 monsters. Earlier monsters stay loose. All three lives keep your progress.</p><p class="nHint">When the pack patrols, make your opening. Before entering the deepest layer, open two ways through. Use Overview to plan, then zoom in to steer.</p></div></div>
     </section>
     <fieldset class="nFieldset">
       <legend> Choose a chase</legend>
@@ -4925,7 +4925,7 @@ function layout(){
     ]};
 }
 
-  const BUILD='TN-D4-2026-10-22-rectangular-1';
+  const BUILD='TN-D4-2026-10-22-rectangular-2';
   const SAVE_KEY='tn.d4.rectangular.v1',PREF_KEY='tn.d4.rectangular.preferences.v1';
   const HERO_SPEED=4.6,MINE_TIME=1.8;
   const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'},d:{tier:3,name:'iron block'},e:{tier:4,name:'obsidian slab'}};
@@ -5064,7 +5064,7 @@ function layout(){
       const order=scene.enemies.findIndex(v=>v.id===e.id);
       // Distinct targets stop the crowd becoming one identical train. Scatter
       // is periodic movement only: no timed monster releases or speed growth.
-      const scattering=e.role==='roamer'&&(state.elapsed+order*2)%14<4;
+      const scattering=state.elapsed%16>=12||(e.role==='roamer'&&(state.elapsed+order*2)%14<4);
       const ahead=e.role==='flanker'&&h.path.length?h.path[Math.min(7,h.path.length-1)]:null;
       const target=inRefuge(h.x,h.y)||scattering?patrol[order%patrol.length]:ahead!==null?{x:ahead%N,y:Math.floor(ahead/N)}:{x:Math.round(h.x),y:Math.round(h.y)};
       let speed=4.85;
@@ -5167,7 +5167,7 @@ function layout(){
   function notesFor(attempt,feedback={},recordedAs=null){
     return JSON.stringify({game:'Twenty Nights — Fourfold Maze',version:4,build:BUILD,
       question:'Which layer had the best chase? Was ten monsters exciting or too crowded?',
-      trialDefaults:{layers:4,monsters:10,cores:4,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
+      trialDefaults:{layers:4,monsters:10,cores:4,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,patrolCycle:{chaseSeconds:12,patrolSeconds:4},goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
       comparison:'Same authored map, goals and roster. Chase package changes; this is not a pure speed comparison.',
       attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,pursuer:attempt.pursuer,status:attempt.status,
         recordedAs:recordedAs||(attempt.status==='won'?'escaped-on-foot':attempt.status==='lost'?'three-lives-used':'in-progress'),
@@ -5238,7 +5238,7 @@ function layout(){
     put('nTool',state.upgrade?'Pickaxe '+state.upgrade+'/4':'Pickaxe needed');put('nBeacons',lit===4?'4/4 · Exit open':lit+'/4 cores');
     const released=state.enemies.filter(e=>e.released).length;
     const threat=!e.released?'All contained':e.wake>0?'Waking up':e.phase==='windup'?'Winding up!':e.phase==='burst'?'Rushing!':e.phase==='rest'?'Catching breath':'Hunting';
-    put('nThreat',released+'/10 awake · '+(state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
+    put('nThreat',released+'/10 awake · '+(released&&state.elapsed%16>=12?'Patrolling · make an opening':state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
     const stages=[state.upgrade>=1,state.upgrade===4,lit===4,state.status==='won'];let first=true;
     ['nObjectiveTool','nObjectiveBreach','nObjectiveBeacons','nObjectiveExit'].forEach((id,i)=>{
       $(id).dataset.state=stages[i]?'done':first?'current':'waiting';if(!stages[i])first=false;
