@@ -34,7 +34,7 @@
       $('title').classList.remove('hidden');const saved=savedAttempt();
       $('nContinuePanel').classList.toggle('hidden',!saved);$('nResume').classList.toggle('hidden',!saved);
       if(saved){const l=layout(saved.layout),p=PURSUERS.find(v=>v.id===saved.pursuer);
-        put('nSavedSummary',l.name+' · '+p.name+' · '+saved.lives+' lives left · '+saved.cores.filter(b=>b.collected).length+'/2 cores');
+        put('nSavedSummary',l.name+' · '+p.name+' · '+saved.lives+' lives left · '+saved.cores.filter(b=>b.collected).length+'/4 cores');
         put('nResume',saved.status==='playing'?'Continue adventure':'Review last adventure');}
       put('nTitleNote',storageOK?'A new adventure starts with three lives and replaces the current saved attempt.':'Saving is unavailable here. Keep this tab open to keep your adventure.');
       syncFocus();return;
@@ -43,11 +43,11 @@
     const lit=state.cores.filter(b=>b.collected).length,e=state.enemies.find(e=>e.released&&e.phase==='burst')||state.enemies.find(e=>e.released&&e.phase==='windup')||state.enemies.find(e=>e.released)||state.enemies[0];
     put('nMode',scene.name+' · '+PURSUERS.find(p=>p.id===state.pursuer).name+(state.origin==='woods'?' · After Night 20':''));
     put('nLives','♥'.repeat(state.lives)+'♡'.repeat(3-state.lives)+'  '+state.lives+'/3');$('nLives').setAttribute('aria-label',state.lives+' of 3 lives');
-    put('nTool',state.upgrade?'Pickaxe '+state.upgrade+'/2':'Pickaxe needed');put('nBeacons',lit===2?'2/2 · Exit open':lit+'/2 cores');
+    put('nTool',state.upgrade?'Pickaxe '+state.upgrade+'/4':'Pickaxe needed');put('nBeacons',lit===4?'4/4 · Exit open':lit+'/4 cores');
     const released=state.enemies.filter(e=>e.released).length;
-    const threat=!e.released?'Both contained':e.wake>0?'Waking up':e.phase==='windup'?'Winding up!':e.phase==='burst'?'Rushing!':e.phase==='rest'?'Catching breath':'Hunting';
-    put('nThreat',released+'/2 awake · '+(state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
-    const stages=[state.upgrade>=1,state.upgrade===2,lit===2,state.status==='won'];let first=true;
+    const threat=!e.released?'All contained':e.wake>0?'Waking up':e.phase==='windup'?'Winding up!':e.phase==='burst'?'Rushing!':e.phase==='rest'?'Catching breath':'Hunting';
+    put('nThreat',released+'/10 awake · '+(released&&state.elapsed%16>=12?'Patrolling · make an opening':state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
+    const stages=[state.upgrade>=1,state.upgrade===4,lit===4,state.status==='won'];let first=true;
     ['nObjectiveTool','nObjectiveBreach','nObjectiveBeacons','nObjectiveExit'].forEach((id,i)=>{
       $(id).dataset.state=stages[i]?'done':first?'current':'waiting';if(!stages[i])first=false;
     });
@@ -61,12 +61,12 @@
       put('nReturnTitle',state.lastLoss==='void'?'A fall. Another chance.':'Caught. Still in the game.');
       put('nReturnLine',state.lastLoss==='void'?'Purple cracks mark the void. Your next route can go around it.':'Watch where the pursuer waits. The blue refuge gives you time to plan.');
       put('nReturnLives','♥'.repeat(state.lives)+'♡'.repeat(3-state.lives)+' · '+state.lives+' lives left');
-      put('nReturnKept',(state.upgrade?'Pickaxe tier '+state.upgrade:'Pickaxe still to find')+' · '+state.breaches+' openings · '+lit+'/2 cores');
+      put('nReturnKept',(state.upgrade?'Pickaxe tier '+state.upgrade:'Pickaxe still to find')+' · '+state.breaches+' openings · '+lit+'/4 cores');
     }
     if(state.status!=='playing'){
       $('nEnd').dataset.outcome=state.status;
       put('nEndTitle',state.status==='won'?'You made it through.':'Three lives. One more idea?');
-      put('nEndLine',state.status==='won'?'Two cores carried through the exit on foot.':scene.hint);
+      put('nEndLine',state.status==='won'?'Four cores carried through the exit on foot.':scene.hint);
       put('nEndStats',scene.name+' · '+PURSUERS.find(p=>p.id===state.pursuer).name+' · '+state.lives+' lives left · '+state.breaches+' openings · '+Math.round(state.elapsed)+'s played');
     }
     syncFocus();
@@ -81,10 +81,10 @@
     setTimeout(()=>URL.revokeObjectURL(url),1000);put(statusId,'Notes downloaded. Nothing was sent.');
   }
   function renderPreviews(){
-    const canvas=$('nPreview-nested-loops-v1'),c=canvas.getContext('2d');if(!c)return;
-    const s=layout(),scale=4,ox=40;c.clearRect(0,0,160,80);
-    for(let i=0;i<400;i++){c.fillStyle={'#':'#64747c',b:'#dc986f',c:'#bd90e8',v:'#b291dd','.':'#26383e'}[s.map[i]];c.fillRect(ox+(i%20)*scale,Math.floor(i/20)*scale,scale-1,scale-1);}
-    for(const [p,color] of [[s.start,'#2c7be5'],[s.goal,'#7eefac'],...s.upgrades.map(p=>[p,'#ffe29b']),...s.cores.map(p=>[p,'#cafff3']),...s.enemies.map(p=>[p,'#f68c90'])]){c.fillStyle=color;c.fillRect(ox+p.x*scale,p.y*scale,4,4);}
+    const canvas=$('nPreview-rectangular-descent-v1'),c=canvas.getContext('2d');if(!c)return;
+    const s=layout(),scale=3,ox=(160-s.width*scale)/2,oy=(124-s.height*scale)/2;c.clearRect(0,0,160,124);
+    for(let i=0;i<s.map.length;i++){c.fillStyle={'#':'#64747c',b:'#dc986f',c:'#bd90e8',d:'#8cc9e5',e:'#f0928e',v:'#b291dd','.':'#172d33'}[s.map[i]];c.fillRect(ox+(i%s.width)*scale,oy+Math.floor(i/s.width)*scale,scale,scale);}
+    for(const [p,color] of [[s.start,'#2c7be5'],[s.goal,'#7eefac'],...s.upgrades.map(p=>[p,'#ffe29b']),...s.cores.map(p=>[p,'#cafff3']),...s.enemies.map(p=>[p,'#ffb949'])]){c.fillStyle=color;c.fillRect(ox+p.x*scale,oy+p.y*scale,3,3);}
   }
   function bindUI(){
     $('nStart').addEventListener('click',()=>{audioInit();closeIntro();resetFeedback();start('practice',{pursuer:selected('nPursuer','goofy')});cv.focus?.();});
