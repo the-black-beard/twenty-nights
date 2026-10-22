@@ -44,7 +44,7 @@ global.location = { search:'', hash:'' };
 global.PointerEvent = global.MouseEvent = global.KeyboardEvent = global.Event = function(){};
 global.performance = { now: () => 0 };
 
-const EXPORTS = ['S','grid','wreck','regrow2','wallHP','nodeHP','regrow','idx','N','breakBuilt',
+const EXPORTS = ['NetherTrial','dawn','S','grid','wreck','regrow2','wallHP','nodeHP','regrow','idx','N','breakBuilt',
   'restoreBuilt','tinkerList','nextCell','scanStep','computeField','sealsHeart','canPlace','G_WALL',
   'G_WRECK','G_SWALL','G_TOWER','G_SPIKE','G_MUD','G_GRASS','G_FIRE','isBuilt','isChewable',
   'updateMonsters','KINDS','PORTALS','HEART','dist','digDist','newGame','doTrade','STALLS','wakeGolem',

@@ -273,6 +273,35 @@
     touch-action:manipulation}
   .pbtn.on{border-color:var(--gold);color:var(--gold);background:#3a2f14}
   #badge{font-size:.72rem}
+/* Local Nether trial UI, sharing the game's canvas and scene clock. */
+.nether-active #top,.nether-active #bottom,.nether-active #actionRow,.nether-active #bark{display:none}
+.nether-active{background:radial-gradient(ellipse at top,#352437,#11131f 80%)}
+#nHud{width:100%;max-width:760px;padding:10px 14px 2px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between}
+#nHeading{font-size:1rem;color:#ffe393;letter-spacing:.04em;font-weight:800}
+#nMode{font-size:.75rem;color:#c0b5ce}
+#nStats{display:flex;gap:8px;flex-wrap:wrap;font-size:.8rem;width:100%;color:#e6d8d9}
+#nStats span{padding:4px 8px;border:1px solid #6c4a5a;border-radius:8px}
+#nControls{display:flex;gap:6px;flex-wrap:wrap}
+#nControls button,#nTitlePanel button{min-height:44px}
+.nether-active #stage{padding:4px;min-height:0}
+.nether-active #cv{width:min(94vw,calc(100dvh - 230px),640px);height:min(94vw,calc(100dvh - 230px),640px);max-height:none;max-width:none;border:1px solid #644455}
+#nHelp{width:100%;max-width:720px;padding:0 14px 10px;flex-shrink:0;font-size:.82rem;color:#d3c4d2;text-align:center}
+#nMessage{min-height:2.7em;margin:4px 0;font-weight:700;color:#fff0cf;line-height:1.35}
+#nHelp .nSmall{margin:4px 0;color:#b5abc2;font-size:.76rem;line-height:1.35}
+#nTitlePanel{max-width:510px;text-align:center;margin:0 12px 12px}
+#nTitlePanel p{font-size:.92rem;line-height:1.4;color:#cfc1cf;margin:8px 0}
+#nTitlePanel .bigbtn{background:#e6bd6e;color:#201a25;margin:8px}
+#nResume{display:block;margin:4px auto}
+#title{overflow-y:auto;padding:20px 10px}
+#title h1{font-size:clamp(2rem,8vw,3rem);margin:8px}
+#title #key,#title>.how{display:none}
+#title .sub{margin:3px 0 12px}
+#title>#startBtn,#title>#howBtn,#title>#fbBtn{font-size:.85rem;padding:7px 15px;min-height:36px;margin:3px}
+#nEnd{background:rgba(15,14,28,.94);gap:14px;text-align:center;padding:28px}
+#nEnd h1{font-size:clamp(2rem,7vw,3rem)}
+#nEnd p{max-width:480px;line-height:1.5}
+@media(max-width:420px){#nHud{gap:5px;font-size:.8rem}#nControls{gap:4px}#nControls .chip{font-size:.72rem;padding:6px}#nHeading{font-size:.9rem}#nStats{font-size:.7rem;gap:4px}}
+
 </style>
 </head>
 <body>
@@ -283,6 +312,12 @@
   <span id="dayLabel">Day 1 / 20</span>
   <button class="chip" id="optBtn" aria-label="Settings" style="padding:.35em .55em">⚙️</button>
 </div>
+
+<header id="nHud" class="hidden">
+  <div><div id="nHeading">THE NETHER · FIRST LAYER</div><div id="nMode"></div></div>
+  <div id="nControls"><button class="chip" id="nPause">Pause</button><button class="chip" id="nSound">Sound on</button><button class="chip" id="nMenu">Save &amp; menu</button></div>
+  <div id="nStats"><span id="nLives">3 / 3 lives</span><span id="nTool">Find the upgrade</span><span id="nThreat">Pursuer contained</span></div>
+</header>
 
 <div id="stage">
   <canvas id="cv" width="640" height="640" aria-label="Twenty Nights game board"></canvas>
@@ -315,6 +350,12 @@
   </div>
 </div>
 
+<section id="nHelp" class="hidden" aria-label="Nether trial guidance">
+  <p id="nMessage" aria-live="polite"></p>
+  <p class="nSmall">Hold &amp; drag to move; lifting finishes the route. Dodge is on.<br>Tap red brick to walk over and mine; tap ground to cancel. Reach the green EXIT.</p>
+  <p class="nSmall">Blue refuge is safe. Purple void costs one life. Arrow keys / WASD also work.<br><span id="nStorage" role="status"></span></p>
+</section>
+
 <div id="bottom">
   <button class="chip" id="modeBtn" title="Two-finger tap or right-click the board to switch"
     aria-label="Switch between walk and build"><span
@@ -332,7 +373,7 @@
 
 <div class="overlay" id="title">
   <h1>Twenty <span class="n">Nights</span></h1>
-  <p class="sub">Build by day · Hold the night</p>
+  <p class="sub">First Nether layer · local playtest</p>
   <div id="key" aria-label="How to play">
     <div class="kc"><span>🌲</span><b>tap</b><span>🪵</span></div>
     <div class="kc"><span>🪨</span><b>tap</b><span>🪨</span></div>
@@ -343,7 +384,13 @@
     <div class="kc"><span>🌙</span><b>survive</b><span>20</span></div>
   </div>
   <p class="how">Everything else you'll find out.</p>
-  <button class="bigbtn" id="startBtn">▶ Start</button>
+  <div id="nTitlePanel">
+  <p>One Nether layer to try: find the golden upgrade, choose a wall to break, and escape the pursuer.</p>
+  <button class="bigbtn" id="nStart">Play the Nether layer</button>
+  <button class="ghostbtn hidden" id="nResume">Continue saved Nether trial</button>
+  <p id="nTitleNote">Three lives · keep upgrades and openings on a return · no countdown.<br>Local trial. Direct play skips the woods; no hammer or Swarm yet.</p>
+</div>
+<button class="ghostbtn" id="startBtn">Play the original woods</button>
   <button class="ghostbtn hidden" id="contBtn">Continue Day <span id="contDay"></span></button>
   <button class="ghostbtn" id="howBtn">❓ How to play</button>
   <button class="ghostbtn" id="fbBtn">💬 Tell us what you think</button>
@@ -408,14 +455,19 @@
   </div>
 </div>
 
+<div class="overlay hidden" id="nEnd" role="dialog" aria-labelledby="nEndTitle">
+  <h1 id="nEndTitle"></h1><p id="nEndLine"></p><p id="nEndStats"></p>
+  <button class="bigbtn" id="nReplay">New three-life attempt</button><button class="ghostbtn" id="nEndMenu">Save &amp; menu</button>
+</div>
+
 <script>
 "use strict";
 /* ═══════════════ 1 · CONSTANTS & STATE ═══════════════ */
 const SAFE_MODE = false;   /*SAFE_FLAG*/              // flipped by tools/build-artifact.js --safe
 const store = {                                        // localStorage that can never crash the game
-  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
-  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
-  del(k){ try{ localStorage.removeItem(k); }catch(e){} },
+  get(k){ try{ return localStorage.getItem("tn.d2." + k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem("tn.d2." + k,v); }catch(e){} },
+  del(k){ try{ localStorage.removeItem("tn.d2." + k); }catch(e){} },
 };
 const TEST = new URLSearchParams(location.search).has("test")
           || location.hash === "#test"
@@ -2540,7 +2592,7 @@ function dawn(survived, rescued){
   setTimeout(() => {
     S.phase = "day"; S.t = 0;                          // FIRST — nothing below may ever strand the dawn
     S.day++;
-    if (S.day > 20){ winGame(); return; }
+    if (S.day > 20){ NetherTrial.enterFromWoods(); return; }
     S.heartHP = 3; S.hero.hp = 5; S.hero.daze = 0;
     S.midDrain = false;
     drainFood();                                       // a new day costs breakfast
@@ -4060,6 +4112,7 @@ function needBark(mat){
 }
 let pDown = null;
 cv.addEventListener("pointerdown", e => {
+  if(NetherTrial.isActive()){NetherTrial.pointer('down',e);return;}
   audioInit(); pDown = {x:e.clientX, y:e.clientY};
   if (S.build){                       // ghost appears the moment the finger lands
     const c = canvasCell(e);
@@ -4068,6 +4121,7 @@ cv.addEventListener("pointerdown", e => {
   }
 });
 cv.addEventListener("pointermove", e => {
+  if(NetherTrial.isActive()){NetherTrial.pointer('move',e);return;}
   if (!S.build) return;
   const c = canvasCell(e);
   const i = c ? idx(c.x, c.y) : -1;
@@ -4077,8 +4131,10 @@ cv.addEventListener("pointermove", e => {
   }
 });
 cv.addEventListener("pointerleave", () => S.hover = -1);
-cv.addEventListener("pointercancel", () => { pDown = null; S.hover = -1; });
+cv.addEventListener("pointercancel", e => {
+  if(NetherTrial.isActive()){NetherTrial.pointer('cancel',e);return;} pDown = null; S.hover = -1; });
 cv.addEventListener("pointerup", e => {
+  if(NetherTrial.isActive()){NetherTrial.pointer('up',e);return;}
   if (!pDown || !S.running) return;
   const moved = Math.hypot(e.clientX - pDown.x, e.clientY - pDown.y); pDown = null;
   const c = canvasCell(e);
@@ -4156,7 +4212,7 @@ $("matBack").addEventListener("click", closeMats);     // …or tap the board be
 $("matClose").addEventListener("click", closeMats);
 window.addEventListener("resize", syncMats);           // turning the phone sideways re-decides
 // right-click anywhere on the board flips Walk ↔ Build
-cv.addEventListener("contextmenu", e => { e.preventDefault(); if (S.running) toggleMode(); });
+cv.addEventListener("contextmenu", e => { e.preventDefault(); if (!NetherTrial.isActive() && S.running) toggleMode(); });
 // two-finger tap does the same on a tablet
 let twoFinger = false;
 cv.addEventListener("touchstart", e => {
@@ -4221,6 +4277,7 @@ $("bellBtn").addEventListener("click", () => {         // "I'm ready" — the da
 });
 $("muteBtn").addEventListener("click", () => { muted = !muted; store.set("tn.mute", muted ? "1" : "0"); audioInit(); refreshHUD(); });
 window.addEventListener("keydown", e => {
+  if(NetherTrial.isActive()){NetherTrial.key(e);return;}
   if (!S.running) return;
   if (e.key === "b" || e.key === "B"){
     S.build = !S.build; refreshHUD();
@@ -4250,12 +4307,336 @@ window.addEventListener("keydown", e => {
   }
 });
 
+/* TN-D2: the first Nether layer. Kept inside the real single-file game. */
+const NetherTrial = (() => {
+  const START = {x:2, y:16}, UPGRADE = {x:3, y:3}, GOAL = {x:10, y:12};
+  const SAVE_KEY = 'tn.d2.nether.v1';
+  const HERO_SPEED = 4.6, CHASE_SPEED = 3.68, MINE_TIME = 1.8;
+  const initialMap = () => {
+    const map = Array(N*N).fill('.');
+    for (let y=0;y<N;y++) for(let x=0;x<N;x++)
+      if(x===0 || y===0 || x===N-1 || y===N-1) map[idx(x,y)]='#';
+    for(let a=5;a<=14;a++) for(const [x,y] of [[a,5],[a,14],[5,a],[14,a]]) map[idx(x,y)]='b';
+    for(const [x,y] of [[8,8],[9,8],[8,9],[9,9],[11,10],[12,10],[11,11],[12,11],
+                        [2,7],[3,7],[16,10],[17,10],[8,2],[8,3]]) map[idx(x,y)]='#';
+    for(const [x,y] of [[16,5],[17,5],[16,6],[17,6]]) map[idx(x,y)]='v';
+    return map;
+  };
+  let state = null, active = false, storageOK = true;
+  const inRefuge = (x,y) => x>=1 && x<=3 && y>=15 && y<=18;
+  const view = () => state ? JSON.parse(JSON.stringify(state)) : null;
+  const walkableCell = (x,y,monster=false,voidTarget=null) => {
+    if(!Number.isInteger(x) || !Number.isInteger(y) || !inB(x,y)) return false;
+    if(monster && inRefuge(x,y)) return false;
+    return state.map[idx(x,y)]==='.' || (!monster && voidTarget===idx(x,y) && state.map[idx(x,y)]==='v');
+  };
+  // Route from either end of the current grid edge, so a new aim can reverse now.
+  // Include the remaining fraction of the chosen anchor; an empty BFS never stops short.
+  function route(entity,tx,ty,monster=false) {
+    const end=idx(tx,ty), targetVoid=!monster && state.map[end]==='v' ? end : null;
+    if(!walkableCell(tx,ty,monster,targetVoid)) return null;
+    const anchors=[];
+    for(const x of new Set([Math.floor(entity.x),Math.ceil(entity.x)]))
+      for(const y of new Set([Math.floor(entity.y),Math.ceil(entity.y)]))
+        if(walkableCell(x,y,monster,targetVoid) && (Math.abs(x-entity.x)<.001 || Math.abs(y-entity.y)<.001)) anchors.push({x,y});
+    let best=null, bestCost=Infinity;
+    for(const anchor of anchors){
+      const from=new Int16Array(N*N).fill(-1), cost=new Float64Array(N*N).fill(Infinity), done=new Uint8Array(N*N);
+      const root=idx(anchor.x,anchor.y);cost[root]=Math.hypot(anchor.x-entity.x,anchor.y-entity.y);
+      for(let count=0;count<N*N;count++){
+        let current=-1,low=Infinity;
+        for(let i=0;i<N*N;i++)if(!done[i] && cost[i]<low){low=cost[i];current=i;}
+        if(current<0)break;
+        if(current===end)break;
+        done[current]=1;const x=current%N,y=Math.floor(current/N);
+        for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+          const nx=x+dx,ny=y+dy;if(!walkableCell(nx,ny,monster,targetVoid))continue;
+          const j=idx(nx,ny);let extra=0;
+          if(!monster && state.enemy.released){
+            const gap=Math.hypot(nx-state.enemy.x,ny-state.enemy.y);
+            extra=gap<1 ? 10 : gap<2 ? 3 : 0;
+          }
+          const next=cost[current]+1+extra;
+          if(next<cost[j]){cost[j]=next;from[j]=current;}
+        }
+      }
+      if(cost[end]>=bestCost)continue;
+      const path=[];let p=end;
+      while(p!==root){path.unshift(p);p=from[p];if(p<0)break;}
+      if(p<0)continue;
+      if(Math.hypot(anchor.x-entity.x,anchor.y-entity.y)>.001)path.unshift(root);
+      best=path;bestCost=cost[end];
+    }
+    return best;
+  }
+  function aim(x,y) {
+    if(!active || state.status!=='playing' || state.paused || state.recovery>0 || !inB(x,y))return false;
+    if(!Number.isInteger(x) || !Number.isInteger(y))return false;
+    const cell=idx(x,y), tile=state.map[cell];
+    if(tile==='b'){
+      if(!state.upgrade){state.message='This brick needs the golden pickaxe upgrade. Find it first.';syncUI();return false;}
+      if(inRefuge(state.hero.x,state.hero.y)){state.message='Step out of the blue refuge before mining.';syncUI();return false;}
+      if(state.mining && state.mining.cell===cell)return true;
+      let chosen=null;
+      for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+        const p=route(state.hero,x+dx,y+dy);if(p && (!chosen || p.length<chosen.length))chosen=p;
+      }
+      if(!chosen){state.message='No reachable side of that brick yet.';syncUI();return false;}
+      state.mining={cell,progress:0};state.hero.path=chosen;state.target=null;
+      state.message='Mining takes a moment. Tap the floor to cancel and escape.';
+    } else {
+      const path=route(state.hero,x,y);if(!path)return false;
+      state.mining=null;state.target={x,y};state.hero.path=path;
+      if(tile==='v')state.message='Purple void! Stepping into it costs one life.';
+    }
+    syncUI();return true;
+  }
+  function move(entity,dt,speed) {
+    let left=dt*speed;
+    while(entity.path.length && left>0){
+      const cell=entity.path[0],x=cell%N,y=Math.floor(cell/N),gap=Math.hypot(x-entity.x,y-entity.y);
+      if(gap<=left){entity.x=x;entity.y=y;entity.path.shift();left-=gap;}
+      else{entity.x+=(x-entity.x)/gap*left;entity.y+=(y-entity.y)/gap*left;left=0;}
+    }
+  }
+  function lose(reason) {
+    if(state.status!=='playing' || state.recovery>0 || (reason==='caught' && inRefuge(state.hero.x,state.hero.y)))return;
+    state.lives--;state.returns++;state.lastLoss=reason;
+    state.mining=null;state.target=null;state.hero.path=[];pointerId=null;
+    if(state.lives===0){state.status='lost';state.message='Three lives used. Your next attempt starts fresh; the woods stay completed.';}
+    else{
+      state.hero.x=START.x;state.hero.y=START.y;state.recovery=.75;
+      state.message=(reason==='void' ? 'Void fall.' : 'Caught.')+' Back at the refuge. Your upgrade and openings stay; so does the pursuer.';
+    }
+    persist();syncUI();
+  }
+  function updatePursuer(dt,repath) {
+    const h=state.hero,e=state.enemy;
+    const target=inRefuge(h.x,h.y) ? {x:4,y:14} : {x:Math.round(h.x),y:Math.round(h.y)};
+    if(!e.released || repath){
+      const path=route(e,target.x,target.y,true);
+      if(path){e.path=path;e.released=true;}
+    }
+    if(!e.released)return;
+    if(!inRefuge(h.x,h.y) && Math.hypot(h.x-e.x,h.y-e.y)<.55){lose('caught');return;}
+    move(e,dt,CHASE_SPEED);
+    if(!inRefuge(h.x,h.y) && Math.hypot(h.x-e.x,h.y-e.y)<.55)lose('caught');
+  }
+
+  let replan=0, saveClock=0;
+  function step(dt) {
+    if(!active || !state || state.status!=='playing' || state.paused || !Number.isFinite(dt) || dt<=0)return;
+    dt=Math.min(.05,dt);state.elapsed+=dt;
+    if(state.recovery>0){state.recovery=Math.max(0,state.recovery-dt);return;}
+    replan-=dt;const repath=replan<=0;
+    if(repath){
+      replan=.1;
+      if(state.target && state.hero.path.length)state.hero.path=route(state.hero,state.target.x,state.target.y)||[];
+    }
+    move(state.hero,dt,HERO_SPEED);
+    if(state.map[idx(Math.round(state.hero.x),Math.round(state.hero.y))]==='v'){lose('void');return;}
+    if(!state.upgrade && Math.hypot(state.hero.x-UPGRADE.x,state.hero.y-UPGRADE.y)<.2){
+      state.upgrade=1;state.message='Upgrade found! Choose any red brick to make a permanent opening.';saveClock=1;snd.gem();
+    }
+    if(state.mining && !state.hero.path.length){
+      const cell=state.mining.cell,x=cell%N,y=Math.floor(cell/N);
+      if(Math.hypot(x-state.hero.x,y-state.hero.y)<=1.01){
+        state.mining.progress+=dt;
+        if(state.mining.progress>=MINE_TIME){state.map[cell]='.';state.mining=null;state.message='Opening made. Now the pursuer can follow you!';saveClock=1;snd.crumble();}
+      }
+    }
+    updatePursuer(dt,repath);
+    if(state.status==='playing' && state.recovery===0 && Math.hypot(state.hero.x-GOAL.x,state.hero.y-GOAL.y)<.2){
+      state.status='won';state.message='First layer complete! The deeper layers and lightning hammer come next.';state.hero.path=[];state.target=null;saveClock=1;
+    }
+    saveClock+=dt;if(saveClock>=1){persist();saveClock=0;}
+    syncUI();
+  }
+
+  function persist() {
+    if(!state)return false;
+    try {localStorage.setItem(SAVE_KEY,JSON.stringify(state));storageOK=true;return true;}
+    catch(error){storageOK=false;return false;}
+  }
+  function validAttempt(v) {
+    if(!v || v.version!==1 || !['practice','woods'].includes(v.origin) || !['playing','won','lost'].includes(v.status)
+       || !Number.isInteger(v.lives) || v.lives<0 || v.lives>3 || ![0,1].includes(v.upgrade)
+       || (v.status==='lost')!==(v.lives===0) || !Array.isArray(v.map) || v.map.length!==N*N)return false;
+    const original=initialMap();
+    if(v.map.some((t,i)=>t!==original[i] && !(original[i]==='b' && t==='.')))return false;
+    if(!v.upgrade && v.map.some((t,i)=>t==='.' && original[i]==='b'))return false;
+    const point=p=>p && Number.isFinite(p.x) && Number.isFinite(p.y) && p.x>=1 && p.x<=18 && p.y>=1 && p.y<=18;
+    const path=p=>Array.isArray(p) && p.length<=N*N && p.every(i=>Number.isInteger(i) && i>=0 && i<N*N);
+    if(!point(v.hero) || !point(v.enemy) || !path(v.hero.path) || !path(v.enemy.path) || typeof v.enemy.released!=='boolean')return false;
+    if(!Number.isFinite(v.recovery) || v.recovery<0 || v.recovery>.75 || !Number.isFinite(v.elapsed) || v.elapsed<0
+       || !Number.isInteger(v.returns) || v.returns!==3-v.lives || typeof v.message!=='string')return false;
+    for(const p of [v.hero,v.enemy]){
+      const tile=v.map[idx(Math.round(p.x),Math.round(p.y))];
+      if(tile!=='.' && !(v.status==='lost' && p===v.hero && tile==='v'))return false;
+    }
+    if(v.target && (!point(v.target) || !Number.isInteger(v.target.x) || !Number.isInteger(v.target.y)))return false;
+    if(v.mining && (!v.upgrade || !Number.isInteger(v.mining.cell) || v.map[v.mining.cell]!=='b'
+       || !Number.isFinite(v.mining.progress) || v.mining.progress<0 || v.mining.progress>MINE_TIME))return false;
+    return true;
+  }
+  function resume() {
+    let saved;
+    try {saved=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(error){return false;}
+    if(!validAttempt(saved))return false;
+    state=saved;state.paused=true;active=true;S.running=false;replan=0;syncUI();return true;
+  }
+  function leave() {persist();active=false;S.running=false;syncUI();}
+  function replay() {return start(state ? state.origin : 'practice');}
+  function setPaused(value) {if(!active || !state)return;state.paused=!!value;persist();syncUI();}
+
+  function syncUI() {
+    document.body.classList.toggle('nether-active',active);
+    $('nHud').classList.toggle('hidden',!active);$('nHelp').classList.toggle('hidden',!active);
+    $('nEnd').classList.toggle('hidden',!active || state.status==='playing');
+    if(!active){$('title').classList.remove('hidden');$('nResume').classList.toggle('hidden',!hasSaved());return;}
+    $('title').classList.add('hidden');$('intro').classList.add('hidden');$('win').classList.add('hidden');$('opts').classList.add('hidden');
+    const put=(id,value)=>{if($(id).textContent!==value)$(id).textContent=value;};
+    put('nLives',state.lives+' / 3 lives');
+    put('nTool',state.upgrade ? 'Pickaxe upgraded' : 'Find the upgrade');
+    put('nThreat',state.enemy.released ? 'Pursuer released' : 'Pursuer contained');
+    put('nMessage',state.paused ? 'Paused. Your attempt is saved when storage is available.' : state.message);
+    put('nPause',state.paused ? 'Resume chase' : 'Pause');put('nSound',muted ? 'Sound off' : 'Sound on');
+    put('nMode',state.origin==='practice' ? 'Direct test · woods skipped' : 'After Night 20 · woods preserved');
+    put('nEndTitle',state.status==='won' ? 'First layer cleared!' : 'Three lives used');
+    put('nEndLine',state.status==='won'
+      ? 'You found the way through. The deeper maze and lightning hammer are the next build.'
+      : 'Your upgrade helped, but the openings also helped your pursuer. Try a different place to break through.');
+    put('nEndStats',state.returns+' '+(state.returns===1?'life':'lives')+' used · '+Math.round(state.elapsed)+' seconds played');
+    put('nStorage',storageOK ? 'Autosave is available in this browser.' : 'Save unavailable — keep this tab open.');
+  }
+  function hasSaved() {
+    try{return validAttempt(JSON.parse(localStorage.getItem(SAVE_KEY)));}catch(error){return false;}
+  }
+  function draw() {
+    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,SIZE,SIZE);
+    const t=state.elapsed;
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const tile=state.map[idx(x,y)],px=x*TILE,py=y*TILE;
+      ctx.fillStyle=((x+y)%2) ? '#2c2330' : '#302633';ctx.fillRect(px,py,TILE,TILE);
+      if(inRefuge(x,y)){
+        ctx.fillStyle=((x+y)%2)?'#194a60':'#1d5366';ctx.fillRect(px,py,TILE,TILE);
+      }
+      if(tile==='#'){
+        ctx.fillStyle='#161c29';ctx.fillRect(px,py,TILE,TILE);
+        ctx.fillStyle='#354052';ctx.fillRect(px+2,py+2,TILE-4,5);
+        ctx.fillStyle='#28303f';ctx.fillRect(px+3,py+9,TILE-6,TILE-12);
+      }
+      if(tile==='b'){
+        ctx.fillStyle=state.upgrade?'#b36151':'#78423f';ctx.fillRect(px,py,TILE,TILE);
+        ctx.strokeStyle='#442731';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px,py+16);ctx.lineTo(px+32,py+16);
+        ctx.moveTo(px+16,py);ctx.lineTo(px+16,py+16);ctx.moveTo(px+8,py+16);ctx.lineTo(px+8,py+32);ctx.stroke();
+        ctx.fillStyle='#dc9880';ctx.fillRect(px+2,py+2,27,2);
+        if(!state.upgrade && (x+y)%3===0){ctx.fillStyle='#eec3a0';ctx.font='bold 11px system-ui';ctx.fillText('1',px+13,py+13);}
+      }
+      if(tile==='v'){
+        ctx.fillStyle='#130c25';ctx.fillRect(px,py,TILE,TILE);
+        ctx.strokeStyle='#9756d7';ctx.lineWidth=2;ctx.beginPath();
+        ctx.moveTo(px+3,py+10+Math.sin(t*2+x)*3);ctx.lineTo(px+15,py+18);ctx.lineTo(px+29,py+13);ctx.stroke();
+      }
+    }
+    ctx.font='bold 11px system-ui';ctx.fillStyle='#9adff7';ctx.textAlign='center';
+    ctx.fillText('REFUGE',2.5*TILE,18.4*TILE);ctx.textAlign='left';
+    // The route is a promise, so make it visible and update it as danger moves.
+    if(state.hero.path.length){
+      ctx.strokeStyle='rgba(150,226,234,.45)';ctx.lineWidth=2;ctx.setLineDash([3,5]);ctx.beginPath();
+      ctx.moveTo((state.hero.x+.5)*TILE,(state.hero.y+.5)*TILE);
+      for(const p of state.hero.path)ctx.lineTo((p%N+.5)*TILE,(Math.floor(p/N)+.5)*TILE);
+      ctx.stroke();ctx.setLineDash([]);
+    }
+    const gx=(GOAL.x+.5)*TILE,gy=(GOAL.y+.5)*TILE;
+    ctx.strokeStyle='#77e0bd';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(gx,gy,11,15,0,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#b9f8df';ctx.font='bold 10px system-ui';ctx.fillText('EXIT',gx-11,gy+28);
+    if(!state.upgrade){
+      const x=(UPGRADE.x+.5)*TILE,y=(UPGRADE.y+.5)*TILE;
+      ctx.fillStyle='#6b5124';ctx.beginPath();ctx.arc(x,y,15+Math.sin(t*3),0,Math.PI*2);ctx.fill();
+      ctx.save();ctx.translate(x,y);ctx.rotate(-.6);
+      ctx.fillStyle='#d8a26b';ctx.fillRect(-2,-2,4,15);ctx.fillStyle='#ffe182';ctx.fillRect(-10,-7,20,6);ctx.restore();
+    }
+    if(state.mining){
+      const p=state.mining.cell,x=(p%N)*TILE,y=Math.floor(p/N)*TILE;
+      ctx.strokeStyle='#ffe393';ctx.lineWidth=3;ctx.strokeRect(x+2,y+2,TILE-4,TILE-4);
+      ctx.fillStyle='#291f25';ctx.fillRect(x,y+TILE-6,TILE,6);
+      ctx.fillStyle='#ffe393';ctx.fillRect(x,y+TILE-6,TILE*Math.min(1,state.mining.progress/MINE_TIME),6);
+    }
+    function character(entity,hero) {
+      const x=(entity.x+.5)*TILE,y=(entity.y+.5)*TILE;
+      ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(x,y+11,11,5,0,0,Math.PI*2);ctx.fill();
+      if(hero){
+        ctx.fillStyle='#62bdd6';ctx.fillRect(x-8,y-1,16,13);ctx.fillStyle='#e7ba98';ctx.fillRect(x-8,y-12,16,13);
+        ctx.fillStyle='#5a372a';ctx.fillRect(x-9,y-14,18,5);
+        face(x,y-6,3,1.3,{x:state.enemy.x-entity.x,y:state.enemy.y-entity.y},state.recovery>0?2:0,1);
+        if(state.upgrade){ctx.fillStyle='#ffe393';ctx.fillRect(x+10,y-3,3,13);ctx.fillRect(x+7,y-5,9,3);}
+      }else{
+        ctx.fillStyle=state.enemy.released?'#c45c73':'#89536c';ctx.beginPath();ctx.ellipse(x,y,12,13,0,0,Math.PI*2);ctx.fill();
+        face(x,y-2,4,2,{x:state.hero.x-entity.x,y:state.hero.y-entity.y},3,4,'#ffe8af');
+      }
+    }
+    character(state.enemy,false);character(state.hero,true);
+    if(state.paused || state.recovery>0){
+      ctx.fillStyle='rgba(12,18,32,.5)';ctx.fillRect(0,0,SIZE,SIZE);
+      ctx.fillStyle='#e9f5ff';ctx.font='bold 24px system-ui';ctx.textAlign='center';
+      ctx.fillText(state.paused?'Paused — use Resume chase':'Back at the refuge',SIZE/2,SIZE/2);ctx.textAlign='left';
+    }
+  }
+  let pointerId=null;
+  function pointer(kind,event) {
+    if(kind==='down'){
+      if(event.button!==undefined && event.button!==0)return;
+      audioInit();event.preventDefault();pointerId=event.pointerId;
+      try{cv.setPointerCapture(pointerId);}catch(error){}
+    }else if(event.pointerId!==pointerId)return;
+    if(kind==='up' || kind==='cancel'){
+      pointerId=null;
+      if(kind==='cancel')setPaused(true);
+      return;
+    }
+    const c=canvasCell(event);if(c)aim(c.x,c.y);
+  }
+  function key(event) {
+    if(event.key===' ' || event.key==='Escape'){event.preventDefault();setPaused(!state.paused);return;}
+    const d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],a:[-1,0],s:[0,1],d:[1,0]}[event.key];
+    if(d){event.preventDefault();aim(Math.round(state.hero.x)+d[0],Math.round(state.hero.y)+d[1]);}
+  }
+  function bindUI() {
+    $('nStart').addEventListener('click',()=>{audioInit();closeIntro();start();});
+    $('nResume').addEventListener('click',()=>{audioInit();closeIntro();if(!resume())$('nTitleNote').textContent='That saved trial could not be loaded. Start a new trial.';});
+    $('nPause').addEventListener('click',()=>setPaused(!state.paused));
+    for(const id of ['nMenu','nEndMenu'])$(id).addEventListener('click',leave);
+    $('nReplay').addEventListener('click',replay);
+    $('nSound').addEventListener('click',()=>{muted=!muted;store.set('tn.mute',muted?'1':'0');audioInit();syncUI();});
+    window.addEventListener('blur',()=>{if(active)setPaused(true);});
+    document.addEventListener('visibilitychange',()=>{if(active && document.hidden)setPaused(true);});
+    window.addEventListener('pagehide',()=>{if(active)persist();});
+    $('nResume').classList.toggle('hidden',!hasSaved());
+  }
+
+  function start(origin='practice') {
+    state = {version:1, origin, status:'playing', lives:3, upgrade:0, map:initialMap(),
+      hero:{x:START.x,y:START.y,path:[]}, enemy:{x:11,y:8,path:[],released:false},
+      mining:null, target:null, paused:false, recovery:0, elapsed:0, returns:0,
+      message:'Find the golden pickaxe upgrade. Then choose a red brick wall to open.'};
+    active = true; S.running = false; replan=0;saveClock=0;pointerId=null;persist();syncUI(); return view();
+  }
+  function enterFromWoods() {
+    const day = S.day; S.day = 20; save(); S.day = day;
+    store.set('tn.woods-complete', store.get('tn.save'));
+    return start('woods');
+  }
+  return {start, enterFromWoods, view, aim, step, persist, resume, leave, replay, setPaused, draw, pointer, key, bindUI, isActive:()=>active};
+})();
+
 /* ═══════════════ 13 · GAME LOOP & BOOT ═══════════════ */
 let last = null;
 function frame(ts){
   if (last == null) last = ts;
   const dt = Math.min(.05, (ts - last)/1000); last = ts;
   clockAll += dt;
+  if(NetherTrial.isActive()){NetherTrial.step(dt);NetherTrial.draw();requestAnimationFrame(frame);return;}
   if (introOpen){ introT += dt; drawIntro(dt); }       // the slides breathe on the same clock
   const optsOpen = !$("opts").classList.contains("hidden");   // the world waits while you fiddle
   if (S.hitstop > 0){ S.hitstop = Math.max(0, S.hitstop - dt); }   // a beat of stillness on a bounce
@@ -4344,6 +4725,7 @@ function frame(ts){
   requestAnimationFrame(frame);
 }
 function newGame(){
+  if(NetherTrial.isActive())NetherTrial.leave();
   buildMap(); computeField();
   S.day = 1; S.wood = 16; S.stone = 0; S.food = 6; S.stoneSeen = false;
   S.pips = Array(20).fill(0);
@@ -4513,7 +4895,7 @@ $("presetRow").addEventListener("click", e => {
 
 buildMap(); computeField(); refreshHUD();
 if (load()){ $("contBtn").classList.remove("hidden"); $("contDay").textContent = S.day; }
-else if (store.get("tn.intro") !== "1") openIntro();   // first time here: show them the ropes
+// Direct local trial access; the woods tutorial stays available through its button.   // first time here: show them the ropes
 if (TEST){
   $("testBadge").classList.remove("hidden");
   window.TN = {
@@ -4532,6 +4914,7 @@ if (TEST){
     pathLen:k => S.ribbons[k] ? S.ribbons[k].length : -1,
   };
 }
+NetherTrial.bindUI();
 requestAnimationFrame(frame);
 </script>
 </body>
