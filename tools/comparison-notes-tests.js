@@ -9,8 +9,8 @@ test('a stopped first chase offers its exact notes before the second chase repla
   assert.equal(html.includes('<button id="nSavedDownloadNotes" class="nButton nButtonQuiet" type="button">Download notes for this adventure</button>'),true);
   global.localStorage.setItem('tn.d3.combined.v1','CANDIDATE_1_PRESERVED');
   n.start('practice',{pursuer:'goofy'});
-  assert.equal(n.aim(2,2),true);
-  for(let i=0;i<90;i++)n.step(.05);
+  assert.equal(n.aim(3,3),true);
+  for(let i=0;i<180;i++)n.step(.05);
   const a=n.view();assert.equal(a.upgrade,1);
   n.setPaused(true);n.leave();
   assert.equal(global.document.getElementById('nContinuePanel').classList.contains('hidden'),false);
@@ -22,7 +22,7 @@ test('a stopped first chase offers its exact notes before the second chase repla
   assert.deepEqual(notes.attempt.events,a.events);
   assert.equal(notes.attempt.upgrade,1);
   assert.equal(notes.feedback.note,'PICK 1 made the route exciting.');
-  assert.match(notes.build,/candidate-2$/);
+  assert.match(notes.build,/rectangular-1$/);
   const query=global.document.querySelector;
   global.document.querySelector=(selector)=>selector==='input[name="nPursuer"]:checked'?{value:'runner'}:query(selector);
   try{global.document.getElementById('nStart').click();}
@@ -35,7 +35,7 @@ test('a stopped first chase offers its exact notes before the second chase repla
 
 test('the visible menu button downloads the saved first attempt, not a stale or later state',async()=>{
   n.start('practice',{pursuer:'goofy'});
-  assert.equal(n.aim(2,2),true);for(let i=0;i<90;i++)n.step(.05);
+  assert.equal(n.aim(3,3),true);for(let i=0;i<180;i++)n.step(.05);
   global.document.getElementById('nSettingsOpen').click();
   global.document.getElementById('nMenu').click();
   assert.equal(n.isActive(),false);

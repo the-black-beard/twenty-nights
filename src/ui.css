@@ -266,3 +266,10 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
   .nModal{padding:9px}
   .nDialogCard{max-height:calc(100dvh - 18px)}
 }
+
+/* Fourfold Maze additions. */
+.nLegendIron{background:#7fb1cc;border:2px solid #c2edff}
+.nLegendObsidian{background:#4b293b;border:2px solid #f0928e}
+.nCombinedMap .nMapPreview canvas{aspect-ratio:45/37;height:auto;width:100%}
+.nCombinedMap{display:flex;gap:20px;align-items:center}.nCombinedMap .nMapPreview{width:200px;flex:none}.nCombinedMap h2{font-size:20px;margin:0 0 8px}.nCombinedMap p{margin:6px 0;line-height:1.5}
+@media(max-width:600px){.nCombinedMap{display:block}.nCombinedMap .nMapPreview{display:none}}

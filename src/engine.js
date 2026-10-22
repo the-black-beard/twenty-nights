@@ -1,15 +1,17 @@
-/* TN-D3-01: one real simulation shared by the browser, notes and test harness. */
+/* Rectangular descent: one real simulation shared by the browser, notes and test harness. */
 const NetherTrial = (() => {
+  const N=45, ROWS=37, CELL_COUNT=N*ROWS, TILE=32;
+  const idx=(x,y)=>y*N+x, inB=(x,y)=>x>=0&&y>=0&&x<N&&y<ROWS;
   /* NETHER_MAPS */
-  const BUILD='TN-D3-01-2026-10-22-candidate-2';
-  const SAVE_KEY='tn.d3.combined.v2',PREF_KEY='tn.d3.combined.preferences.v2';
+  const BUILD='TN-D4-2026-10-22-rectangular-1';
+  const SAVE_KEY='tn.d4.rectangular.v1',PREF_KEY='tn.d4.rectangular.preferences.v1';
   const HERO_SPEED=4.6,MINE_TIME=1.8;
-  const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'}};
+  const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'},d:{tier:3,name:'iron block'},e:{tier:4,name:'obsidian slab'}};
   const PURSUERS=[
     {id:'goofy',name:'Goofy regular',description:'Quick feet, late turns. They sometimes choose the wrong way.'},
     {id:'runner',name:'Tracking rush',description:'A warning, a much faster chase, then time to catch your breath.'}
   ];
-  const defaults={dodge:true,showRoute:true,closeView:false,highContrast:false,reducedMotion:!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches};
+  const defaults={dodge:true,showRoute:true,closeView:true,highContrast:false,reducedMotion:!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches};
   let prefs={...defaults};
   try{const saved=JSON.parse(localStorage.getItem(PREF_KEY));for(const k of Object.keys(defaults))if(typeof saved?.[k]==='boolean')prefs[k]=saved[k];}catch(error){}
   let state=null,active=false,storageOK=true,scene=layout();
@@ -37,10 +39,10 @@ const NetherTrial = (() => {
       state.message='Opening '+material.name+'. Monsters can use this passage too. Tap floor to cancel.';
     }else{
       const p=route(state.hero,x,y);
-      if(!p){if(tile==='#'){state.message='Dark basalt stays solid. Look for walls marked 1 or 2.';syncUI();}return false;}
+      if(!p){if(tile==='#'){state.message='Dark basalt stays solid. Look for walls marked 1 to 4.';syncUI();}return false;}
       state.mining=null;state.target={x,y};state.hero.path=p;
       if(tile==='v')state.message='Purple void costs a life. Tap safe ground to turn back.';
-      if(x===GOAL.x&&y===GOAL.y&&!state.cores.every(c=>c.collected))state.message='The exit needs both cores. Bring them here on foot.';
+      if(x===GOAL.x&&y===GOAL.y&&!state.cores.every(c=>c.collected))state.message='The exit needs all four cores. Bring them here on foot.';
     }
     syncUI();return true;
   }
@@ -72,7 +74,8 @@ const NetherTrial = (() => {
   }
   function random(){state.rng=(Math.imul(state.rng,1664525)+1013904223)>>>0;return state.rng/4294967296;}
   function updatePursuers(dt,repath){
-    const h=state.hero,target=inRefuge(h.x,h.y)?scene.refugeWait:{x:Math.round(h.x),y:Math.round(h.y)};
+    const h=state.hero;
+    const patrol=[{x:1,y:1},{x:43,y:1},{x:43,y:35},{x:1,y:19},{x:23,y:3},{x:41,y:18}];
     for(const e of state.enemies){
       if(!e.released){
         if(!repath)continue;
@@ -81,6 +84,12 @@ const NetherTrial = (() => {
       }
       if(!e.released)continue;
       if(e.wake>0){e.wake=Math.max(0,e.wake-dt);continue;}
+      const order=scene.enemies.findIndex(v=>v.id===e.id);
+      // Distinct targets stop the crowd becoming one identical train. Scatter
+      // is periodic movement only: no timed monster releases or speed growth.
+      const scattering=e.role==='roamer'&&(state.elapsed+order*2)%14<4;
+      const ahead=e.role==='flanker'&&h.path.length?h.path[Math.min(7,h.path.length-1)]:null;
+      const target=inRefuge(h.x,h.y)||scattering?patrol[order%patrol.length]:ahead!==null?{x:ahead%N,y:Math.floor(ahead/N)}:{x:Math.round(h.x),y:Math.round(h.y)};
       let speed=4.85;
       if(state.pursuer==='runner'){
         e.phaseTime-=dt;
@@ -112,7 +121,11 @@ const NetherTrial = (() => {
     dt=Math.min(.05,dt);state.elapsed+=dt;
     if(state.recovery>0){state.recovery=Math.max(0,state.recovery-dt);return;}
     replan-=dt;let repath=replan<=0;
-    if(repath){replan=.12;if(state.target&&state.hero.path.length)state.hero.path=route(state.hero,state.target.x,state.target.y)||[];}
+    if(repath){
+      replan=.12;
+      if(state.target&&state.hero.path.length)state.hero.path=route(state.hero,state.target.x,state.target.y)||[];
+      if(state.mining&&state.hero.path.length){const end=state.hero.path[state.hero.path.length-1];state.hero.path=route(state.hero,end%N,Math.floor(end/N))||[];}
+    }
     move(state.hero,dt,HERO_SPEED);
     if(state.map[idx(Math.round(state.hero.x),Math.round(state.hero.y))]==='v'){lose('void');return;}
     for(const u of scene.upgrades)if(state.upgrade===u.tier-1&&Math.hypot(state.hero.x-u.x,state.hero.y-u.y)<.2){
@@ -125,7 +138,7 @@ const NetherTrial = (() => {
         if(state.mining.progress>=MINE_TIME){
           const tier=MATERIALS[state.map[cell]].tier;state.map[cell]='.';state.mining=null;state.breaches++;
           state.events.push({type:'breach',x,y,tier,time:state.elapsed});repath=true;
-          state.message='A permanent passage. You and the monsters can both use it.';saveClock=1;snd.crumble();
+          state.message='Wall cleared for good. A connected passage lets monsters through too.';saveClock=1;snd.crumble();
         }
       }
     }
@@ -133,29 +146,29 @@ const NetherTrial = (() => {
     if(state.status!=='playing'||state.awaitingReturn)return;
     for(const c of state.cores)if(!c.collected&&Math.hypot(state.hero.x-c.x,state.hero.y-c.y)<.2){
       c.collected=true;state.events.push({type:'core',core:c.id,time:state.elapsed});saveClock=1;snd.gem();
-      state.message=state.cores.every(v=>v.collected)?'Both cores collected! Walk to the green exit.':c.label+' collected. Keep it, even if you are caught.';
+      state.message=state.cores.every(v=>v.collected)?'All four cores collected! Walk to the green exit.':c.label+' collected. Keep it, even if you are caught.';
     }
     if(state.cores.every(c=>c.collected)&&Math.hypot(state.hero.x-GOAL.x,state.hero.y-GOAL.y)<.2){
       state.status='won';state.events.push({type:'escaped-on-foot',x:state.hero.x,y:state.hero.y,time:state.elapsed});
-      state.message='Both cores carried out. You escaped on foot!';state.hero.path=[];state.target=null;saveClock=1;snd.gem();
+      state.message='All four cores carried out. You escaped on foot!';state.hero.path=[];state.target=null;saveClock=1;snd.gem();
     }
     saveClock+=dt;if(saveClock>=1){persist();saveClock=0;}syncUI();
   }
   function persist(){if(!state)return false;try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));storageOK=true;return true;}catch(error){storageOK=false;return false;}}
   function validAttempt(v){
-    if(!v||v.version!==3||v.build!==BUILD||v.layout!==scene.id||!PURSUERS.some(p=>p.id===v.pursuer)||!['practice','woods'].includes(v.origin)
-      ||!['playing','won','lost'].includes(v.status)||!Number.isInteger(v.lives)||v.lives<0||v.lives>3||![0,1,2].includes(v.upgrade)
-      ||(v.status==='lost')!==(v.lives===0)||!Array.isArray(v.map)||v.map.length!==400)return false;
+    if(!v||v.version!==4||v.build!==BUILD||v.layout!==scene.id||!PURSUERS.some(p=>p.id===v.pursuer)||!['practice','woods'].includes(v.origin)
+      ||!['playing','won','lost'].includes(v.status)||!Number.isInteger(v.lives)||v.lives<0||v.lives>3||![0,1,2,3,4].includes(v.upgrade)
+      ||(v.status==='lost')!==(v.lives===0)||!Array.isArray(v.map)||v.map.length!==CELL_COUNT)return false;
     if(v.map.some((t,i)=>t!==scene.map[i]&&!(MATERIALS[scene.map[i]]?.tier<=v.upgrade&&t==='.')))return false;
-    const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=1&&p.x<=18&&p.y>=1&&p.y<=18;
-    const path=p=>Array.isArray(p)&&p.length<=400&&p.every(i=>Number.isInteger(i)&&i>=0&&i<400&&(v.map[i]==='.'||v.target&&i===idx(v.target.x,v.target.y)&&v.map[i]==='v'));
+    const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=1&&p.x<=N-2&&p.y>=1&&p.y<=ROWS-2;
+    const path=p=>Array.isArray(p)&&p.length<=CELL_COUNT&&p.every(i=>Number.isInteger(i)&&i>=0&&i<CELL_COUNT&&(v.map[i]==='.'||v.target&&i===idx(v.target.x,v.target.y)&&v.map[i]==='v'));
     const body=p=>point(p)&&path(p.path)&&(v.map[idx(Math.round(p.x),Math.round(p.y))]==='.'||p===v.hero&&v.status==='lost'&&v.map[idx(Math.round(p.x),Math.round(p.y))]==='v');
     const pref=p=>p&&Object.keys(defaults).every(k=>typeof p[k]==='boolean');
-    if(!body(v.hero)||!Array.isArray(v.enemies)||v.enemies.length!==scene.enemies.length||v.enemies.some((e,i)=>!body(e)||e.id!==scene.enemies[i].id||e.layer!==scene.enemies[i].layer||typeof e.released!=='boolean'||inRefuge(e.x,e.y)
+    if(!body(v.hero)||!Array.isArray(v.enemies)||v.enemies.length!==scene.enemies.length||v.enemies.some((e,i)=>!body(e)||e.id!==scene.enemies[i].id||e.layer!==scene.enemies[i].layer||e.role!==scene.enemies[i].role||typeof e.released!=='boolean'||inRefuge(e.x,e.y)
       ||!['stalk','windup','burst','rest'].includes(e.phase)||!Number.isFinite(e.phaseTime)||e.phaseTime<0||e.phaseTime>2.4||!Number.isFinite(e.wake)||e.wake<0||e.wake>.85||!Number.isFinite(e.notice)||e.notice<0||e.notice>1||typeof e.wrongTurn!=='boolean'))return false;
     if(!Number.isFinite(v.recovery)||v.recovery<0||v.recovery>.75||!Number.isFinite(v.elapsed)||v.elapsed<0||!Number.isInteger(v.returns)||v.returns!==3-v.lives||typeof v.message!=='string'||typeof v.paused!=='boolean'||typeof v.awaitingReturn!=='boolean')return false;
     if(v.awaitingReturn&&(v.status!=='playing'||v.lives>=3||v.recovery<=0||v.hero.x!==START.x||v.hero.y!==START.y))return false;
-    if(!Array.isArray(v.cores)||v.cores.length!==2||v.cores.some((c,i)=>c.id!==scene.cores[i].id||c.x!==scene.cores[i].x||c.y!==scene.cores[i].y||typeof c.collected!=='boolean'))return false;
+    if(!Array.isArray(v.cores)||v.cores.length!==scene.cores.length||v.cores.some((c,i)=>c.id!==scene.cores[i].id||c.x!==scene.cores[i].x||c.y!==scene.cores[i].y||typeof c.collected!=='boolean'))return false;
     if(v.status==='won'&&(!v.cores.every(c=>c.collected)||Math.hypot(v.hero.x-GOAL.x,v.hero.y-GOAL.y)>=.2))return false;
     if(!Array.isArray(v.losses)||v.losses.length!==v.returns||v.losses.some(l=>!point(l)||!['caught','void'].includes(l.cause)||!Number.isFinite(l.time)))return false;
     if(!Number.isInteger(v.breaches)||v.breaches!==v.map.filter((t,i)=>t==='.'&&MATERIALS[scene.map[i]]).length)return false;
@@ -175,14 +188,14 @@ const NetherTrial = (() => {
     try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(error){}syncUI();return preferences();
   }
   function notesFor(attempt,feedback={},recordedAs=null){
-    return JSON.stringify({game:'Twenty Nights — Combined Nether trial',version:3,build:BUILD,
-      question:'Did opening the deeper wall make the chase exciting, or did it feel unfair?',
-      trialDefaults:{layers:2,monsters:2,cores:2,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
+    return JSON.stringify({game:'Twenty Nights — Fourfold Maze',version:4,build:BUILD,
+      question:'Which layer had the best chase? Was ten monsters exciting or too crowded?',
+      trialDefaults:{layers:4,monsters:10,cores:4,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
       comparison:'Same authored map, goals and roster. Chase package changes; this is not a pure speed comparison.',
       attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,pursuer:attempt.pursuer,status:attempt.status,
         recordedAs:recordedAs||(attempt.status==='won'?'escaped-on-foot':attempt.status==='lost'?'three-lives-used':'in-progress'),
         lives:attempt.lives,upgrade:attempt.upgrade,cores:attempt.cores,breaches:attempt.breaches,losses:attempt.losses,events:attempt.events,
-        openings:attempt.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%20,y:Math.floor(i/20),tier:MATERIALS[scene.map[i]].tier}]:[]),
+        openings:attempt.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%N,y:Math.floor(i/N),tier:MATERIALS[scene.map[i]].tier}]:[]),
         elapsed:Math.round(attempt.elapsed),initialPreferences:attempt.initialPreferences,preferences:attempt.preferences,settingChanges:attempt.settingChanges}:null,feedback},null,2);
   }
   function exportNotes(feedback={}){return notesFor(state,feedback);}
@@ -192,8 +205,8 @@ const NetherTrial = (() => {
   }
   function start(origin='practice',selection={}){
     const pursuer=PURSUERS.some(p=>p.id===selection.pursuer)?selection.pursuer:'goofy';
-    state={version:3,build:BUILD,attemptId:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),startedAt:new Date().toISOString(),origin,status:'playing',layout:scene.id,pursuer,lives:3,upgrade:0,map:scene.map.slice(),preferences:{...prefs},initialPreferences:{...prefs},settingChanges:[],events:[],rng:20261022,
-      hero:{...START,path:[]},enemies:scene.enemies.map(e=>({...e,path:[],released:false,wake:0,phase:'stalk',phaseTime:2.4,notice:0,wrongTurn:false})),
+    state={version:4,build:BUILD,attemptId:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),startedAt:new Date().toISOString(),origin,status:'playing',layout:scene.id,pursuer,lives:3,upgrade:0,map:scene.map.slice(),preferences:{...prefs},initialPreferences:{...prefs},settingChanges:[],events:[],rng:20261022,
+      hero:{...START,path:[]},enemies:scene.enemies.map((e,i)=>({...e,path:[],released:false,wake:0,phase:'stalk',phaseTime:.4+(i%5)*.5,notice:(i%5)*.2,wrongTurn:false})),
       cores:scene.cores.map(c=>({...c,collected:false})),breaches:0,losses:[],mining:null,target:null,paused:false,recovery:0,awaitingReturn:false,elapsed:0,returns:0,
       message:'Find pickaxe 1 in the outer loop. Choose your own opening through the copper wall.'};
     active=true;S.running=false;replan=0;saveClock=0;pointerId=null;persist();syncUI();return view();

@@ -6,11 +6,11 @@ const {NetherTrial:n}=require('./harness.js');
 function corridor(){
  n.start('practice',{pursuer:'runner'});
  const s=n.view();s.preferences.dodge=false;
- s.upgrade=1;s.map[103]='.';s.breaches=1;
- s.hero={x:2,y:9,path:[]};
- s.enemies[0]={...s.enemies[0],x:2,y:13,path:[242,222,202,182],released:true,wake:0,phase:'burst',phaseTime:1.1};
- global.localStorage.setItem('tn.d3.combined.v2',JSON.stringify(s));
- assert.equal(n.resume(),true);n.setPaused(false);assert.equal(n.aim(2,2),true);
+ s.upgrade=1;s.map[229]='.';s.breaches=1;
+ s.hero={x:1,y:9,path:[]};
+ s.enemies[0]={...s.enemies[0],x:1,y:13,path:[541,496,451,406],released:true,wake:0,phase:'burst',phaseTime:1.1};
+ global.localStorage.setItem('tn.d4.rectangular.v1',JSON.stringify(s));
+ assert.equal(n.resume(),true);n.setPaused(false);assert.equal(n.aim(1,2),true);
 }
 test('a rushing Runner visibly closes on a fleeing player and keeps chasing beyond the old target',()=>{
  corridor();
@@ -24,8 +24,8 @@ test('a rushing Runner visibly closes on a fleeing player and keeps chasing beyo
 
 test('the faster rush catches a nearby fleeing player but a four-tile head start survives into recovery',()=>{
  corridor();let close=n.view();close.hero.y=10;close.hero.path=[];close.target=null;
- global.localStorage.setItem('tn.d3.combined.v2',JSON.stringify(close));
- assert.equal(n.resume(),true);n.setPaused(false);n.aim(2,2);
+ global.localStorage.setItem('tn.d4.rectangular.v1',JSON.stringify(close));
+ assert.equal(n.resume(),true);n.setPaused(false);n.aim(1,2);
  for(let i=0;i<20&&!n.view().awaitingReturn;i++)n.step(.05);
  assert.equal(n.view().lives,2);assert.equal(n.view().lastLoss,'caught');
  assert.equal(n.view().awaitingReturn,true);
