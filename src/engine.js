@@ -1,8 +1,8 @@
 /* TN-D3-01: one real simulation shared by the browser, notes and test harness. */
 const NetherTrial = (() => {
   /* NETHER_MAPS */
-  const BUILD='TN-D3-01-2026-10-22-candidate-1';
-  const SAVE_KEY='tn.d3.combined.v1',PREF_KEY='tn.d3.combined.preferences.v1';
+  const BUILD='TN-D3-01-2026-10-22-candidate-2';
+  const SAVE_KEY='tn.d3.combined.v2',PREF_KEY='tn.d3.combined.preferences.v2';
   const HERO_SPEED=4.6,MINE_TIME=1.8;
   const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'}};
   const PURSUERS=[
@@ -174,14 +174,21 @@ const NetherTrial = (() => {
     if(active&&state){state.preferences={...prefs};if(Object.keys(changed).length)state.settingChanges.push({time:state.elapsed,changed});persist();}
     try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(error){}syncUI();return preferences();
   }
-  function exportNotes(feedback={}){
+  function notesFor(attempt,feedback={},recordedAs=null){
     return JSON.stringify({game:'Twenty Nights — Combined Nether trial',version:3,build:BUILD,
       question:'Did opening the deeper wall make the chase exciting, or did it feel unfair?',
       trialDefaults:{layers:2,monsters:2,cores:2,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
       comparison:'Same authored map, goals and roster. Chase package changes; this is not a pure speed comparison.',
-      attempt:state?{id:state.attemptId,startedAt:state.startedAt,layout:state.layout,pursuer:state.pursuer,status:state.status,lives:state.lives,upgrade:state.upgrade,cores:state.cores,breaches:state.breaches,losses:state.losses,events:state.events,
-        openings:state.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%20,y:Math.floor(i/20),tier:MATERIALS[scene.map[i]].tier}]:[]),
-        elapsed:Math.round(state.elapsed),initialPreferences:state.initialPreferences,preferences:state.preferences,settingChanges:state.settingChanges}:null,feedback},null,2);
+      attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,pursuer:attempt.pursuer,status:attempt.status,
+        recordedAs:recordedAs||(attempt.status==='won'?'escaped-on-foot':attempt.status==='lost'?'three-lives-used':'in-progress'),
+        lives:attempt.lives,upgrade:attempt.upgrade,cores:attempt.cores,breaches:attempt.breaches,losses:attempt.losses,events:attempt.events,
+        openings:attempt.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%20,y:Math.floor(i/20),tier:MATERIALS[scene.map[i]].tier}]:[]),
+        elapsed:Math.round(attempt.elapsed),initialPreferences:attempt.initialPreferences,preferences:attempt.preferences,settingChanges:attempt.settingChanges}:null,feedback},null,2);
+  }
+  function exportNotes(feedback={}){return notesFor(state,feedback);}
+  function exportSavedNotes(feedback={}){
+    const saved=savedAttempt();
+    return saved?notesFor(saved,feedback,saved.status==='playing'?'stopped-for-comparison':null):null;
   }
   function start(origin='practice',selection={}){
     const pursuer=PURSUERS.some(p=>p.id===selection.pursuer)?selection.pursuer:'goofy';
@@ -196,5 +203,5 @@ const NetherTrial = (() => {
   /* NETHER_UI */
   /* NETHER_DRAW */
   /* NETHER_INPUT */
-  return {start,enterFromWoods,view,aim,step,persist,resume,leave,replay,setPaused,draw,pointer,key,bindUI,isActive:()=>active,options,preferences,setPreferences,resumeRecovery,exportNotes,prepareWoods};
+  return {start,enterFromWoods,view,aim,step,persist,resume,leave,replay,setPaused,draw,pointer,key,bindUI,isActive:()=>active,options,preferences,setPreferences,resumeRecovery,exportNotes,exportSavedNotes,prepareWoods};
 })();

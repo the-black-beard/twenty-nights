@@ -36,7 +36,7 @@ test('a void fall keeps the fixed maze and upgrade, and only the third loss ends
 });
 
 const {action,run,step:advance}=require('./route-sweep');
-const savedKey='tn.d3.combined.v1';
+const savedKey='tn.d3.combined.v2';
 const roundtrip=()=>{assert.equal(n.persist(),true);n.leave();assert.equal(n.resume(),true);n.setPaused(false);};
 function openFirst(mode='goofy'){
  n.setPreferences({dodge:true});n.start('practice',{pursuer:mode});
@@ -100,9 +100,9 @@ test('notes identify the exact adventure, rules, setting changes and a single de
 });
 
 test('new save identities preserve all previous games and reject malformed attempts without erasing them',()=>{
- for(const key of ['tn.d2.lab.v2','tn.d2.lab.preferences.v1','tn.d2lab.tn.save'])global.localStorage.setItem(key,'PRESERVED');
+ for(const key of ['tn.d2.lab.v2','tn.d2.lab.preferences.v1','tn.d2lab.tn.save','tn.d3.combined.v1'])global.localStorage.setItem(key,'PRESERVED');
  n.start();go(2,2);roundtrip();
- for(const key of ['tn.d2.lab.v2','tn.d2.lab.preferences.v1','tn.d2lab.tn.save'])assert.equal(global.localStorage.getItem(key),'PRESERVED');
+ for(const key of ['tn.d2.lab.v2','tn.d2.lab.preferences.v1','tn.d2lab.tn.save','tn.d3.combined.v1'])assert.equal(global.localStorage.getItem(key),'PRESERVED');
  const valid=n.view();
  for(const change of [s=>s.map[0]='.',s=>s.enemies[0].phaseTime=999,s=>s.cores[0].x=18,s=>s.lives=9,s=>{s.status='won';s.cores.forEach(c=>c.collected=true);}]){
   const bad=structuredClone(valid);change(bad);const text=JSON.stringify(bad);global.localStorage.setItem(savedKey,text);assert.equal(n.resume(),false);assert.equal(global.localStorage.getItem(savedKey),text);

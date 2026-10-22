@@ -21,7 +21,7 @@
 <!-- NETHER FRAGMENT: GUIDANCE — replace #nHelp, immediately after #stage. -->
 <section id="nHelp" class="nUi hidden" aria-label="What to do next">
   <p id="nMessage" role="status" aria-live="polite">Find the golden pickaxe. Choose your way through.</p>
-  <div class="nBoardLegend" aria-label="Board legend"><span><i class="nLegendRefuge" aria-hidden="true"></i>Safe refuge</span><span><i class="nLegendBrick" aria-hidden="true"></i>1 · Copper wall</span><span><i class="nLegendVoid" aria-hidden="true"></i>2 · Crystal wall</span><span>Cracked purple floor · void</span></div>
+  <div class="nBoardLegend" aria-label="Board legend"><span><i class="nLegendRefuge" aria-hidden="true"></i>Safe refuge</span><span><i class="nLegendBrick" aria-hidden="true"></i>1 · Copper wall</span><span><i class="nLegendCrystal" aria-hidden="true"></i>2 · Crystal wall</span><span><i class="nLegendVoid" aria-hidden="true"></i>Cracked floor · void</span></div>
   <p id="nControlHint" class="nHint">Drag to move · tap a wall to mine · move to cancel</p>
   <p id="nStorage" class="nStorage" role="status"></p>
 </section>
@@ -35,7 +35,7 @@
       <div class="nPortalMark" aria-hidden="true"><span class="nPortalCore"></span><span class="nPortalSpark nSparkOne"></span><span class="nPortalSpark nSparkTwo"></span><span class="nPortalStep"></span></div>
     </header>
     <div class="nRules" aria-label="Rules shared by every challenge"><span><b>3</b> lives</span><span>Keep what you earn</span><span>No countdown</span></div>
-    <div id="nContinuePanel" class="nContinuePanel hidden"><div><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p></div><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button></div>
+    <div id="nContinuePanel" class="nContinuePanel hidden"><div class="nSavedDetails"><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p><label for="nSavedMoment">One moment to remember <span>(optional)</span></label><textarea id="nSavedMoment" rows="2" maxlength="500" placeholder="The part where…"></textarea><p id="nSavedExportStatus" role="status">Download notes before trying another chase. Nothing is sent.</p></div><div class="nSavedActions"><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button><button id="nSavedDownloadNotes" class="nButton nButtonQuiet" type="button">Download notes for this adventure</button></div></div>
     <section class="nFieldset nMapFieldset" aria-label="Your fixed maze">
       <div class="nCombinedMap"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-nested-loops-v1" width="160" height="80"></canvas></span><div><h2>The Double Descent</h2><p>Copper walls first. Crystal walls deeper in. Each opened layer releases another monster.</p><p class="nHint">The same maze, cores and two monsters in both chase choices. All three lives keep your progress.</p></div></div>
     </section>

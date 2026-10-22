@@ -74,7 +74,12 @@
   function openSettings(){focusBack=document.activeElement;settingsWasPaused=!!state?.paused;settingsOpen=true;if(active)setPaused(true);syncUI();}
   function closeSettings(){settingsOpen=false;if(active&&!state.awaitingReturn)setPaused(settingsWasPaused);syncUI();focusBack?.focus?.();}
   function selected(name,fallback){return document.querySelector('input[name="'+name+'"]:checked')?.value||fallback;}
-  function resetFeedback(){for(const id of ['nFeelFun','nFeelTense','nFeelUnfair'])$(id).checked=false;$('nFeedbackNote').value='';put('nFeedbackStatus','Stays here. Nothing is sent.');}
+  function resetFeedback(){for(const id of ['nFeelFun','nFeelTense','nFeelUnfair'])$(id).checked=false;$('nFeedbackNote').value='';$('nSavedMoment').value='';put('nFeedbackStatus','Stays here. Nothing is sent.');put('nSavedExportStatus','Download notes before trying another chase. Nothing is sent.');}
+  function downloadNotes(json,attempt,statusId){
+    const a=document.createElement('a'),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+    a.href=url;a.download='nether-'+attempt.pursuer+'-'+attempt.attemptId+'-notes.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);put(statusId,'Notes downloaded. Nothing was sent.');
+  }
   function renderPreviews(){
     const canvas=$('nPreview-nested-loops-v1'),c=canvas.getContext('2d');if(!c)return;
     const s=layout(),scale=4,ox=40;c.clearRect(0,0,160,80);
@@ -95,11 +100,14 @@
     for(const [id,key] of [['nDodge','dodge'],['nRoute','showRoute'],['nContrast','highContrast'],['nReducedMotion','reducedMotion']])$(id).addEventListener('change',()=>setPreferences({[key]:$(id).checked}));
     for(const id of ['nCameraWhole','nCameraClose'])$(id).addEventListener('change',()=>setPreferences({closeView:$('nCameraClose').checked}));
     $('nFeedback').addEventListener('submit',event=>event.preventDefault());
+    $('nSavedDownloadNotes').addEventListener('click',()=>{
+      const saved=savedAttempt(),json=exportSavedNotes({note:$('nSavedMoment').value});
+      if(!saved||!json){put('nSavedExportStatus','The saved adventure could not be read. Its data was left untouched.');return;}
+      downloadNotes(json,saved,'nSavedExportStatus');
+    });
     $('nDownloadNotes').addEventListener('click',()=>{
       const json=exportNotes({feeling:selected('nFeeling',''),note:$('nFeedbackNote').value});
-      const a=document.createElement('a'),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
-      a.href=url;a.download='nether-'+state.pursuer+'-'+state.attemptId+'-notes.json';a.click();
-      setTimeout(()=>URL.revokeObjectURL(url),1000);put('nFeedbackStatus','Notes downloaded. Nothing was sent.');
+      downloadNotes(json,state,'nFeedbackStatus');
     });
     window.addEventListener('blur',()=>{if(active)setPaused(true);});
     document.addEventListener('visibilitychange',()=>{if(active&&document.hidden)setPaused(true);});

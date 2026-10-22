@@ -7,7 +7,7 @@ for marker,file in [('MAPS','layout.js'),('ROUTE','route.js'),('UI','ui.js'),('D
  text=(s/file).read_text().split('// Omit this footer')[0]
  engine=engine.replace('  /* NETHER_'+marker+' */',text)
 result=base[:a]+engine+'\n\n'+base[b:]
-result=result.replace('tn.d2lab.','tn.d3trial.').replace('<title>Twenty Nights','<title>Two-Layer Trial · Twenty Nights')
+result=result.replace('tn.d2lab.','tn.d3trial2.').replace('<title>Twenty Nights','<title>Two-Layer Trial · Twenty Nights')
 markup=(s/'ui.html').read_text();parts={};matches=list(re.finditer(r'<!-- NETHER FRAGMENT: ([A-Z]+).*?-->',markup,re.S))
 for i,m in enumerate(matches):parts[m.group(1)]=markup[m.end():matches[i+1].start() if i+1<len(matches) else len(markup)].strip()
 for id,key,end in [('nHud','HUD','</header>'),('nHelp','GUIDANCE','</section>'),('title','TITLE','</section>'),('nSettings','SETTINGS','</section>'),('nReturn','RETURN','</section>'),('nEnd','END','</section>')]:

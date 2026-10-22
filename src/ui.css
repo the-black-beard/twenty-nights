@@ -48,6 +48,9 @@
 .nContinuePanel b{color:var(--n-teal);font-size:14px}
 .nContinuePanel p{font-size:12px;color:var(--n-muted);margin-top:3px}
 .nContinuePanel button{flex-shrink:0}
+.nSavedDetails{min-width:0;flex:1}.nSavedDetails label{display:block;margin:10px 0 4px;font-size:12px;font-weight:700;color:#d5e2d9}.nSavedDetails label span{font-weight:400;color:var(--n-muted)}
+.nSavedDetails textarea{display:block;box-sizing:border-box;width:100%;max-width:440px;min-height:52px;padding:8px 10px;border:1px solid #68827f;border-radius:8px;background:#10262b;color:#f6edda;font:inherit;resize:vertical}
+.nSavedActions{display:flex;flex-direction:column;gap:8px;align-items:stretch}.nSavedActions button{min-height:44px;white-space:normal}
 .nFieldset{min-width:0;margin:0;padding:0;border:0}
 .nFieldset legend{padding:0;font-size:15px;font-weight:850;margin-bottom:11px}
 .nStepTag{display:inline-block;color:var(--n-ember);font:700 10px var(--mono);margin-right:10px;vertical-align:1px}
@@ -122,7 +125,8 @@ body.nether-active{background:radial-gradient(ellipse at 50% 0,#283b40,transpare
 .nBoardLegend i{display:inline-block;width:9px;height:9px;border-radius:2px}
 .nLegendRefuge{background:#6fc9ce;border:1px solid #b0f2ea}
 .nLegendBrick{background:#cc8b6d;border:1px solid #ffd3ac}
-.nLegendVoid{background:repeating-linear-gradient(45deg,#b99acb 0 1px,#372545 1px 4px);border:1px solid #b99acb}
+.nLegendCrystal{background:#8b6bb2;border:1px solid #ddc2ff}
+.nLegendVoid{background:linear-gradient(135deg,#110e20 0 40%,#b99acb 42% 49%,#110e20 51% 100%);border:1px solid #b99acb}
 .nStorage{font-size:9px;color:#93aaa7;min-height:1.4em;margin-top:5px!important}
 .nStorage[data-state="error"]{color:#ffba9d}
 /* Paused, keyboard-operable dialogs. Root owns focus trap/restore and state. */

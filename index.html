@@ -605,7 +605,7 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
 
 <section id="nHelp" class="nUi hidden" aria-label="What to do next">
   <p id="nMessage" role="status" aria-live="polite">Find the golden pickaxe. Choose your way through.</p>
-  <div class="nBoardLegend" aria-label="Board legend"><span><i class="nLegendRefuge" aria-hidden="true"></i>Safe refuge</span><span><i class="nLegendBrick" aria-hidden="true"></i>1 · Copper wall</span><span><i class="nLegendVoid" aria-hidden="true"></i>2 · Crystal wall</span><span>Cracked purple floor · void</span></div>
+  <div class="nBoardLegend" aria-label="Board legend"><span><i class="nLegendRefuge" aria-hidden="true"></i>Safe refuge</span><span><i class="nLegendBrick" aria-hidden="true"></i>1 · Copper wall</span><span><i class="nLegendCrystal" aria-hidden="true"></i>2 · Crystal wall</span><span><i class="nLegendVoid" aria-hidden="true"></i>Cracked floor · void</span></div>
   <p id="nControlHint" class="nHint">Drag to move · tap a wall to mine · move to cancel</p>
   <p id="nStorage" class="nStorage" role="status"></p>
 </section>
@@ -632,7 +632,7 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
       <div class="nPortalMark" aria-hidden="true"><span class="nPortalCore"></span><span class="nPortalSpark nSparkOne"></span><span class="nPortalSpark nSparkTwo"></span><span class="nPortalStep"></span></div>
     </header>
     <div class="nRules" aria-label="Rules shared by every challenge"><span><b>3</b> lives</span><span>Keep what you earn</span><span>No countdown</span></div>
-    <div id="nContinuePanel" class="nContinuePanel hidden"><div><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p></div><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button></div>
+    <div id="nContinuePanel" class="nContinuePanel hidden"><div class="nSavedDetails"><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p><label for="nSavedMoment">One moment to remember <span>(optional)</span></label><textarea id="nSavedMoment" rows="2" maxlength="500" placeholder="The part where…"></textarea><p id="nSavedExportStatus" role="status">Download notes before trying another chase. Nothing is sent.</p></div><div class="nSavedActions"><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button><button id="nSavedDownloadNotes" class="nButton nButtonQuiet" type="button">Download notes for this adventure</button></div></div>
     <section class="nFieldset nMapFieldset" aria-label="Your fixed maze">
       <div class="nCombinedMap"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-nested-loops-v1" width="160" height="80"></canvas></span><div><h2>The Double Descent</h2><p>Copper walls first. Crystal walls deeper in. Each opened layer releases another monster.</p><p class="nHint">The same maze, cores and two monsters in both chase choices. All three lives keep your progress.</p></div></div>
     </section>
@@ -751,9 +751,9 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
 /* ═══════════════ 1 · CONSTANTS & STATE ═══════════════ */
 const SAFE_MODE = false;   /*SAFE_FLAG*/              // flipped by tools/build-artifact.js --safe
 const store = {                                        // localStorage that can never crash the game
-  get(k){ try{ return localStorage.getItem("tn.d3trial." + k); }catch(e){ return null; } },
-  set(k,v){ try{ localStorage.setItem("tn.d3trial." + k,v); }catch(e){} },
-  del(k){ try{ localStorage.removeItem("tn.d3trial." + k); }catch(e){} },
+  get(k){ try{ return localStorage.getItem("tn.d3trial2." + k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem("tn.d3trial2." + k,v); }catch(e){} },
+  del(k){ try{ localStorage.removeItem("tn.d3trial2." + k); }catch(e){} },
 };
 const TEST = new URLSearchParams(location.search).has("test")
           || location.hash === "#test"
@@ -4614,8 +4614,8 @@ function layout(){
     enemies:[{id:'grumble',name:'Grumble',layer:1,x:14,y:5},{id:'wobble',name:'Wobble',layer:2,x:8,y:11}]};
 }
 
-  const BUILD='TN-D3-01-2026-10-22-candidate-1';
-  const SAVE_KEY='tn.d3.combined.v1',PREF_KEY='tn.d3.combined.preferences.v1';
+  const BUILD='TN-D3-01-2026-10-22-candidate-2';
+  const SAVE_KEY='tn.d3.combined.v2',PREF_KEY='tn.d3.combined.preferences.v2';
   const HERO_SPEED=4.6,MINE_TIME=1.8;
   const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'}};
   const PURSUERS=[
@@ -4827,14 +4827,21 @@ function layout(){
     if(active&&state){state.preferences={...prefs};if(Object.keys(changed).length)state.settingChanges.push({time:state.elapsed,changed});persist();}
     try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(error){}syncUI();return preferences();
   }
-  function exportNotes(feedback={}){
+  function notesFor(attempt,feedback={},recordedAs=null){
     return JSON.stringify({game:'Twenty Nights — Combined Nether trial',version:3,build:BUILD,
       question:'Did opening the deeper wall make the chase exciting, or did it feel unfair?',
       trialDefaults:{layers:2,monsters:2,cores:2,lives:3,tool:'reusable tiers',heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
       comparison:'Same authored map, goals and roster. Chase package changes; this is not a pure speed comparison.',
-      attempt:state?{id:state.attemptId,startedAt:state.startedAt,layout:state.layout,pursuer:state.pursuer,status:state.status,lives:state.lives,upgrade:state.upgrade,cores:state.cores,breaches:state.breaches,losses:state.losses,events:state.events,
-        openings:state.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%20,y:Math.floor(i/20),tier:MATERIALS[scene.map[i]].tier}]:[]),
-        elapsed:Math.round(state.elapsed),initialPreferences:state.initialPreferences,preferences:state.preferences,settingChanges:state.settingChanges}:null,feedback},null,2);
+      attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,pursuer:attempt.pursuer,status:attempt.status,
+        recordedAs:recordedAs||(attempt.status==='won'?'escaped-on-foot':attempt.status==='lost'?'three-lives-used':'in-progress'),
+        lives:attempt.lives,upgrade:attempt.upgrade,cores:attempt.cores,breaches:attempt.breaches,losses:attempt.losses,events:attempt.events,
+        openings:attempt.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%20,y:Math.floor(i/20),tier:MATERIALS[scene.map[i]].tier}]:[]),
+        elapsed:Math.round(attempt.elapsed),initialPreferences:attempt.initialPreferences,preferences:attempt.preferences,settingChanges:attempt.settingChanges}:null,feedback},null,2);
+  }
+  function exportNotes(feedback={}){return notesFor(state,feedback);}
+  function exportSavedNotes(feedback={}){
+    const saved=savedAttempt();
+    return saved?notesFor(saved,feedback,saved.status==='playing'?'stopped-for-comparison':null):null;
   }
   function start(origin='practice',selection={}){
     const pursuer=PURSUERS.some(p=>p.id===selection.pursuer)?selection.pursuer:'goofy';
@@ -4922,7 +4929,12 @@ function layout(){
   function openSettings(){focusBack=document.activeElement;settingsWasPaused=!!state?.paused;settingsOpen=true;if(active)setPaused(true);syncUI();}
   function closeSettings(){settingsOpen=false;if(active&&!state.awaitingReturn)setPaused(settingsWasPaused);syncUI();focusBack?.focus?.();}
   function selected(name,fallback){return document.querySelector('input[name="'+name+'"]:checked')?.value||fallback;}
-  function resetFeedback(){for(const id of ['nFeelFun','nFeelTense','nFeelUnfair'])$(id).checked=false;$('nFeedbackNote').value='';put('nFeedbackStatus','Stays here. Nothing is sent.');}
+  function resetFeedback(){for(const id of ['nFeelFun','nFeelTense','nFeelUnfair'])$(id).checked=false;$('nFeedbackNote').value='';$('nSavedMoment').value='';put('nFeedbackStatus','Stays here. Nothing is sent.');put('nSavedExportStatus','Download notes before trying another chase. Nothing is sent.');}
+  function downloadNotes(json,attempt,statusId){
+    const a=document.createElement('a'),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+    a.href=url;a.download='nether-'+attempt.pursuer+'-'+attempt.attemptId+'-notes.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);put(statusId,'Notes downloaded. Nothing was sent.');
+  }
   function renderPreviews(){
     const canvas=$('nPreview-nested-loops-v1'),c=canvas.getContext('2d');if(!c)return;
     const s=layout(),scale=4,ox=40;c.clearRect(0,0,160,80);
@@ -4943,11 +4955,14 @@ function layout(){
     for(const [id,key] of [['nDodge','dodge'],['nRoute','showRoute'],['nContrast','highContrast'],['nReducedMotion','reducedMotion']])$(id).addEventListener('change',()=>setPreferences({[key]:$(id).checked}));
     for(const id of ['nCameraWhole','nCameraClose'])$(id).addEventListener('change',()=>setPreferences({closeView:$('nCameraClose').checked}));
     $('nFeedback').addEventListener('submit',event=>event.preventDefault());
+    $('nSavedDownloadNotes').addEventListener('click',()=>{
+      const saved=savedAttempt(),json=exportSavedNotes({note:$('nSavedMoment').value});
+      if(!saved||!json){put('nSavedExportStatus','The saved adventure could not be read. Its data was left untouched.');return;}
+      downloadNotes(json,saved,'nSavedExportStatus');
+    });
     $('nDownloadNotes').addEventListener('click',()=>{
       const json=exportNotes({feeling:selected('nFeeling',''),note:$('nFeedbackNote').value});
-      const a=document.createElement('a'),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
-      a.href=url;a.download='nether-'+state.pursuer+'-'+state.attemptId+'-notes.json';a.click();
-      setTimeout(()=>URL.revokeObjectURL(url),1000);put('nFeedbackStatus','Notes downloaded. Nothing was sent.');
+      downloadNotes(json,state,'nFeedbackStatus');
     });
     window.addEventListener('blur',()=>{if(active)setPaused(true);});
     document.addEventListener('visibilitychange',()=>{if(active&&document.hidden)setPaused(true);});
@@ -5157,7 +5172,7 @@ function drawNetherWorld(ctx,state,scene,prefs={}) {
     if(d){event.preventDefault();aim(Math.round(state.hero.x)+d[0],Math.round(state.hero.y)+d[1]);}
   }
 
-  return {start,enterFromWoods,view,aim,step,persist,resume,leave,replay,setPaused,draw,pointer,key,bindUI,isActive:()=>active,options,preferences,setPreferences,resumeRecovery,exportNotes,prepareWoods};
+  return {start,enterFromWoods,view,aim,step,persist,resume,leave,replay,setPaused,draw,pointer,key,bindUI,isActive:()=>active,options,preferences,setPreferences,resumeRecovery,exportNotes,exportSavedNotes,prepareWoods};
 })();
 
 
