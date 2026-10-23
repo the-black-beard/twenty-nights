@@ -2,7 +2,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const n=require('./harness').NetherTrial;
-const SAVE_KEY='tn.d4.rectangular.v1';
+const SAVE_KEY='tn.d5.storm.v1';
 const scene=()=>n.options().layouts[0];
 const at=(s,x,y)=>y*s.width+x;
 const pointCell=(s,p)=>at(s,p.x,p.y);
@@ -51,7 +51,7 @@ function arrive(x,y,maxSeconds=90){
 }
 function connectedFixture(mode='runner'){
   const state=launch(mode),s=scene();
-  state.upgrade=4;
+  state.upgrade=4;state.hammer.collected=true;
   for(const layer of s.layers)state.map[at(s,19,layer.y1)]='.';
   state.breaches=4;
   state.cores.forEach(core=>{core.collected=true;});
@@ -192,10 +192,10 @@ test('four-layer settings, HUD and notes report the actual totals without changi
   restoreFixture(connectedFixture('goofy'));const before=n.view();
   n.setPreferences({dodge:true,closeView:true,highContrast:true,reducedMotion:true});const after=n.view();
   for(const key of ['attemptId','map','lives','enemies','cores','upgrade'])assert.deepEqual(after[key],before[key]);
-  assert.equal(global.document.getElementById('nBeacons').textContent,'4/4 · Exit open');
+  assert.equal(global.document.getElementById('nBeacons').textContent,'4/4 · Portal ready');
   assert.match(global.document.getElementById('nThreat').textContent,/10\/10 awake/);
   const feedback={note:'Test fixture: fourth layer feedback.'},notes=JSON.parse(n.exportNotes(feedback));
-  assert.match(notes.build,/TN-D4/);assert.equal(notes.version,4);assert.equal(notes.attempt.layout,scene().id);
+  assert.match(notes.build,/TN-D5/);assert.equal(notes.version,5);assert.equal(notes.attempt.layout,scene().id);
   assert.equal(notes.trialDefaults.layers,4);assert.equal(notes.trialDefaults.monsters,10);assert.equal(notes.trialDefaults.cores,4);assert.equal(notes.trialDefaults.lives,3);
   assert.equal(notes.attempt.cores.length,4);assert.deepEqual(notes.attempt.openings.map(o=>o.tier),[1,2,3,4]);
   assert.equal(notes.attempt.settingChanges.at(-1).changed.dodge.to,true);assert.deepEqual(notes.feedback,feedback);

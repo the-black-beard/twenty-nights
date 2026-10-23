@@ -22,7 +22,7 @@ test('a stopped first chase offers its exact notes before the second chase repla
   assert.deepEqual(notes.attempt.events,a.events);
   assert.equal(notes.attempt.upgrade,1);
   assert.equal(notes.feedback.note,'PICK 1 made the route exciting.');
-  assert.match(notes.build,/rectangular-2$/);
+  assert.match(notes.build,/storm-hammer-1$/);
   const query=global.document.querySelector;
   global.document.querySelector=(selector)=>selector==='input[name="nPursuer"]:checked'?{value:'runner'}:query(selector);
   try{global.document.getElementById('nStart').click();}

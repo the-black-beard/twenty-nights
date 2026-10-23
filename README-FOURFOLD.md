@@ -1,3 +1,5 @@
+This document describes the preserved D4 checkpoint. For the current Storm Hammer revision, see `docs/nether/STORM-HAMMER.md` and `README-STORM-HAMMER.md`.
+
 # Fourfold Maze — playable rectangular Nether
 
 Open Fourfold-Maze.html in a browser. Offline, self-contained. Candidate 2 is ready for private playtesting; publication remains a separate step.

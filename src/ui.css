@@ -273,3 +273,25 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
 .nCombinedMap .nMapPreview canvas{aspect-ratio:45/37;height:auto;width:100%}
 .nCombinedMap{display:flex;gap:20px;align-items:center}.nCombinedMap .nMapPreview{width:200px;flex:none}.nCombinedMap h2{font-size:20px;margin:0 0 8px}.nCombinedMap p{margin:6px 0;line-height:1.5}
 @media(max-width:600px){.nCombinedMap{display:block}.nCombinedMap .nMapPreview{display:none}}
+
+/* Storm Hammer trial: controls remain beside the board on iPad. */
+.nMixedIcon{background:linear-gradient(90deg,#b86764 50%,#ce8b57 50%)}
+.nMixHint{margin-top:10px!important}
+.nPursuerCardBody .nRecommended{display:inline-block;margin:4px 0 0;font-size:8px}
+#nTool[data-material="copper"]{color:#ffd3ac;border-color:#dc986f;background:#493329}
+#nTool[data-material="crystal"]{color:#e7d4ff;border-color:#bd90e8;background:#382c4a}
+#nTool[data-material="iron"]{color:#d7f3ff;border-color:#8cc9e5;background:#233c49}
+#nTool[data-material="obsidian"]{color:#ffc6cc;border-color:#f0928e;background:#442d3c}
+#nRefuge[data-state="protected"]{color:#bcfff0;border-color:#8de0ce;background:#17473e}
+#nRefuge[data-state="recharging"],#nRefuge[data-state="spent"]{color:#ffcc9c;border-color:#a8744c;background:#3a2b28}
+.nHammerBar{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:8px 0 5px}
+.nHammerDetails{display:flex;flex-direction:column;gap:3px;min-width:0}
+.nHammerDetails b{font-size:12px;color:#d5eaff}
+.nHammerDetails span{font-size:10px;line-height:1.35;color:var(--n-muted)}
+.nHammerButton{flex:none;min-width:114px;min-height:48px;padding:10px 12px;background:#253f64;border-color:#7baee7;color:#e2f3ff;font-size:14px;touch-action:manipulation}
+.nHammerButton[data-ready="true"]{box-shadow:0 0 15px #6ca8f22b,0 3px 0 #11263e}
+.nHammerButton:disabled{opacity:.65}
+.nWoodsReward{width:100%;margin:0 0 14px;min-height:52px}
+.nether-active #cv{width:min(calc(100vw - 20px),calc(100dvh - 320px),640px);height:min(calc(100vw - 20px),calc(100dvh - 320px),640px)}
+@media(max-width:620px){.nHammerBar{gap:9px}.nHammerDetails b{font-size:11px}.nHammerDetails span{font-size:9px}.nHammerButton{min-width:104px;font-size:12px}}
+@media(max-height:540px) and (orientation:landscape){.nether-active #cv{width:min(calc(100dvh - 26px),calc(55vw - 22px),640px);height:min(calc(100dvh - 26px),calc(55vw - 22px),640px)}}
