@@ -8,7 +8,7 @@
     for(const id of ['top','bottom','actionRow','stage'])$(id).inert=!!current||setup;
     if(current!==lastModal){
       lastModal=current;
-      const target={nSettings:'nSettingsClose',nReturn:'nReturnContinue',nEnd:'nReplay'}[current];
+      const target={nSettings:'nSettingsClose',nReturn:'nReturnContinue',nEnd:state?.status==='won'?'nReturnWoods':'nReplay'}[current];
       if(target)$(target).focus?.();
     }
   }
@@ -43,11 +43,24 @@
     const lit=state.cores.filter(b=>b.collected).length,e=state.enemies.find(e=>e.released&&e.phase==='burst')||state.enemies.find(e=>e.released&&e.phase==='windup')||state.enemies.find(e=>e.released)||state.enemies[0];
     put('nMode',scene.name+' · '+PURSUERS.find(p=>p.id===state.pursuer).name+(state.origin==='woods'?' · After Night 20':''));
     put('nLives','♥'.repeat(state.lives)+'♡'.repeat(3-state.lives)+'  '+state.lives+'/3');$('nLives').setAttribute('aria-label',state.lives+' of 3 lives');
-    put('nTool',state.upgrade?'Pickaxe '+state.upgrade+'/4':'Pickaxe needed');put('nBeacons',lit===4?'4/4 · Exit open':lit+'/4 cores');
+    const toolName=['','Copper','Crystal','Iron','Obsidian'][state.upgrade];
+    put('nTool',toolName?toolName+' pickaxe':'Pickaxe needed');$('nTool').dataset.material=toolName.toLowerCase();
+    put('nBeacons',lit===4&&state.hammer.collected?'4/4 · Portal ready':lit+'/4 cores');
+    const h=state.hammer,face=h.faceY<0?'↑':h.faceY>0?'↓':h.faceX<0?'←':'→';
+    const faceName=h.faceY<0?'up':h.faceY>0?'down':h.faceX<0?'left':'right';
+    $('nHammer').disabled=!h.collected||h.cooldown>0||state.paused||state.awaitingReturn||state.status!=='playing';
+    put('nHammer',h.cooldown>0?'Ready in '+h.cooldown.toFixed(1)+'s':'Swing '+face);
+    $('nHammer').setAttribute('aria-label','Swing hammer '+faceName+(h.cooldown>0?', recharging':''));
+    $('nHammer').dataset.ready=String(h.collected&&h.cooldown<=0);
+    put('nHammerState',!h.collected?'Storm Hammer awaits at the centre':h.charged?'Lightning awakened!':'Storm Hammer · lightning asleep');
+    put('nHammerHint',h.collected?'Facing '+faceName+' '+face+' · one monster per swing · lightning wakes at the portal.':'Claim it at the centre. Carry it out to awaken its lightning.');
+    const refuge=state.refuge;
+    put('nRefuge',refuge.inside&&refuge.remaining>0&&refuge.cooldown<=0?'Shield '+Math.ceil(refuge.remaining)+'s':refuge.inside&&refuge.remaining<=0?'Shield spent · leave refuge':refuge.cooldown>0?'Refuge recharge '+Math.ceil(refuge.cooldown)+'s':'Refuge ready · 8s');
+    $('nRefuge').dataset.state=refuge.inside&&refuge.remaining>0&&refuge.cooldown<=0?'protected':refuge.inside&&refuge.remaining<=0?'spent':refuge.cooldown>0?'recharging':'ready';
     const released=state.enemies.filter(e=>e.released).length;
     const threat=!e.released?'All contained':e.wake>0?'Waking up':e.phase==='windup'?'Winding up!':e.phase==='burst'?'Rushing!':e.phase==='rest'?'Catching breath':'Hunting';
     put('nThreat',released+'/10 awake · '+(released&&state.elapsed%16>=12?'Patrolling · make an opening':state.pursuer==='goofy'&&released?'Goofy chase':threat));$('nThreat').dataset.state=!e.released?'contained':e.phase==='windup'?'warning':'hunting';
-    const stages=[state.upgrade>=1,state.upgrade===4,lit===4,state.status==='won'];let first=true;
+    const stages=[state.upgrade>=1,state.upgrade===4,lit===4&&state.hammer.collected,state.status==='won'];let first=true;
     ['nObjectiveTool','nObjectiveBreach','nObjectiveBeacons','nObjectiveExit'].forEach((id,i)=>{
       $(id).dataset.state=stages[i]?'done':first?'current':'waiting';if(!stages[i])first=false;
     });
@@ -55,18 +68,19 @@
     put('nPause',state.paused?'Resume':'Pause');put('nCameraToggle',prefs.closeView?'Overview':'Zoom');
     $('nCameraToggle').setAttribute('aria-pressed',String(prefs.closeView));
     $('nCameraToggle').setAttribute('aria-label',prefs.closeView?'Show the whole maze':'Zoom in on the board');
-    put('nControlHint','Drag or tap to move · tap a numbered wall to mine · touch cores to collect'+(prefs.dodge?' · Dodge on':''));
+    put('nControlHint','Drag or tap to move · match pickaxe and wall colour · Space or Swing to hit'+(prefs.dodge?' · Dodge on':''));
     put('nStorage',storageOK?'Autosaved on this browser.':'Saving unavailable — keep this tab open.');$('nStorage').dataset.state=storageOK?'ok':'error';
     if(state.awaitingReturn){
       put('nReturnTitle',state.lastLoss==='void'?'A fall. Another chance.':'Caught. Still in the game.');
-      put('nReturnLine',state.lastLoss==='void'?'Purple cracks mark the void. Your next route can go around it.':'Watch where the pursuer waits. The blue refuge gives you time to plan.');
+      put('nReturnLine',state.lastLoss==='void'?'Purple cracks mark the void. Your next route can go around it.':'Watch where the monsters wait. You have eight seconds of refuge protection after you continue.');
       put('nReturnLives','♥'.repeat(state.lives)+'♡'.repeat(3-state.lives)+' · '+state.lives+' lives left');
-      put('nReturnKept',(state.upgrade?'Pickaxe tier '+state.upgrade:'Pickaxe still to find')+' · '+state.breaches+' openings · '+lit+'/4 cores');
+      put('nReturnKept',(toolName?toolName+' pickaxe':'Pickaxe still to find')+' · '+state.breaches+' openings · '+lit+'/4 cores'+(state.hammer.collected?' · Storm Hammer':''));
     }
     if(state.status!=='playing'){
       $('nEnd').dataset.outcome=state.status;
-      put('nEndTitle',state.status==='won'?'You made it through.':'Three lives. One more idea?');
-      put('nEndLine',state.status==='won'?'Four cores carried through the exit on foot.':scene.hint);
+      $('nReturnWoods').classList.toggle('hidden',state.status!=='won');
+      put('nEndTitle',state.status==='won'?'The storm is yours.':'Three lives. One more idea?');
+      put('nEndLine',state.status==='won'?'You carried the hammer and four cores to the portal. Lightning has awakened. Take it into the woods!' :scene.hint);
       put('nEndStats',scene.name+' · '+PURSUERS.find(p=>p.id===state.pursuer).name+' · '+state.lives+' lives left · '+state.breaches+' openings · '+Math.round(state.elapsed)+'s played');
     }
     syncFocus();
@@ -84,11 +98,13 @@
     const canvas=$('nPreview-rectangular-descent-v1'),c=canvas.getContext('2d');if(!c)return;
     const s=layout(),scale=3,ox=(160-s.width*scale)/2,oy=(124-s.height*scale)/2;c.clearRect(0,0,160,124);
     for(let i=0;i<s.map.length;i++){c.fillStyle={'#':'#64747c',b:'#dc986f',c:'#bd90e8',d:'#8cc9e5',e:'#f0928e',v:'#b291dd','.':'#172d33'}[s.map[i]];c.fillRect(ox+(i%s.width)*scale,oy+Math.floor(i/s.width)*scale,scale,scale);}
-    for(const [p,color] of [[s.start,'#2c7be5'],[s.goal,'#7eefac'],...s.upgrades.map(p=>[p,'#ffe29b']),...s.cores.map(p=>[p,'#cafff3']),...s.enemies.map(p=>[p,'#ffb949'])]){c.fillStyle=color;c.fillRect(ox+p.x*scale,oy+p.y*scale,3,3);}
+    for(const [p,color] of [[s.start,'#2c7be5'],[s.goal,'#7eefac'],...s.upgrades.map(p=>[p,['','#dc986f','#bd90e8','#8cc9e5','#f0928e'][p.tier]]),...s.cores.map(p=>[p,'#cafff3']),...s.enemies.map(p=>[p,'#ffb949'])]){c.fillStyle=color;c.fillRect(ox+p.x*scale,oy+p.y*scale,3,3);}
   }
   function bindUI(){
-    $('nStart').addEventListener('click',()=>{audioInit();closeIntro();resetFeedback();start('practice',{pursuer:selected('nPursuer','goofy')});cv.focus?.();});
+    $('nStart').addEventListener('click',()=>{audioInit();closeIntro();resetFeedback();start('practice',{pursuer:selected('nPursuer','middle')});cv.focus?.();});
     $('nResume').addEventListener('click',()=>{audioInit();closeIntro();if(!resume())put('nTitleNote','The saved adventure could not be loaded. Choose a fresh challenge.');});
+    $('nHammer').addEventListener('click',()=>{audioInit();swingHammer();cv.focus?.();});
+    $('nReturnWoods').addEventListener('click',()=>{audioInit();returnToWoods();});
     $('nPause').addEventListener('click',()=>setPaused(!state.paused));
     for(const id of ['nSettingsOpen','nSetupSettings'])$(id).addEventListener('click',openSettings);
     for(const id of ['nSettingsClose','nSettingsDone'])$(id).addEventListener('click',closeSettings);

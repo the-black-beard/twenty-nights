@@ -17,3 +17,6 @@ Human playtest: try both on iPad, report favorite, unfair traps and chase pressu
 Git destination: `https://github.com/the-black-beard/twenty-nights.git`. Game source lives on feature/prototype branches; selected reviewed changes merge to `integration/nether`. Original `main` remains the woods baseline. Private Site Git tracks deployment output separately.
 
 The user approved the recommended Git workflow on 2026-10-23: commit and push tested changes, preserve alternatives and merge selected reviewed changes. Continue using Ask Matt for routing; publication and original-main advancement retain their documented scope and gates.
+
+
+Storm Hammer update: `/storm-hammer.html` is the new four-layer feedback revision described in `STORM-HAMMER.md`. `/compare.html` presents it first while preserving both prior games. Package all four generated HTML files after `python3 assemble.py`. The latest two modes with action-only full escape evidence are Middle rush and Goofy; physical iPad and music preference remain open for human feedback.

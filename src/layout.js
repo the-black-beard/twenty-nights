@@ -28,9 +28,11 @@ function layout(){
   perimeter(17,17,27,19,'.');
   for(const l of layers)perimeter(l.x1,l.y1,l.x2,l.y2,l.tile);
   // Refuge uses an existing corner loop, with two independently usable exits.
-  const refuge={x1:1,x2:3,y1:32,y2:35};
+  const refuge={x1:1,x2:1,y1:34,y2:34};
+  // A small refuge never seals the corner. This bypass also stays one cell wide.
+  map[at(2,33)]='.';map[at(3,34)]='.';
   return {...NETHER_LAYOUT_CATALOGUE[0],width,height,map,layers,
-    start:{x:1,y:34},goal:{x:43,y:1},refuge,refugeWait:{x:1,y:30},
+    hammer:{x:23,y:19},start:{x:1,y:34},goal:{x:43,y:1},refuge,refugeWait:{x:1,y:30},
     recoveryExits:[{x:1,y:31},{x:4,y:35}],
     upgrades:[{x:3,y:3,tier:1,label:'Copper pickaxe'},{x:37,y:7,tier:2,label:'Crystal pickaxe'},{x:11,y:25,tier:3,label:'Iron pickaxe'},{x:29,y:21,tier:4,label:'Obsidian pickaxe'}],
     cores:[{id:'ember',x:5,y:29,tier:1,label:'Ember core'},{id:'crystal',x:35,y:11,tier:2,label:'Crystal core'},{id:'iron',x:13,y:21,tier:3,label:'Iron core'},{id:'deep',x:23,y:19,tier:4,label:'Deep core'}],

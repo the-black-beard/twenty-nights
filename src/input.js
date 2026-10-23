@@ -63,7 +63,8 @@
       return;
     }
     if(event.target?.closest?.('button,input,textarea,select,[contenteditable="true"]'))return;
-    if(event.key===' '||event.key==='Escape'){event.preventDefault();setPaused(!state.paused);return;}
+    if(event.key===' '){event.preventDefault();if(!event.repeat){audioInit();swingHammer();}return;}
+    if(event.key==='Escape'||event.key==='p'||event.key==='P'){event.preventDefault();if(!event.repeat)setPaused(!state.paused);return;}
     const d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],a:[-1,0],s:[0,1],d:[1,0]}[event.key];
     if(d){event.preventDefault();aim(Math.round(state.hero.x)+d[0],Math.round(state.hero.y)+d[1]);}
   }

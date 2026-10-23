@@ -1,3 +1,5 @@
+Historical D4 request. The current authorized revision and Git/publication scope are recorded in `docs/nether/STORM-HAMMER.md`; the later user instructions supersede the no-Git sentence below.
+
 # Rectangular descent playable candidate
 
 Direct user request, 22 October 2026: more monsters, more layers, predominantly single-channel Pac-Man-like pathways like C1. User confirmed “do it” and “the layers do need to be rectangular”.

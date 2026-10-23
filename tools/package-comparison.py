@@ -17,6 +17,10 @@ def main():
         if hashlib.sha256(content).hexdigest() != expected:
             raise ValueError(f'Checkpoint hash mismatch: {filename}')
         (output / filename).write_bytes(content)
+    storm=(ROOT/'index.html').read_bytes()
+    if b'TN-D5-2026-10-23-storm-hammer-1' not in storm:
+        raise ValueError('Assemble the Storm Hammer candidate before packaging')
+    (output/'storm-hammer.html').write_bytes(storm)
     (output / 'compare.html').write_bytes((ROOT / 'web' / 'compare.html').read_bytes())
     print('Comparison packaged; both game hashes verified.')
 

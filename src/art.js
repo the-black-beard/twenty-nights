@@ -9,7 +9,42 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
   const ring=(x,y,r,color,width=2,start=0,end=Math.PI*2)=>{ctx.beginPath();ctx.arc(x,y,r,start,end);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();};
   const label=(value,x,y,color=pale,size=10)=>{ctx.font='bold '+size+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=3;ctx.strokeStyle=ink;ctx.strokeText(value,x,y);ctx.fillStyle=color;ctx.fillText(value,x,y);};
   const point=p=>({x:(p.x+.5)*T,y:(p.y+.5)*T});
+  const materialKeys=['b','c','d','e'];
+  // Repeat the same material mark on wall and tool, so colour is never the only clue.
+  function materialMark(key,x,y,scale=1,color=ink){
+    ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+    if(key==='b'){line([[-4,-2],[4,-2]],color,1.5);line([[-4,2],[4,2]],color,1.5);line([[0,-2],[0,2]],color,1.5);}
+    else if(key==='c')poly([[0,-5],[4,0],[0,5],[-4,0]],color);
+    else if(key==='d'){for(const dx of [-3,3])for(const dy of [-3,3])rect(dx-1,dy-1,2,2,color);}
+    else if(key==='e')line([[-4,4],[-1,-4],[1,4],[4,-4]],color,1.8);
+    ctx.restore();
+  }
+  function pickaxe(tier,x,y,scale=1,angle=-.4){
+    const key=materialKeys[tier-1]||'b', color=wallColors[key];
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale,scale);
+    rect(-3,-2,6,20,ink);rect(-2,-2,4,18,'#bc7f47');rect(-2,11,4,3,'#553b33');
+    const heads={b:[[-13,-8],[5,-11],[14,-4],[12,1],[4,-4],[-10,-2]],c:[[-14,-5],[-7,-13],[5,-12],[15,-3],[10,1],[3,-5],[-8,-2]],d:[[-14,-10],[8,-10],[14,-6],[14,1],[8,1],[7,-3],[-14,-3]],e:[[-15,-4],[-8,-13],[1,-9],[7,-13],[15,-3],[10,2],[3,-4],[-7,-2]]};
+    poly(heads[key],color,ink);line([[-9,-7],[3,-8],[10,-4]],'#fff3ed',1);
+    materialMark(key,0,-6,.65);ctx.restore();
+  }
+  function stormHammer(x,y,scale=1,angle=0,charged=false){
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale,scale);
+    rect(-4,-1,8,24,ink);rect(-2,-1,4,22,'#956841');
+    for(const yy of [4,9,14])line([[-2,yy],[2,yy+2]],'#e5b872',1.5);
+    poly([[-5,20],[0,25],[5,20],[0,17]],'#d6a757',ink);
+    poly([[-19,-16],[-13,-21],[-7,-17],[7,-17],[13,-21],[19,-16],[16,-2],[10,1],[-10,1],[-16,-2]],'#24354d',ink);
+    poly([[-15,-15],[-9,-17],[-7,-4],[-13,-3]],'#b8d8e6');
+    poly([[9,-17],[15,-15],[13,-3],[7,-4]],'#6b97ad');
+    line([[-12,-17],[-7,-14],[7,-14],[12,-17]],gold,2);
+    poly([[-6,-12],[0,-16],[6,-12],[5,-3],[0,0],[-5,-3]],charged?'#72d9fb':'#31506a','#81c3d8');
+    // A steady inlaid rune promises lightning; the uncharged hammer has no arcs.
+    poly([[1,-14],[-4,-7],[0,-7],[-1,-1],[5,-9],[1,-9]],charged?'#f3ffff':'#a0e1ed');
+    line([[-15,-3],[-10,0],[-5,0]],gold,1.5);line([[5,0],[10,0],[15,-3]],gold,1.5);
+    ctx.restore();
+  }
   const refuge=scene.refuge, safe=(x,y)=>x>=refuge.x1&&x<=refuge.x2&&y>=refuge.y1&&y<=refuge.y2;
+  const refugeState=state.refuge||{remaining:8,cooldown:0}, refugeActive=refugeState.remaining>0&&refugeState.cooldown<=0;
+  const hammer=state.hammer||{collected:false,charged:false,swing:0};
   ctx.save();ctx.lineJoin='round';ctx.lineCap='round';rect(0,0,cols*T,rows*T,'#201d29');
   const left=viewport?Math.max(0,Math.floor(viewport.x/T)):0, top=viewport?Math.max(0,Math.floor(viewport.y/T)):0;
   const right=viewport?Math.min(cols,Math.ceil((viewport.x+viewport.width)/T)):cols, bottom=viewport?Math.min(rows,Math.ceil((viewport.y+viewport.height)/T)):rows;
@@ -19,7 +54,7 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
     rect(px+3,py+3,T-6,1,'rgba(185,155,161,.08)');
     rect(px+6+grain,py+20+(grain%5),4,1,'rgba(206,179,162,.12)');
     if(safe(x,y)){
-      rect(px,py,T,T,(x+y)%2?'#205b65':'#1c505d');
+      rect(px,py,T,T,refugeActive?'#1c505d':'#343546');
       rect(px+5,py+5,22,1,'rgba(145,243,219,.12)');
     }
     if(tile==='#'){
@@ -32,7 +67,7 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
     }else if(tile==='c'){
       rect(px,py,T,T,'#322239');rect(px+2,py+2,28,28,hi?'#a185d1':'#67528b');
       poly([[px+3,py+4],[px+15,py+2],[px+29,py+11],[px+26,py+28],[px+12,py+30],[px+3,py+21]],'#8b6bb2','#3c2d52');
-      line([[px+5,py+7],[px+15,py+4],[px+26,py+12]],'#dbb7f6',2);label('2',px+16,py+17,'#fff0ff',10);
+      line([[px+5,py+7],[px+15,py+4],[px+26,py+12]],wallColors.c,2);materialMark('c',px+16,py+17,1,wallColors.c);
     }else if(tile==='b'){
       rect(px,py,T,T,'#3a2329');
       rect(px+1,py+2,30,13,hi?'#e78d62':'#a75845');
@@ -41,18 +76,18 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
       rect(px+3,py+18,26,2,'#b97157');
       rect(px+15,py+2,2,13,'#4b2a2c');rect(px+7,py+17,2,13,'#47282c');
       rect(px+29,py+3,2,11,'#6c3933');rect(px+29,py+18,2,11,'#61342f');
-      rect(px+12,py+10,9,12,'#482a2c');label('1',px+16,py+16,'#ffd59b',10);
+      rect(px+10,py+10,13,12,'#482a2c');materialMark('b',px+16,py+16,1,wallColors.b);
     }else if(tile==='d'){
       rect(px,py,T,T,'#26333f');rect(px+2,py+2,28,28,hi?'#a9bdc5':'#70868f');
       rect(px+4,py+4,24,3,'#bed3db');rect(px+4,py+9,24,17,'#4d6470');
       for(const dx of [5,25])for(const dy of [5,26]){rect(px+dx-1,py+dy-1,3,3,'#d8e5e8');rect(px+dx,py+dy,1,1,'#31404c');}
-      label('3',px+16,py+17,'#effaff',10);
+      materialMark('d',px+16,py+17,1,wallColors.d);
     }else if(tile==='e'){
       rect(px,py,T,T,'#321d30');rect(px+2,py+2,28,28,hi?'#c96683':'#7d3c59');
       poly([[px+3,py+5],[px+15,py+2],[px+29,py+6],[px+25,py+27],[px+14,py+30],[px+4,py+24]],'#4d2945','#bb5b79');
       line([[px+6,py+8],[px+16,py+4],[px+26,py+8]],'#f196a8',2);
       line([[px+6,py+24],[px+15,py+28],[px+25,py+24]],'#bf657b',2);
-      label('4',px+16,py+17,'#ffe2ed',10);
+      materialMark('e',px+16,py+17,1,wallColors.e);
     }else if(tile==='v'){
       rect(px,py,T,T,'#100c1f');rect(px+4,py+5,24,25,'#191029');
       const edge=hi?'#d2a4ff':'#a273d1';
@@ -65,12 +100,16 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
       line([[px+9,py+17],[px+13,py+19],[px+19,py+15]],'#58404a',1);
     }
   }
-  // A clean boundary and two escape arrows teach the safe region without prose.
+  // The refuge is one alcove: its rim drains with protection, then shows recharge.
   const rx=refuge.x1*T, ry=refuge.y1*T, rw=(refuge.x2-refuge.x1+1)*T, rh=(refuge.y2-refuge.y1+1)*T;
-  ctx.strokeStyle=teal;ctx.lineWidth=2;ctx.strokeRect(rx+2,ry+2,rw-4,rh-4);
-  for(const [x,y] of [[rx+2,ry+2],[rx+rw-6,ry+2],[rx+2,ry+rh-6],[rx+rw-6,ry+rh-6]])rect(x,y,4,4,teal);
-  label('SAFE',rx+rw/2,ry+rh-14,'#b6fff0',10);
-  for(const exit of scene.recoveryExits){
+  const refugeColor=refugeActive?teal:'#ad98c7', rcx=rx+rw/2, rcy=ry+rh/2;
+  ctx.strokeStyle=refugeColor;ctx.lineWidth=1.5;ctx.strokeRect(rx+2,ry+2,rw-4,rh-4);
+  ring(rcx,rcy,12,'#18333e',3);
+  const refugeFraction=refugeActive?Math.max(0,Math.min(1,refugeState.remaining/8)):Math.max(0,Math.min(1,1-refugeState.cooldown/15));
+  if(refugeFraction>0)ring(rcx,rcy,12,refugeColor,3,-Math.PI/2,-Math.PI/2+Math.PI*2*refugeFraction);
+  poly([[rcx-5,rcy-5],[rcx,rcy-7],[rcx+5,rcy-5],[rcx+4,rcy+2],[rcx,rcy+6],[rcx-4,rcy+2]],refugeActive?'#6bcbb8':'#665873');
+  if(!refugeActive)line([[rcx-2,rcy-3],[rcx+1,rcy-3],[rcx-1,rcy+1],[rcx+2,rcy+1]],'#ddcaef',1.5);
+  for(const exit of scene.recoveryExits||[]){
     const p=point(exit), north=exit.y<refuge.y1;
     if(north)line([[p.x-5,p.y+3],[p.x,p.y-3],[p.x+5,p.y+3]],teal,2);
     else line([[p.x-3,p.y-5],[p.x+3,p.y],[p.x-3,p.y+5]],teal,2);
@@ -81,31 +120,46 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
     line(path,'rgba(113,229,232,.6)',2);ctx.setLineDash([]);
   }
   if(prefs.showRoute&&state.target){const p=point(state.target);ring(p.x,p.y,8,'#b2ffff',2);rect(p.x-2,p.y-2,4,4,'#b2ffff');}
-  const unlocked=state.cores.every(c=>c.collected);
+  const unlocked=state.cores.every(c=>c.collected)&&(!scene.hammer||hammer.collected);
   for(const core of state.cores){
     const p=point(core);
+    if(scene.hammer&&core.x===scene.hammer.x&&core.y===scene.hammer.y){
+      if(hammer.collected){ring(p.x,p.y,10,'#607a72',1);line([[p.x-4,p.y],[p.x-1,p.y+3],[p.x+5,p.y-4]],'#91c8ad',2);}
+      else{
+        ctx.beginPath();ctx.ellipse(p.x,p.y+16,21,10,0,0,Math.PI*2);ctx.fillStyle='rgba(104,185,210,.16)';ctx.fill();
+        poly([[p.x-17,p.y+11],[p.x,p.y+5],[p.x+17,p.y+11],[p.x+14,p.y+20],[p.x-14,p.y+20]],'#3f4663',ink);
+        line([[p.x-13,p.y+13],[p.x,p.y+17],[p.x+13,p.y+13]],'#a0e1ed',1.5);
+        stormHammer(p.x,p.y-3+Math.sin(time*1.5)*1.2,1,0,false);
+      }
+      continue;
+    }
     if(core.collected){ring(p.x,p.y,9,'#607a72',1);line([[p.x-4,p.y],[p.x-1,p.y+3],[p.x+5,p.y-4]],'#91c8ad',2);continue;}
     ring(p.x,p.y,14,'rgba(157,255,217,.25)',2);
     poly([[p.x,p.y-14],[p.x+11,p.y],[p.x,p.y+14],[p.x-11,p.y]],'#baffde',ink);
     poly([[p.x,p.y-14],[p.x,p.y+14],[p.x+11,p.y]],'#53bbac');
     line([[p.x-5,p.y-3],[p.x,p.y-9],[p.x+3,p.y-5]],'#effff5',2);
-    label(String(core.tier),p.x,p.y+1,'#f4fff8',8);
   }
   const gp=point(scene.goal);
   ctx.beginPath();ctx.ellipse(gp.x,gp.y+11,15,7,0,0,Math.PI*2);ctx.fillStyle=unlocked?'#174d45':'#242e35';ctx.fill();
   ctx.beginPath();ctx.ellipse(gp.x,gp.y,12,16,0,0,Math.PI*2);ctx.fillStyle=unlocked?'#113c34':'#202c32';ctx.fill();ctx.strokeStyle=unlocked?'#98ffd0':'#69867c';ctx.lineWidth=3;ctx.stroke();
-  if(unlocked){ctx.beginPath();ctx.ellipse(gp.x,gp.y,7,11,0,0,Math.PI*2);ctx.strokeStyle='#3d9e7b';ctx.lineWidth=2;ctx.stroke();line([[gp.x-4,gp.y],[gp.x+3,gp.y],[gp.x,gp.y-4],[gp.x+4,gp.y],[gp.x,gp.y+4]],'#b8ffe0',2);}
+  if(unlocked){
+    ctx.beginPath();ctx.ellipse(gp.x,gp.y,7,11,0,0,Math.PI*2);ctx.strokeStyle='#72cae9';ctx.lineWidth=2;ctx.stroke();
+    for(let i=0;i<4;i++){
+      const a=i*Math.PI/2+time*.5, pulse=1+Math.sin(time*3+i)*.1;
+      const arcPoints=[[-.3,1],[-.14,1.16],[0,.88],[.17,1.13],[.32,1]].map(([da,r])=>[gp.x+Math.cos(a+da)*17*r*pulse,gp.y+Math.sin(a+da)*21*r*pulse]);
+      line(arcPoints,'#437aaf',4);line(arcPoints,'#d9faff',1.5);
+    }
+    poly([[gp.x+1,gp.y-11],[gp.x-5,gp.y-1],[gp.x,gp.y-1],[gp.x-2,gp.y+7],[gp.x+6,gp.y-4],[gp.x+1,gp.y-4]],'#eaffff');
+  }
   else{line([[gp.x-5,gp.y-2],[gp.x-5,gp.y-7],[gp.x+5,gp.y-7],[gp.x+5,gp.y-2]],'#bbcab6',2);rect(gp.x-7,gp.y-2,14,10,'#99a99b');rect(gp.x-1,gp.y+1,2,5,'#263a35');}
   label('EXIT',gp.x,gp.y+10,unlocked?'#b6ffdc':'#bac8bd',7);
   for(const upgrade of scene.upgrades){
     if(state.upgrade>=upgrade.tier)continue;
     const p=point(upgrade);ctx.beginPath();ctx.ellipse(p.x,p.y+9,17,8,0,0,Math.PI*2);ctx.fillStyle='rgba(237,186,76,.16)';ctx.fill();
-    ring(p.x,p.y,14,'#8b7040',1);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-.4);
-    rect(-3,-2,6,20,ink);rect(-2,-2,4,18,'#bc7f47');
-    poly([[-13,-8],[5,-11],[14,-4],[12,1],[4,-4],[-10,-2]],gold,ink);line([[-9,-7],[4,-8],[11,-4]],'#fff6c8',2);ctx.restore();
+    const materialColor=wallColors[materialKeys[upgrade.tier-1]]||gold;
+    ring(p.x,p.y,14,materialColor,1);pickaxe(upgrade.tier,p.x,p.y);
     const twinkle=prefs.reducedMotion?1:.7+Math.sin(time*2)*.3;
-    line([[p.x+21,p.y-13],[p.x+21,p.y-7]],'rgba(255,231,156,'+twinkle+')',1);line([[p.x+18,p.y-10],[p.x+24,p.y-10]],gold,1);
-    label(String(upgrade.tier),p.x+10,p.y+9,wallColors[['b','c','d','e'][upgrade.tier-1]],9);
+    ctx.save();ctx.globalAlpha=twinkle;line([[p.x+21,p.y-13],[p.x+21,p.y-7]],materialColor,1);line([[p.x+18,p.y-10],[p.x+24,p.y-10]],materialColor,1);ctx.restore();
   }
   if(state.mining){
     const m=state.mining, x=(m.cell%cols)*T,y=Math.floor(m.cell/cols)*T, amount=Math.max(0,Math.min(1,(m.progress||0)/1.8));
@@ -125,13 +179,16 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
   poly([[ep.x+5,ep.y-11],[ep.x+11,ep.y-19],[ep.x+12,ep.y-7]],rest?'#a48a82':'#d6afa0',ink);
   rect(ep.x-10,ep.y+10,7,5,'#3b263a');rect(ep.x+4,ep.y+10,7,5,'#3b263a');
   rect(ep.x-9,ep.y-6,18,8,'#302238');const eyes=burst?'#fff5d3':windup?'#ffe28b':rest?'#c19a96':'#ffbd99';
-  if(state.pursuer==='goofy'){
+  if((enemy.kind||state.pursuer)==='goofy'){
     for(const sign of [-1,1]){ctx.beginPath();ctx.ellipse(ep.x+sign*5,ep.y-3,4,enemyIndex%2?5:4,0,0,Math.PI*2);ctx.fillStyle='#fff9e8';ctx.fill();rect(ep.x+sign*5+(enemy.wrongTurn?1:-1),ep.y-4,2,3,ink);}
     line([[ep.x-7,ep.y-10],[ep.x-2,ep.y-8]],ink,2);line([[ep.x+2,ep.y-8],[ep.x+7,ep.y-10]],ink,2);
     line([[ep.x-4,ep.y+5],[ep.x,ep.y+(enemyIndex%3===0?3:8)],[ep.x+5,ep.y+5]],ink,2);
     if(enemyIndex%3===2)rect(ep.x+1,ep.y+5,3,4,'#fff8de');
   }else{rect(ep.x-7,ep.y-4,5,rest?2:4,eyes);rect(ep.x+3,ep.y-4,5,rest?2:4,eyes);line([[ep.x-3,ep.y+6],[ep.x+3,ep.y+5]],'#ffd0b0',1);}
-  label(!enemy.released?'Z':windup?'!':String(enemy.layer),ep.x,ep.y-26,windup?gold:pale,9);
+  if(enemy.stun>0){
+    for(let s=0;s<3;s++){const a=s*Math.PI*2/3+time*2, sx=ep.x+Math.cos(a)*12,sy=ep.y-18+Math.sin(a)*3;line([[sx-2,sy],[sx+2,sy]],gold,1.5);line([[sx,sy-2],[sx,sy+2]],gold,1.5);}
+  }else if(!enemy.released||windup)label(!enemy.released?'Z':'!',ep.x,ep.y-26,windup?gold:pale,9);
+  else if((enemy.kind||state.pursuer)==='runner')line([[ep.x-6,ep.y-23],[ep.x-1,ep.y-26],[ep.x-3,ep.y-21],[ep.x+4,ep.y-25]],'#ffb58a',1.5);
   }
   const enemy=state.enemies.find(e=>e.released)||state.enemies[0];
   // Match the main game's Steve: bright-blue rounded body, brow, expressive eyes.
@@ -154,7 +211,13 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
     ctx.beginPath();ctx.arc(ex,ey,2.5,0,Math.PI*2);ctx.fillStyle='#11131a';ctx.fill();
     ctx.beginPath();ctx.arc(ex-.8,ey-.9,.75,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
   }
-  if(state.upgrade){rect(hp.x+10,hp.y-3,4,17,ink);rect(hp.x+11,hp.y-3,2,15,'#c08e50');poly([[hp.x+5,hp.y-7],[hp.x+14,hp.y-9],[hp.x+20,hp.y-4],[hp.x+18,hp.y],[hp.x+13,hp.y-4],[hp.x+6,hp.y-2]],wallColors[['b','c','d','e'][state.upgrade-1]]||gold,ink);}
+  if(hammer.collected){
+    if(hammer.swing>0){
+      const fx=Number.isFinite(hammer.faceX)?hammer.faceX:1, fy=Number.isFinite(hammer.faceY)?hammer.faceY:0, a=Math.atan2(fy,fx), phase=Math.max(0,Math.min(1,hammer.swing/.24));
+      ring(hp.x,hp.y,27,'rgba(241,225,192,.7)',3,a-.5,a+.5);
+      stormHammer(hp.x+Math.cos(a)*19,hp.y+Math.sin(a)*19,.72,a+Math.PI/2+(prefs.reducedMotion?0:(phase-.5)*.7),hammer.charged);
+    }else stormHammer(hp.x+15,hp.y+1,.62,-.3,hammer.charged);
+  }else if(state.upgrade)pickaxe(state.upgrade,hp.x+13,hp.y-2,.68,-.1);
   ctx.restore();
 }
 
