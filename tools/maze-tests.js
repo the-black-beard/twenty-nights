@@ -2,7 +2,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const n=require('./harness').NetherTrial;
-const SAVE_KEY='tn.d6.comparison.v1';
+const SAVE_KEY='tn.d7.shapes.v1';
 const scene=()=>n.options().layouts[0];
 const at=(s,x,y)=>y*s.width+x;
 const pointCell=(s,p)=>at(s,p.x,p.y);
@@ -195,7 +195,7 @@ test('four-layer settings, HUD and notes report the actual totals without changi
   assert.equal(global.document.getElementById('nBeacons').textContent,'4/4 · Portal ready');
   assert.match(global.document.getElementById('nThreat').textContent,/10\/10 awake/);
   const feedback={note:'Test fixture: fourth layer feedback.'},notes=JSON.parse(n.exportNotes(feedback));
-  assert.match(notes.build,/TN-D6/);assert.equal(notes.version,6);assert.equal(notes.attempt.layout,scene().id);
+  assert.match(notes.build,/TN-D7/);assert.equal(notes.version,7);assert.equal(notes.attempt.layout,scene().id);
   assert.equal(notes.trialDefaults.layers,4);assert.equal(notes.trialDefaults.monsters,10);assert.equal(notes.trialDefaults.cores,4);assert.equal(notes.trialDefaults.lives,3);
   assert.equal(notes.attempt.cores.length,4);assert.deepEqual(notes.attempt.openings.map(o=>o.tier),[1,2,3,4]);
   assert.equal(notes.attempt.settingChanges.at(-1).changed.dodge.to,true);assert.deepEqual(notes.feedback,feedback);

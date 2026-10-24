@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const game=require('./harness'),n=game.NetherTrial;
-const KEY='tn.d6.comparison.v1',scene=n.options().layouts[0];
+const KEY='tn.d7.shapes.v1',scene=n.options().layouts[0];
 const tick=s=>{for(let i=0;i<Math.ceil(s/.05);i++)n.step(.05);};
 function restore(s){global.localStorage.setItem(KEY,JSON.stringify(s));assert.equal(n.resume(),true,'synthetic Continue fixture accepted');n.setPaused(false);}
 function openScenario(){

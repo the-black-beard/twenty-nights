@@ -1,9 +1,9 @@
 /* A D-minor descent: a steady tablet-speaker beat acquires shadows and
-   syncopation as the hero physically enters each rectangular layer. */
+   syncopation as the hero physically enters each physical maze layer. */
   const netherScore={context:null,master:null,noise:null,voices:new Set(),playing:false,next:0,step:0,bpm:80};
   function netherMusicStage(){
     const h=state?.hero;
-    const depth=h?scene.layers.filter(l=>h.x>l.x1&&h.x<l.x2&&h.y>l.y1&&h.y<l.y2).length:0;
+    const depth=h?(scene.depth?.[idx(Math.round(h.x),Math.round(h.y))]??scene.layers.filter(l=>h.x>l.x1&&h.x<l.x2&&h.y>l.y1&&h.y<l.y2).length):0;
     const escape=!!state?.hammer?.collected;
     return {depth,bpm:80+depth*12+(escape?8:0),escape};
   }

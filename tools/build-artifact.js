@@ -32,7 +32,7 @@ for (const bad of ["<!doctype", "<html", "<head>", "</head>", "<body>", "</body>
 for (const bad of ['property="og:', 'name="twitter:', 'rel="apple-touch-icon"',
                    'mobile-web-app-capable', 'name="theme-color"', 'rel="icon"'])
   if (s.includes(bad)) throw new Error("meta left behind: " + bad);
-if (!s.includes("<title>Comparison Lab · Twenty Nights</title>")) throw new Error("lost the trial title");
+if (!s.includes("<title>Maze Shapes · Twenty Nights</title>")) throw new Error("lost the trial title");
 
 // --safe: no clipboard writes, no <input>, no <textarea>. Same game otherwise.
 if (process.argv.includes("--safe")){

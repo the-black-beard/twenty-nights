@@ -350,3 +350,36 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
   .nGestureGuide p{font-size:11px}.nCustomGrid{gap:11px;padding:12px}.nCustomGrid label,.nCustomGrid select{font-size:11px}.nCustomChoices>summary span{font-size:9px;margin-left:5px}
 }
 @media(max-width:380px){.nCustomGrid{grid-template-columns:1fr}.nVariantTag{font-size:7px}.nVariantCard strong{font-size:15px}.nVariantArt{height:67px}.nVariantHeader{gap:5px}}
+
+/* Maze-shape comparison: previews show the complete playable geometry. */
+.nShapeLab .nPairChoices{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.nShapeLab .nPairChoice{justify-content:flex-start;gap:13px;padding:12px 16px;text-align:left;font-size:15px}
+.nShapeLab .nPairChoice>span:first-child{font-size:28px}
+.nShapeLab .nPairChoice>span+span{font-size:15px;line-height:1.35;color:inherit}
+.nShapeLab .nPairChoice small{display:block;margin-top:3px;font-size:10px;font-weight:500;color:var(--n-muted)}
+.nShapeLab .nComparisonCards{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.nShapeLab .nVariantCard{padding:12px;border-radius:14px}
+.nShapeLab .nVariantArt{width:100%;height:auto;aspect-ratio:45/37;max-width:none;margin:12px 0;background:#10262e;border:1px solid #63817f;border-radius:5px;overflow:hidden}
+.nShapeLab .nVariantArt svg{display:block;width:100%;height:100%;overflow:visible}
+.nShapeLab .nVariantCard strong{font-size:19px}
+.nShapeLab .nVariantDescription{font-size:12px;max-width:none}
+.nShapeLab .nVariantTag{font-size:10px;line-height:1.3}
+.nMapPreviewLegend{display:flex;justify-content:center;gap:8px 19px;flex-wrap:wrap;margin:12px 0!important;font-size:11px;color:var(--n-muted)}
+.nMapPreviewLegend span{display:inline-flex;align-items:center;gap:5px}
+.nMapPreviewLegend b{font-size:17px;font-weight:700;line-height:1}
+.nPreviewHero{color:#85c4ff}.nPreviewPick{color:#dc986f}.nPreviewCore{color:#b4fff1}.nPreviewMonster{color:#ffca64}.nPreviewPortal{color:#6bcba9}
+.nComparisonFairness{font-size:11px;color:#b5cac5;line-height:1.55;margin:14px 0 0!important;max-width:760px}
+.nMazeRules h2{font-size:20px;margin:0 0 11px}.nMazeRules p{font-size:12px;line-height:1.6;margin:7px 0}
+.nPreviousLab{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px;margin:20px 0 0;border:1px solid #4a6b6b;border-radius:12px;background:#152b31}
+.nPreviousLab b{font-size:13px;color:var(--n-teal)}.nPreviousLab p{font-size:11px;color:var(--n-muted);line-height:1.5;margin-top:4px;max-width:370px}
+.nPreviousLab a{font-size:12px;flex:none;max-width:260px}
+@media(max-width:760px){.nShapeLab .nVariantCard{padding:10px}.nShapeLab .nVariantHeader{gap:5px}.nShapeLab .nVariantTag{font-size:9px}.nShapeLab .nVariantCard strong{font-size:16px}.nShapeLab .nVariantDescription{font-size:11px}}
+@media(max-width:620px){
+  .nShapeLab .nPairChoices{gap:8px}.nShapeLab .nPairChoice{flex-direction:row;padding:10px;gap:8px;min-height:70px}.nShapeLab .nPairChoice>span+span{font-size:13px}.nShapeLab .nPairChoice small{font-size:9px}.nShapeLab .nTrialBadge{font-size:13px}
+  .nShapeLab .nComparisonCards{grid-template-columns:1fr;gap:10px}
+  .nShapeLab .nVariantCard{display:grid;grid-template-columns:43% minmax(0,1fr);gap:6px 13px;padding:12px;align-items:start}
+  .nShapeLab .nVariantArt{grid-column:1;grid-row:1/4;margin:0;align-self:center}
+  .nShapeLab .nVariantHeader{grid-column:2;grid-row:1}.nShapeLab .nVariantCard strong{grid-column:2;grid-row:2;font-size:18px;margin:0}.nShapeLab .nVariantDescription{grid-column:2;grid-row:3;font-size:11px}.nShapeLab .nVariantTag{font-size:9px}
+  .nMapPreviewLegend{gap:7px 13px;font-size:10px}.nPreviousLab{align-items:stretch;flex-direction:column;gap:12px;padding:13px}.nPreviousLab a{max-width:none}.nComparisonFairness{font-size:10px}
+}
+@media(max-width:380px){.nShapeLab .nVariantCard{grid-template-columns:41% minmax(0,1fr);gap:5px 9px;padding:10px}.nShapeLab .nVariantCard strong{font-size:16px}.nShapeLab .nVariantDescription{font-size:10px}.nShapeLab .nVariantTag{font-size:8px}.nShapeLab .nPairChoice>span:first-child{font-size:22px}}
