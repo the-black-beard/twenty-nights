@@ -295,3 +295,58 @@ body.nReducedMotion .nUi *,body.nReducedMotion .nUi *:before,body.nReducedMotion
 .nether-active #cv{width:min(calc(100vw - 20px),calc(100dvh - 320px),640px);height:min(calc(100vw - 20px),calc(100dvh - 320px),640px)}
 @media(max-width:620px){.nHammerBar{gap:9px}.nHammerDetails b{font-size:11px}.nHammerDetails span{font-size:9px}.nHammerButton{min-width:104px;font-size:12px}}
 @media(max-height:540px) and (orientation:landscape){.nether-active #cv{width:min(calc(100dvh - 26px),calc(55vw - 22px),640px);height:min(calc(100dvh - 26px),calc(55vw - 22px),640px)}}
+
+/* Comparison lab: one visible pair, with extra dials kept behind a disclosure. */
+.nUi select{font:inherit;color:var(--n-ink);background:#10262b;border:1px solid #68827f;border-radius:9px;min-height:44px;padding:9px 30px 9px 10px;max-width:100%;touch-action:manipulation}
+.nUi select:focus-visible{outline:3px solid var(--n-focus);outline-offset:3px}
+.nSavedDetails select{display:block;width:100%;margin:5px 0 8px;font-size:12px}
+.nLab{margin-bottom:26px}
+.nLabHeading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.nLabHeading h2{font-size:25px;letter-spacing:-.025em;margin-top:3px}
+.nTrialBadge{border:1px solid #627d79;border-radius:9px;padding:8px 11px;font-size:17px;font-weight:900;letter-spacing:.08em;color:var(--n-teal);background:#1b3439}
+.nPairChoices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.nPairChoice{display:flex;justify-content:center;align-items:center;gap:8px;min-height:48px;padding:9px 8px;background:#172b32;border:1px solid var(--n-line);border-radius:11px;color:var(--n-muted);font-size:12px;font-weight:800;line-height:1.2;touch-action:manipulation}
+.nPairChoice>span{font-size:21px;line-height:1;color:#a6c9c2}
+.nPairChoice[aria-pressed="true"]{background:#294b48;color:#e0ffef;border-color:#8de0ce;box-shadow:inset 0 -2px 0 #8de0ce}
+.nPairChoice[aria-pressed="true"]>span{color:#b8f4df}
+.nPairQuestion{font-size:15px;font-weight:800;margin:18px 0 12px!important;color:#f5e4cc}
+.nComparisonCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nVariantCard{display:flex;flex-direction:column;align-items:stretch;min-width:0;padding:15px 17px 17px;border:2px solid #425c60;border-radius:17px;background:linear-gradient(150deg,#213740,#182b32);color:var(--n-ink);text-align:left;touch-action:manipulation}
+.nVariantCard[aria-pressed="true"]{border-color:var(--n-ember);background:linear-gradient(150deg,#3c3a32,#242e30);box-shadow:0 0 0 2px #f3ac7517}
+.nVariantHeader{display:flex;align-items:center;gap:8px;width:100%;font-size:10px;color:var(--n-muted)}
+.nLetter{display:grid;place-items:center;width:25px;height:25px;border-radius:7px;background:#38565c;color:#e3f5e7;font-size:14px;font-weight:900}
+.nVariantCard[aria-pressed="true"] .nLetter{color:#342a21;background:var(--n-ember)}
+.nVariantTag{flex:1;font-size:10px;font-weight:700}
+.nVariantTick{visibility:hidden;font-size:19px;line-height:1;color:var(--n-ember)}
+.nVariantCard[aria-pressed="true"] .nVariantTick{visibility:visible}
+.nVariantArt{display:block;align-self:center;width:min(190px,100%);height:95px;margin:7px 0 10px}
+.nVariantArt svg{display:block;width:100%;height:100%;overflow:visible}
+.nVariantCard strong{display:block;font-size:19px;letter-spacing:-.02em;line-height:1.2;margin-bottom:8px}
+.nVariantDescription{display:block;font-size:12px;line-height:1.5;color:#c6d4ce;max-width:320px}
+.nExperimentHint{display:flex;align-items:center;gap:12px;background:#132930;border:1px solid #3c575a;border-radius:11px;margin-top:12px;padding:11px 14px}
+.nExperimentHint>span{font-size:25px;color:var(--n-teal)}
+.nExperimentHint b{font-size:12px;color:#b5e5d6}.nExperimentHint p{font-size:12px;color:var(--n-muted);margin-top:3px}
+.nLab .nLaunchRow{margin-top:16px}
+.nLab .nLaunchRow .nButtonPrimary{min-width:250px}
+.nGestureGuide{display:flex;align-items:center;gap:13px;padding:12px 0 16px;margin-top:6px;color:var(--n-muted)}
+.nGestureGuide>span{display:grid;place-items:center;flex:none;width:39px;height:39px;font-size:23px;color:var(--n-teal);border:1px dashed #6b9890;border-radius:11px}
+.nGestureGuide p{font-size:12px;line-height:1.5}.nGestureGuide b{color:#d6e8de}
+.nCustomChoices{border:1px solid #466062;border-radius:12px;background:#14282e;overflow:hidden}
+.nCustomChoices>summary{padding:13px 15px;min-height:46px;font-size:13px;font-weight:800;cursor:pointer;touch-action:manipulation}
+.nCustomChoices>summary span{margin-left:12px;font-size:10px;font-weight:500;color:var(--n-muted)}
+.nCustomChoices[open]>summary{border-bottom:1px solid #3b5155}
+.nCustomGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;padding:15px}
+.nCustomGrid label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#c6d8d1}
+.nCustomGrid select{width:100%;font-size:12px;white-space:normal}
+.nCustomGrid>.nButton{align-self:end;min-height:44px}
+.nCustomChoices>.nHint{padding:0 15px 15px}
+.nMapFieldset{padding-top:20px;border-top:1px solid var(--n-line)}
+.nCombinedMap h2{font-size:17px}.nCombinedMap p{font-size:12px}
+@media(max-width:620px){
+  .nLabHeading h2{font-size:22px}.nPairChoices{gap:5px}.nPairChoice{flex-direction:column;gap:5px;font-size:10px;padding:8px 4px;min-height:65px}.nPairChoice>span{font-size:20px}
+  .nPairQuestion{font-size:14px;margin-top:15px!important}.nComparisonCards{gap:8px}.nVariantCard{padding:12px 11px;border-radius:13px}.nVariantArt{height:80px;margin:5px 0 9px}
+  .nVariantCard strong{font-size:16px}.nVariantDescription{font-size:11px}.nVariantTag{font-size:8px}.nLetter{width:23px;height:23px}.nVariantTick{font-size:15px}
+  .nExperimentHint{padding:10px;gap:9px}.nExperimentHint b,.nExperimentHint p{font-size:11px}.nLab .nLaunchRow .nButtonPrimary{min-width:0}
+  .nGestureGuide p{font-size:11px}.nCustomGrid{gap:11px;padding:12px}.nCustomGrid label,.nCustomGrid select{font-size:11px}.nCustomChoices>summary span{font-size:9px;margin-left:5px}
+}
+@media(max-width:380px){.nCustomGrid{grid-template-columns:1fr}.nVariantTag{font-size:7px}.nVariantCard strong{font-size:15px}.nVariantArt{height:67px}.nVariantHeader{gap:5px}}

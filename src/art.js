@@ -1,4 +1,4 @@
-/* World-only art: 32px cells, no camera/DOM/global game helpers or external art. */
+/* World-only art: 32px cells, no camera/DOM or external art. */
 function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
   const T=32, cols=scene.width, rows=scene.height, hi=!!prefs.highContrast, time=prefs.reducedMotion?0:(state.elapsed||0);
   const wallColors={b:'#d28b5d',c:'#c29be9',d:'#b7d1d8',e:'#f18a9e'};
@@ -99,6 +99,13 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
       rect(px+3,py+25,3,3,'#b27457');rect(px+25,py+4,4,3,'#b27457');
       line([[px+9,py+17],[px+13,py+19],[px+19,py+15]],'#58404a',1);
     }
+    if(wallColors[tile]&&state.trial?.weakSpots&&typeof isWeakSpot==='function'&&isWeakSpot(i)){
+      // A lit fault beside the material mark: the wall still reads as its material.
+      const crack=[[px+23,py+3],[px+20,py+10],[px+25,py+15],[px+21,py+22],[px+23,py+29]];
+      line(crack,ink,4.5);line(crack,wallColors[tile],2.5);line(crack,'#fff4cf',1.1);
+      line([[px+21,py+22],[px+15,py+25]],ink,3);
+      line([[px+21,py+22],[px+15,py+25]],'#fff4cf',1);
+    }
   }
   // The refuge is one alcove: its rim drains with protection, then shows recharge.
   const rx=refuge.x1*T, ry=refuge.y1*T, rw=(refuge.x2-refuge.x1+1)*T, rh=(refuge.y2-refuge.y1+1)*T;
@@ -162,7 +169,8 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
     ctx.save();ctx.globalAlpha=twinkle;line([[p.x+21,p.y-13],[p.x+21,p.y-7]],materialColor,1);line([[p.x+18,p.y-10],[p.x+24,p.y-10]],materialColor,1);ctx.restore();
   }
   if(state.mining){
-    const m=state.mining, x=(m.cell%cols)*T,y=Math.floor(m.cell/cols)*T, amount=Math.max(0,Math.min(1,(m.progress||0)/1.8));
+    const m=state.mining, x=(m.cell%cols)*T,y=Math.floor(m.cell/cols)*T;
+    const duration=typeof miningSeconds==='function'?miningSeconds(m.cell):1.8, amount=Math.max(0,Math.min(1,(m.progress||0)/duration));
     ctx.strokeStyle=gold;ctx.lineWidth=2;ctx.strokeRect(x+1,y+1,30,30);
     if(amount>0){line([[x+17,y+5],[x+13,y+14],[x+20,y+18],[x+14,y+28]],'#f8d3a6',2);line([[x+13,y+14],[x+6,y+11]],'#f8d3a6',1);}
     rect(x+2,y+26,28,4,ink);rect(x+2,y+26,28*amount,4,gold);
@@ -172,7 +180,7 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
   const ep=point(enemy), windup=enemy.phase==='windup', burst=enemy.phase==='burst', rest=enemy.phase==='rest';
   shadow(ep,14);
   if(windup||enemy.wake>0){ring(ep.x,ep.y,21,windup?'#ffdc82':'#e9b4dc',2);ring(ep.x,ep.y,25,'rgba(255,220,130,.3)',1);for(const dx of [-1,1])line([[ep.x+dx*27,ep.y-4],[ep.x+dx*31,ep.y],[ep.x+dx*27,ep.y+4]],'#ffdc82',2);}
-  if(burst){const dx=state.hero.x-enemy.x,dy=state.hero.y-enemy.y,d=Math.max(.1,Math.hypot(dx,dy));for(let i=-1;i<=1;i++)line([[ep.x-dx/d*17-dy/d*i*5,ep.y-dy/d*17+dx/d*i*5],[ep.x-dx/d*26-dy/d*i*5,ep.y-dy/d*26+dx/d*i*5]],'#e49a78',2);}
+  if(burst){const next=enemy.path?.[0], target=next===undefined?state.hero:{x:next%cols,y:Math.floor(next/cols)},dx=target.x-enemy.x,dy=target.y-enemy.y,d=Math.max(.1,Math.hypot(dx,dy));for(let i=-1;i<=1;i++)line([[ep.x-dx/d*17-dy/d*i*5,ep.y-dy/d*17+dx/d*i*5],[ep.x-dx/d*26-dy/d*i*5,ep.y-dy/d*26+dx/d*i*5]],'#e49a78',2);}
   const body=enemy.released?['#efac45','#ef8b74','#bdd65b','#ed8bc5'][(enemy.layer-1)%4]:'#736174';
   poly([[ep.x-11,ep.y+10],[ep.x-14,ep.y-3],[ep.x-10,ep.y-13],[ep.x-4,ep.y-11],[ep.x+4,ep.y-12],[ep.x+12,ep.y-8],[ep.x+14,ep.y+7],[ep.x+9,ep.y+13]],body,ink);
   poly([[ep.x-10,ep.y-10],[ep.x-12,ep.y-20],[ep.x-3,ep.y-12]],rest?'#a48a82':'#d6afa0',ink);
@@ -184,6 +192,11 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
     line([[ep.x-7,ep.y-10],[ep.x-2,ep.y-8]],ink,2);line([[ep.x+2,ep.y-8],[ep.x+7,ep.y-10]],ink,2);
     line([[ep.x-4,ep.y+5],[ep.x,ep.y+(enemyIndex%3===0?3:8)],[ep.x+5,ep.y+5]],ink,2);
     if(enemyIndex%3===2)rect(ep.x+1,ep.y+5,3,4,'#fff8de');
+  }else if(rest&&state.trial?.brain==='committed'){
+    // The runner has lost the trail, not its speed. Keep the joke in its face.
+    for(const sign of [-1,1]){ctx.beginPath();ctx.ellipse(ep.x+sign*5,ep.y-3,3.5,4.5,sign*.15,0,Math.PI*2);ctx.fillStyle='#fff9e8';ctx.fill();rect(ep.x+sign*3-1,ep.y-4,2,3,ink);}
+    line([[ep.x-8,ep.y-10],[ep.x-3,ep.y-9]],ink,1.5);line([[ep.x+3,ep.y-10],[ep.x+7,ep.y-12]],ink,1.5);
+    line([[ep.x-4,ep.y+5],[ep.x,ep.y+7],[ep.x+5,ep.y+4]],ink,2);rect(ep.x+1,ep.y+5,2,3,'#fff8de');
   }else{rect(ep.x-7,ep.y-4,5,rest?2:4,eyes);rect(ep.x+3,ep.y-4,5,rest?2:4,eyes);line([[ep.x-3,ep.y+6],[ep.x+3,ep.y+5]],'#ffd0b0',1);}
   if(enemy.stun>0){
     for(let s=0;s<3;s++){const a=s*Math.PI*2/3+time*2, sx=ep.x+Math.cos(a)*12,sy=ep.y-18+Math.sin(a)*3;line([[sx-2,sy],[sx+2,sy]],gold,1.5);line([[sx,sy-2],[sx,sy+2]],gold,1.5);}
@@ -193,6 +206,9 @@ function drawNetherWorld(ctx,state,scene,prefs={},viewport=null) {
   const enemy=state.enemies.find(e=>e.released)||state.enemies[0];
   // Match the main game's Steve: bright-blue rounded body, brow, expressive eyes.
   const hp=point(state.hero);shadow(hp,11);
+  const fx=Number.isFinite(hammer.faceX)?hammer.faceX:0, fy=Number.isFinite(hammer.faceY)?hammer.faceY:-1;
+  const facing=[[hp.x+fx*16-fy*4,hp.y+fy*16+fx*4],[hp.x+fx*21,hp.y+fy*21],[hp.x+fx*16+fy*4,hp.y+fy*16-fx*4]];
+  line(facing,ink,5);line(facing,hammer.collected?gold:'#b0d9ff',2.5);
   hp.y+=Math.sin(time*2.2)*1.2;
   const hs=.68*T, radius=7, x=hp.x-hs/2, y=hp.y-hs/2;
   ctx.beginPath();ctx.moveTo(x+radius,y);

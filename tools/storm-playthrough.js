@@ -1,5 +1,6 @@
 /* Action-only Storm Hammer audition; no state writes, teleports or earned items injected.
-   This proves two full routes exist, not that their difficulty or iPad controls feel fair. */
+   This proves full routes exist with the default Dodge off and optional Dodge on,
+   not that their difficulty or iPad controls feel fair. */
 const assert=require('node:assert/strict');
 const {NetherTrial:n,S}=require('./harness');
 const plan=[[3,3],[40,29,true],[5,29],[40,29,true],[37,7],[36,11,true],[35,11],[8,25,true],[11,25],[12,21,true],[13,21],[29,21],[28,19,true],[23,19],[43,1]];
@@ -23,7 +24,7 @@ function action(x,y,mine=false,hammer=true){
   return 'timeout';
 }
 function run({mode='middle',delay=4,recoveryWait=0,recoveryExit=[1,31],route=plan,hammer=true,dodge=true}={}){
-  n.setPreferences({dodge});n.start('practice',{pursuer:mode});const log=[];
+  n.start('practice',{pursuer:mode});n.setPreferences({dodge});const log=[];
   for(const [i,target] of route.entries()){
     if(i===1)step(delay,hammer);
     let result=action(target[0],target[1],target[2]||false,hammer);
@@ -38,7 +39,7 @@ function run({mode='middle',delay=4,recoveryWait=0,recoveryExit=[1,31],route=pla
   const s=n.view();
   return {mode,delay,recoveryWait,recoveryExit,dodge,build:s.build,status:s.status,lives:s.lives,upgrade:s.upgrade,cores:s.cores.filter(c=>c.collected).length,hammer:s.hammer,monsters:s.enemies.filter(e=>e.released).length,elapsed:+s.elapsed.toFixed(2),losses:s.losses,swings:s.events.filter(e=>e.type==='hammer-swing').length,hits:s.events.filter(e=>e.type==='hammer-swing'&&e.enemy).length,exit:s.events.find(e=>e.type==='escaped-on-foot')||null,log};
 }
-if(require.main===module)for(const recipe of [{mode:'middle',delay:4},{mode:'goofy',delay:12}]){
+if(require.main===module)for(const recipe of [{mode:'middle',delay:4,dodge:true},{mode:'goofy',delay:12,dodge:true},{mode:'middle',delay:2,dodge:false}]){
   const result=run(recipe);
   assert.equal(result.status,'won',JSON.stringify(result));
   assert.ok(result.lives>0);assert.equal(result.upgrade,4);assert.equal(result.cores,4);assert.equal(result.monsters,10);

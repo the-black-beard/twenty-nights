@@ -7,7 +7,7 @@ for marker,file in [('MAPS','layout.js'),('ROUTE','route.js'),('UI','ui.js'),('D
  text=(s/file).read_text().split('// Omit this footer')[0]
  engine=engine.replace('  /* NETHER_'+marker+' */',text)
 result=base[:a]+engine+'\n\n'+base[b:]
-result=result.replace('tn.d2lab.','tn.stormtrial1.').replace('<title>Twenty Nights','<title>Storm Hammer · Twenty Nights')
+result=result.replace('tn.d2lab.','tn.comparisontrial1.').replace('<title>Twenty Nights','<title>Comparison Lab · Twenty Nights')
 markup=(s/'ui.html').read_text();parts={};matches=list(re.finditer(r'<!-- NETHER FRAGMENT: ([A-Z]+).*?-->',markup,re.S))
 for i,m in enumerate(matches):parts[m.group(1)]=markup[m.end():matches[i+1].start() if i+1<len(matches) else len(markup)].strip()
 for id,key,end in [('nHud','HUD','</header>'),('nHelp','GUIDANCE','</section>'),('title','TITLE','</section>'),('nSettings','SETTINGS','</section>'),('nReturn','RETURN','</section>'),('nEnd','END','</section>')]:
@@ -31,4 +31,4 @@ patch_once('ctx.moveTo(tr.x1*TILE, tr.y1*TILE); ctx.lineTo(tr.x2*TILE, tr.y2*TIL
 
 assert '/* NETHER_' not in result
 (r/'index.html').write_text(result)
-print('Assembled Storm Hammer independently; preserved games unchanged.')
+print('Assembled Comparison Lab independently; preserved games unchanged.')
