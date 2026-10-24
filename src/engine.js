@@ -3,8 +3,8 @@ const NetherTrial = (() => {
   const N=45, ROWS=37, CELL_COUNT=N*ROWS, TILE=32;
   const idx=(x,y)=>y*N+x, inB=(x,y)=>x>=0&&y>=0&&x<N&&y<ROWS;
   /* NETHER_MAPS */
-  const BUILD='TN-D6-2026-10-24-comparison-lab-1';
-  const SAVE_KEY='tn.d6.comparison.v1',PREF_KEY='tn.d6.comparison.preferences.v1',HISTORY_KEY='tn.d6.comparison.history.v1';
+  const BUILD='TN-D7-2026-10-24-maze-shapes-1';
+  const SAVE_KEY='tn.d7.shapes.v1',PREF_KEY='tn.d7.shapes.preferences.v1',HISTORY_KEY='tn.d7.shapes.history.v1';
   const HERO_SPEED=4.6,MINE_TIME=1.8;
   const MATERIALS={b:{tier:1,name:'copper brick'},c:{tier:2,name:'crystal stone'},d:{tier:3,name:'iron block'},e:{tier:4,name:'obsidian slab'}};
   const PURSUERS=[
@@ -15,8 +15,14 @@ const NetherTrial = (() => {
     {id:'goofy',name:'Goofy regular',description:'Quick feet, late turns. They sometimes choose the wrong way.'},
     {id:'runner',name:'Tracking rush',description:'A warning, a much faster chase, then time to catch your breath.'}
   ];
-  const TRIAL_DEFAULTS={control:'tap',brain:'committed',weakSpots:false,cues:true,pursuer:'middle'};
+  const SCENES=new Map(NETHER_LAYOUT_CATALOGUE.map(meta=>[meta.id,layout(meta.id)]));
+  const TRIAL_DEFAULTS={layout:'rectangular-descent-v1',control:'tap',brain:'committed',weakSpots:false,cues:true,pursuer:'middle'};
   const LAB_PRESETS=[
+    {id:'shape-current',pair:'paths',label:'Current loops',layout:'rectangular-descent-v1'},
+    {id:'shape-islands',pair:'paths',label:'Loop islands',layout:'loop-islands-v1'},
+    {id:'shape-snake',pair:'paths',label:'Snake race',layout:'snake-race-v1'},
+    {id:'shape-steps',pair:'boundaries',label:'Stepped islands',layout:'stepped-islands-v1'},
+    {id:'shape-castle',pair:'boundaries',label:'Castle islands',layout:'castle-islands-v1'},
     {id:'controls-a',pair:'controls',label:'Tap a destination',description:'Choose where to go; the hero follows a route.',control:'tap'},
     {id:'controls-b',pair:'controls',label:'Swipe the next turn',description:'Keep running. Queue a turn before the junction.',control:'swipe'},
     {id:'brains-a',pair:'brains',label:'Tracking rush',description:'Fast monsters keep updating their chase.',brain:'tracking'},
@@ -31,23 +37,22 @@ const NetherTrial = (() => {
   function trialSelection(selection){
     const preset=LAB_PRESETS.find(p=>p.id===selection.preset);
     const t={...TRIAL_DEFAULTS,...(preset||{}),...(!preset?selection:{})};
-    return {preset:preset?.id||'custom',label:preset?.label||'Your mix',control:t.control==='swipe'?'swipe':'tap',brain:t.brain==='tracking'?'tracking':'committed',weakSpots:!!t.weakSpots,cues:t.cues!==false,pursuer:PURSUERS.some(p=>p.id===t.pursuer)?t.pursuer:'middle'};
+    return {layout:SCENES.has(t.layout)?t.layout:'rectangular-descent-v1',preset:preset?.id||'custom',label:preset?.label||'Your mix',control:t.control==='swipe'?'swipe':'tap',brain:t.brain==='tracking'?'tracking':'committed',weakSpots:!!t.weakSpots,cues:t.cues!==false,pursuer:PURSUERS.some(p=>p.id===t.pursuer)?t.pursuer:'middle'};
   }
   // Fixed optional shortcuts; every other matching material remains mineable.
-  const WEAK_CELLS=new Set(sceneWeakCells());
-  function sceneWeakCells(){return layout().layers.flatMap(l=>[idx(19,l.y1),idx(25,l.y2)]);}
-  const isWeakSpot=cell=>!!state?.trial.weakSpots&&WEAK_CELLS.has(cell)&&!!MATERIALS[state.map[cell]];
+  const isWeakSpot=cell=>!!state?.trial.weakSpots&&(scene.weakCells||scene.layers.flatMap(l=>[idx(19,l.y1),idx(25,l.y2)])).includes(cell)&&!!MATERIALS[state.map[cell]];
   const miningSeconds=cell=>isWeakSpot(cell)?.9:MINE_TIME;
   const defaults={dodge:false,showRoute:true,closeView:true,zoom:2.2,highContrast:false,reducedMotion:!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches};
   let prefs={...defaults};
   try{const saved=JSON.parse(localStorage.getItem(PREF_KEY));for(const k of Object.keys(defaults))if(k==='zoom'?Number.isFinite(saved?.[k])&&saved[k]>=1&&saved[k]<=3.2:typeof saved?.[k]==='boolean')prefs[k]=saved[k];}catch(error){}
-  let state=null,active=false,storageOK=true,scene=layout();
+  let state=null,active=false,storageOK=true,scene=SCENES.get('rectangular-descent-v1');
   const retainedAttempts=new Map(),pendingAttempts=new Set();
-  const START=scene.start,GOAL=scene.goal;
+  let START=scene.start,GOAL=scene.goal;
+  function activateScene(id){scene=SCENES.get(id);START=scene.start;GOAL=scene.goal;}
   let replan=0,saveClock=0,pointerId=null,lastPointer=null;
   const view=()=>state?JSON.parse(JSON.stringify(state)):null;
   const preferences=()=>({...prefs});
-  const options=()=>({layouts:[layout()],pursuers:PURSUERS.map(p=>({...p})),presets:LAB_PRESETS.map(p=>({...p})),saveKey:SAVE_KEY});
+  const options=()=>({layouts:JSON.parse(JSON.stringify([...SCENES.values()])),pursuers:PURSUERS.map(p=>({...p})),presets:LAB_PRESETS.map(p=>({...p})),saveKey:SAVE_KEY});
   const inRefuge=(x,y)=>x>=scene.refuge.x1-.5&&x<scene.refuge.x2+.5&&y>=scene.refuge.y1-.5&&y<scene.refuge.y2+.5;
   const refugeActive=()=>!!state&&inRefuge(state.hero.x,state.hero.y)&&state.refuge.remaining>0&&state.refuge.cooldown<=0;
   const enemyKind=(mode,layer)=>mode==='runner'||mode==='middle'&&(layer===2||layer===3)||mode==='deep'&&layer>=3||mode==='one'&&layer===2||mode==='three'&&layer>=2?'runner':'goofy';
@@ -163,7 +168,7 @@ const NetherTrial = (() => {
   function random(){state.rng=(Math.imul(state.rng,1664525)+1013904223)>>>0;return state.rng/4294967296;}
   function updatePursuers(dt,repath){
     const h=state.hero;
-    const patrol=[{x:1,y:1},{x:43,y:1},{x:43,y:35},{x:1,y:19},{x:23,y:3},{x:41,y:18}];
+    const patrol=scene.patrol||[{x:1,y:1},{x:43,y:1},{x:43,y:35},{x:1,y:19},{x:23,y:3},{x:41,y:18}];
     for(const e of state.enemies){
       if(!e.released){
         if(!repath)continue;
@@ -262,15 +267,17 @@ const NetherTrial = (() => {
     }catch(error){storageOK=false;return false;}
   }
   function persist(){if(!state)return false;if(!saveAttempt(state))return false;try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));return true;}catch(error){storageOK=false;return false;}}
-  function history(){return historyIds().reverse().map(attemptById).filter(Boolean).map(a=>({id:a.attemptId,label:a.trial.label,status:a.status,lives:a.lives,elapsed:Math.round(a.elapsed),hammer:a.hammer.collected,cores:a.cores.filter(c=>c.collected).length,feedback:a.feedback||{}}));}
+  function history(){return historyIds().reverse().map(attemptById).filter(Boolean).map(a=>({id:a.attemptId,label:a.trial.label,layout:a.layout,layoutName:SCENES.get(a.layout).name,status:a.status,lives:a.lives,elapsed:Math.round(a.elapsed),hammer:a.hammer.collected,cores:a.cores.filter(c=>c.collected).length,feedback:a.feedback||{}}));}
   function recordFeedback(feedback,id=null){
     const a=!id||id===state?.attemptId?state:attemptById(id);if(!a)return false;
     a.feedback={feeling:typeof feedback?.feeling==='string'?feedback.feeling:(a.feedback?.feeling||''),note:typeof feedback?.note==='string'?feedback.note:(a.feedback?.note||'')};
     return a===state?persist():saveAttempt(a);
   }
-  function exportHistory(){if(state)persist();return JSON.stringify({game:'Twenty Nights — Comparison Lab',build:BUILD,attempts:historyIds().map(attemptById).filter(Boolean).map(a=>JSON.parse(notesFor(a,{},a.status==='playing'?'stopped-for-comparison':null)))},null,2);}
+  function exportHistory(){if(state)persist();return JSON.stringify({game:'Twenty Nights — Maze Shapes',build:BUILD,attempts:historyIds().map(attemptById).filter(Boolean).map(a=>JSON.parse(notesFor(a,{},a.status==='playing'?'stopped-for-comparison':null)))},null,2);}
   function validAttempt(v){
-    if(!v||v.version!==6||v.build!==BUILD||v.layout!==scene.id||!PURSUERS.some(p=>p.id===v.pursuer)||!['practice','woods'].includes(v.origin)
+    if(!v||!SCENES.has(v.layout))return false;
+    const scene=SCENES.get(v.layout),START=scene.start,GOAL=scene.goal;
+    if(!v||v.version!==7||v.build!==BUILD||v.layout!==scene.id||!PURSUERS.some(p=>p.id===v.pursuer)||!['practice','woods'].includes(v.origin)
       ||!['playing','won','lost'].includes(v.status)||!Number.isInteger(v.lives)||v.lives<0||v.lives>3||![0,1,2,3,4].includes(v.upgrade)
       ||(v.status==='lost')!==(v.lives===0)||!Array.isArray(v.map)||v.map.length!==CELL_COUNT)return false;
     if(v.map.some((t,i)=>t!==scene.map[i]&&!(MATERIALS[scene.map[i]]?.tier<=v.upgrade&&t==='.')))return false;
@@ -278,7 +285,7 @@ const NetherTrial = (() => {
     const path=p=>Array.isArray(p)&&p.length<=CELL_COUNT&&p.every(i=>Number.isInteger(i)&&i>=0&&i<CELL_COUNT&&(v.map[i]==='.'||v.target&&i===idx(v.target.x,v.target.y)&&v.map[i]==='v'));
     const body=p=>point(p)&&path(p.path)&&(v.map[idx(Math.round(p.x),Math.round(p.y))]==='.'||p===v.hero&&v.status==='lost'&&v.map[idx(Math.round(p.x),Math.round(p.y))]==='v');
     const pref=p=>p&&Object.keys(defaults).every(k=>k==='zoom'?Number.isFinite(p[k])&&p[k]>=1&&p[k]<=3.2:typeof p[k]==='boolean');
-    if(!v.trial||!['tap','swipe'].includes(v.trial.control)||!['tracking','committed'].includes(v.trial.brain)||typeof v.trial.weakSpots!=='boolean'||typeof v.trial.cues!=='boolean'||v.trial.pursuer!==v.pursuer||typeof v.trial.label!=='string'||typeof v.trial.preset!=='string')return false;
+    if(!v.trial||v.trial.layout!==v.layout||!['tap','swipe'].includes(v.trial.control)||!['tracking','committed'].includes(v.trial.brain)||typeof v.trial.weakSpots!=='boolean'||typeof v.trial.cues!=='boolean'||v.trial.pursuer!==v.pursuer||typeof v.trial.label!=='string'||typeof v.trial.preset!=='string')return false;
     const direction=d=>d&&Number.isInteger(d.dx)&&Number.isInteger(d.dy)&&Math.abs(d.dx)+Math.abs(d.dy)<=1;
     if(!direction(v.steering)||v.steering.queued&&!direction(v.steering.queued))return false;
     if(!body(v.hero)||!Array.isArray(v.enemies)||v.enemies.length!==scene.enemies.length||v.enemies.some((e,i)=>!body(e)||e.id!==scene.enemies[i].id||e.layer!==scene.enemies[i].layer||e.role!==scene.enemies[i].role||typeof e.released!=='boolean'||e.kind!==enemyKind(v.pursuer,e.layer)||!Number.isFinite(e.stun)||e.stun<0||e.stun>.85
@@ -297,7 +304,7 @@ const NetherTrial = (() => {
     return true;
   }
   function savedAttempt(){try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));return validAttempt(saved)?saved:null;}catch(error){return null;}}
-  function resume(id=null){const saved=id?attemptById(id):savedAttempt();if(id&&state)persist();if(!saved)return false;state=saved;prefs={...state.preferences};state.paused=true;active=true;S.running=false;replan=0;resetInput();syncUI();return true;}
+  function resume(id=null){const saved=id?attemptById(id):savedAttempt();if(id&&state)persist();if(!saved)return false;activateScene(saved.layout);state=saved;prefs={...state.preferences};state.paused=true;active=true;S.running=false;replan=0;resetInput();syncUI();return true;}
   function leave(){stopNetherMusic();persist();active=false;S.running=false;resetInput();syncUI();}
   function replay(){return start(state?state.origin:'practice',state?{...state.trial}:{});}
   function setPaused(value){if(!active||!state)return;state.paused=!!value;if(state.paused)stopNetherMusic();resetInput();persist();syncUI();}
@@ -307,14 +314,15 @@ const NetherTrial = (() => {
     try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(error){}syncUI();return preferences();
   }
   function notesFor(attempt,feedback={},recordedAs=null){
-    return JSON.stringify({game:'Twenty Nights — Comparison Lab',version:6,build:BUILD,
-      question:'Which A/B option felt fair, exciting and easier to steer? Did you escape with the hammer?',
+    const attemptScene=SCENES.get(attempt?.layout)||scene;
+    return JSON.stringify({game:'Twenty Nights — Maze Shapes',version:7,build:BUILD,
+      question:'Which maze gives the most exciting chase and a fair escape? Do you prefer loops, winding routes, stepped walls or castle walls?',
       trialDefaults:{layers:4,monsters:10,cores:4,lives:3,tool:'colour-matched reusable materials',refuge:{shield:8,recharge:15},hammer:{lightning:'portal only',stun:.85,cooldown:1.1},heroSpeed:HERO_SPEED,mineSeconds:MINE_TIME,patrolCycle:{chaseSeconds:12,patrolSeconds:4},goofy:{speed:4.85,noticeSeconds:1,wrongTurnChance:.30},runner:{stalk:3.7,warningSeconds:.7,burst:8.2,burstSeconds:1.1,recovery:2.4,recoverySeconds:1.3}},
-      comparison:'Each named A/B pair changes one gameplay dial on the same authored map, fixed seed and roster. Camera and accessibility preferences are recorded.',
-      attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,pursuer:attempt.pursuer,trial:attempt.trial,status:attempt.status,
+      comparison:'Shape presets share rules, roster and a rectangular 45 by 37 board. Geometry changes route lengths and decisions, so equal difficulty is not assumed. Custom settings and display changes are recorded.',
+      attempt:attempt?{id:attempt.attemptId,startedAt:attempt.startedAt,layout:attempt.layout,layoutName:attemptScene.name,pursuer:attempt.pursuer,trial:attempt.trial,status:attempt.status,
         recordedAs:recordedAs||(attempt.status==='won'?'escaped-on-foot':attempt.status==='lost'?'three-lives-used':'in-progress'),
         lives:attempt.lives,upgrade:attempt.upgrade,hammer:attempt.hammer,refuge:attempt.refuge,monsterMix:attempt.enemies.map(e=>({id:e.id,layer:e.layer,kind:e.kind})),cores:attempt.cores,breaches:attempt.breaches,losses:attempt.losses,events:attempt.events,
-        openings:attempt.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[scene.map[i]]?[{x:i%N,y:Math.floor(i/N),tier:MATERIALS[scene.map[i]].tier}]:[]),
+        openings:attempt.map.flatMap((tile,i)=>tile==='.'&&MATERIALS[attemptScene.map[i]]?[{x:i%N,y:Math.floor(i/N),tier:MATERIALS[attemptScene.map[i]].tier}]:[]),
         elapsed:Math.round(attempt.elapsed),initialPreferences:attempt.initialPreferences,preferences:attempt.preferences,settingChanges:attempt.settingChanges}:null,feedback:{...attempt?.feedback,...feedback}},null,2);
   }
   function exportNotes(feedback={}){return notesFor(state,feedback);}
@@ -323,10 +331,10 @@ const NetherTrial = (() => {
     return saved?notesFor(saved,feedback,saved.status==='playing'?'stopped-for-comparison':null):null;
   }
   function start(origin='practice',selection={}){
-    if(state)persist();const trial=trialSelection(selection),pursuer=trial.pursuer;
+    if(state)persist();const trial=trialSelection(selection),pursuer=trial.pursuer;activateScene(trial.layout);
     prefs.dodge=false;
     stopNetherMusic();
-    state={version:6,build:BUILD,attemptId:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),startedAt:new Date().toISOString(),origin,status:'playing',layout:scene.id,pursuer,trial,steering:{dx:0,dy:0,queued:null},feedback:{},lives:3,upgrade:0,map:scene.map.slice(),preferences:{...prefs},initialPreferences:{...prefs},settingChanges:[],events:[],rng:20261022,
+    state={version:7,build:BUILD,attemptId:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),startedAt:new Date().toISOString(),origin,status:'playing',layout:scene.id,pursuer,trial,steering:{dx:0,dy:0,queued:null},feedback:{},lives:3,upgrade:0,map:scene.map.slice(),preferences:{...prefs},initialPreferences:{...prefs},settingChanges:[],events:[],rng:20261022,
       hammer:{collected:false,charged:false,cooldown:0,swing:0,faceX:0,faceY:-1},refuge:{remaining:8,cooldown:0,inside:true},
       hero:{...START,path:[]},enemies:scene.enemies.map((e,i)=>({...e,kind:enemyKind(pursuer,e.layer),stun:0,path:[],released:false,wake:0,phase:'stalk',phaseTime:.4+(i%5)*.5,notice:(i%5)*.2,wrongTurn:false})),
       cores:scene.cores.map(c=>({...c,collected:false})),breaches:0,losses:[],mining:null,target:null,paused:false,recovery:0,awaitingReturn:false,elapsed:0,returns:0,

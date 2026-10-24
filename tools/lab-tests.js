@@ -1,11 +1,11 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const n=require('./harness').NetherTrial;
-const KEY='tn.d6.comparison.v1';
+const KEY='tn.d7.shapes.v1';
 const tick=s=>{for(let i=0;i<Math.ceil(s/.05);i++)n.step(.05);};
 const restore=s=>{localStorage.setItem(KEY,JSON.stringify(s));assert.equal(n.resume(),true);n.setPaused(false);};
 test('each A/B pair changes exactly one gameplay dial',()=>{
- const presets=n.options().presets;assert.equal(presets.length,10);
+ const presets=n.options().presets.filter(p=>!p.id.startsWith('shape-'));assert.equal(presets.length,10);
  for(const pair of ['controls','brains','walls','layers','cues']){
   const a=n.start('practice',{preset:pair+'-a'}),b=n.start('practice',{preset:pair+'-b'});
   assert.equal(['control','brain','weakSpots','cues','pursuer'].filter(k=>a.trial[k]!==b.trial[k]).length,1);
@@ -43,9 +43,9 @@ test('a panic swipe away cancels a long auto-mining approach immediately',()=>{
  assert.equal(n.queueTurn(-1,0),true);n.step(.05);assert.ok(n.view().hero.x<x);assert.equal(n.view().mining,null);
 });
 test('storage quota cannot erase a run from this session or its downloadable notes',()=>{
- let fallbackId;const original=localStorage.setItem;localStorage.setItem=function(k,v){if(k.startsWith('tn.d6.comparison.history'))throw new Error('quota');original.call(this,k,v);};
+ let fallbackId;const original=localStorage.setItem;localStorage.setItem=function(k,v){if(k.startsWith('tn.d7.shapes.history'))throw new Error('quota');original.call(this,k,v);};
  try{const a=n.start('practice',{preset:'walls-a'});fallbackId=a.attemptId;n.recordFeedback({note:'Keep this'});const b=n.start('practice',{preset:'walls-b'});
  const all=JSON.parse(n.exportHistory()).attempts;assert.ok(all.some(r=>r.attempt.id===a.attemptId&&r.feedback.note==='Keep this'));assert.ok(all.some(r=>r.attempt.id===b.attemptId));assert.equal(n.resume(a.attemptId),true);
  }finally{localStorage.setItem=original;}
- n.persist();assert.ok(localStorage.getItem('tn.d6.comparison.history.v1.'+fallbackId),'storage recovery flushes earlier unsaved runs');
+ n.persist();assert.ok(localStorage.getItem('tn.d7.shapes.history.v1.'+fallbackId),'storage recovery flushes earlier unsaved runs');
 });
