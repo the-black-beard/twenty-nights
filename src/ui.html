@@ -2,7 +2,7 @@
 <header id="nHud" class="nUi hidden">
   <div class="nHudTop">
     <div class="nHudIdentity"><span class="nEyebrow">TWENTY NIGHTS</span><h1 id="nHeading">Into the Nether</h1><p id="nMode">The Storm Hammer · Middle rush</p></div>
-    <div class="nHudButtons"><button id="nPause" class="nButton nButtonSmall" type="button">Pause</button><button id="nCameraToggle" class="nButton nButtonSmall nButtonQuiet" type="button" aria-label="Zoom in on the board" aria-pressed="false">Zoom</button><button id="nSettingsOpen" class="nButton nButtonSmall nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Settings</button></div>
+    <div class="nHudButtons"><button id="nPause" class="nButton nButtonSmall" type="button">Pause</button><button id="nCameraToggle" class="nButton nButtonSmall nButtonQuiet" type="button" aria-label="Show the whole maze" aria-pressed="false">Map</button><button id="nSettingsOpen" class="nButton nButtonSmall nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Settings</button></div>
   </div>
   <div class="nStatusRow" aria-label="Attempt status">
     <span id="nLives" class="nLifeBadge" aria-label="3 of 3 lives"><span aria-hidden="true">♥ ♥ ♥</span><span class="nSrOnly">3 of 3 lives</span></span>
@@ -36,28 +36,43 @@
 <section id="title" class="overlay nTitle nUi" aria-labelledby="nTitleHeading">
   <div class="nSetupShell">
     <header class="nSetupHeader">
-      <div><p class="nEyebrow">TWENTY NIGHTS · THE NETHER</p><h1 id="nTitleHeading">Choose your descent.<br><em>Make your escape.</em></h1><p class="nLead">Match your pickaxe to each wall, claim the Storm Hammer at the centre, then escape with four cores. The portal awakens its lightning for the woods.</p></div>
+      <div><p class="nEyebrow">TWENTY NIGHTS · THE NETHER</p><h1 id="nTitleHeading">Choose the chase.<br><em>Make it yours.</em></h1><p class="nLead">Try two versions of one idea. Same maze, three lives, and a sleeping Storm Hammer to carry out. Which one makes the best escape?</p></div>
       <div class="nPortalMark" aria-hidden="true"><span class="nPortalCore"></span><span class="nPortalSpark nSparkOne"></span><span class="nPortalSpark nSparkTwo"></span><span class="nPortalStep"></span></div>
     </header>
     <div class="nRules" aria-label="Rules shared by every challenge"><span><b>3</b> lives</span><span>Keep what you earn</span><span>No countdown</span></div>
-    <div id="nContinuePanel" class="nContinuePanel hidden"><div class="nSavedDetails"><b>One adventure is waiting.</b><p id="nSavedSummary">Continue with your remaining lives and openings.</p><label for="nSavedMoment">One moment to remember <span>(optional)</span></label><textarea id="nSavedMoment" rows="2" maxlength="500" placeholder="The chase, music or hammer moment where…"></textarea><p id="nSavedExportStatus" role="status">Download notes before trying another chase. Nothing is sent.</p></div><div class="nSavedActions"><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button><button id="nSavedDownloadNotes" class="nButton nButtonQuiet" type="button">Download notes for this adventure</button></div></div>
+    <div id="nContinuePanel" class="nContinuePanel hidden"><div class="nSavedDetails"><b>Your adventures are kept here.</b><label for="nHistory">Choose a saved adventure</label><select id="nHistory" aria-describedby="nSavedSummary"></select><p id="nSavedSummary">Continue with your remaining lives and openings.</p><label for="nSavedMoment">One moment to remember <span>(optional)</span></label><textarea id="nSavedMoment" rows="2" maxlength="500" placeholder="I escaped the fast monster by…"></textarea><p id="nSavedExportStatus" role="status">Notes stay on this browser. Nothing is sent.</p></div><div class="nSavedActions"><button id="nResume" class="nButton nButtonTeal" type="button">Continue adventure</button><button id="nSavedDownloadNotes" class="nButton nButtonQuiet" type="button">Download this adventure</button><button id="nHistoryDownload" class="nButton nButtonQuiet" type="button">Download all comparisons</button></div></div>
+    <section class="nLab" aria-labelledby="nLabHeading">
+      <div class="nLabHeading"><div><p class="nEyebrow">ONE CHANGE AT A TIME</p><h2 id="nLabHeading">What shall we try?</h2></div><span class="nTrialBadge">A ↔ B</span></div>
+      <div class="nPairChoices" role="group" aria-label="Choose a comparison">
+        <button id="nPairControls" data-pair="controls" class="nPairChoice" type="button" aria-pressed="true"><span aria-hidden="true">↱</span>Moving</button>
+        <button id="nPairBrains" data-pair="brains" class="nPairChoice" type="button" aria-pressed="false"><span aria-hidden="true">⚡</span>Fast brains</button>
+        <button id="nPairWalls" data-pair="walls" class="nPairChoice" type="button" aria-pressed="false"><span aria-hidden="true">⛏</span>Wall holes</button>
+        <button id="nPairLayers" data-pair="layers" class="nPairChoice" type="button" aria-pressed="false"><span aria-hidden="true">▣</span>Fast layers</button>
+        <button id="nPairCues" data-pair="cues" class="nPairChoice" type="button" aria-pressed="false"><span aria-hidden="true">◀</span>Warnings</button>
+      </div>
+      <p id="nPairQuestion" class="nPairQuestion">Which movement feels best during a chase?</p>
+      <div class="nComparisonCards" role="group" aria-label="Choose version A or B">
+        <button id="nVariantA" class="nVariantCard" type="button" aria-pressed="true" aria-describedby="nVariantADescription"><span class="nVariantHeader"><b class="nLetter">A</b><span id="nVariantATag" class="nVariantTag">First try</span><span class="nVariantTick" aria-hidden="true">✓</span></span><span id="nVariantAArt" class="nVariantArt" aria-hidden="true"></span><strong id="nVariantALabel">Tap route</strong><span id="nVariantADescription" class="nVariantDescription">Tap where you want to go.</span></button>
+        <button id="nVariantB" class="nVariantCard" type="button" aria-pressed="false" aria-describedby="nVariantBDescription"><span class="nVariantHeader"><b class="nLetter">B</b><span id="nVariantBTag" class="nVariantTag">Try next</span><span class="nVariantTick" aria-hidden="true">✓</span></span><span id="nVariantBArt" class="nVariantArt" aria-hidden="true"></span><strong id="nVariantBLabel">Buffered swipe</strong><span id="nVariantBDescription" class="nVariantDescription">Swipe early to turn at the next opening.</span></button>
+      </div>
+      <div class="nExperimentHint"><span aria-hidden="true">◎</span><div><b id="nPairImpact">Changes: steering</b><p id="nPairTry">Try a sharp turn when a monster is close.</p></div></div>
+      <div class="nLaunchRow"><button id="nStart" class="nButton nButtonPrimary" type="button">Play A · Tap route <span aria-hidden="true">↗</span></button><button id="nSetupSettings" class="nButton nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Camera &amp; display</button></div>
+      <p id="nTitleNote" class="nFinePrint">Each new try starts fresh. Your earlier adventures stay saved.</p>
+      <div class="nGestureGuide"><span aria-hidden="true">↔</span><p><b>Room to see.</b> Drag two fingers to look ahead; release to drift back. Pinch to zoom. The <b>Map</b> button fills the canvas with the whole maze.</p></div>
+      <details class="nCustomChoices"><summary>Mix your own chase <span>Optional dials</span></summary><div class="nCustomGrid">
+        <label for="nCustomControl">Movement<select id="nCustomControl"><option value="tap">Tap route</option><option value="swipe">Buffered swipe</option></select></label>
+        <label for="nCustomBrain">Fast-monster brain<select id="nCustomBrain"><option value="committed">Dumber · commits to its rush</option><option value="tracking">Tracks during the rush</option></select></label>
+        <label for="nCustomLayers">Layers with fast monsters<select id="nCustomLayers"><option value="goofy">0 · goofy regulars everywhere</option><option value="one">1 · crystal only</option><option value="middle" selected>2 · crystal + iron</option><option value="three">3 · crystal + iron + obsidian</option><option value="runner">4 · every layer</option><option value="deep">2 · iron + obsidian</option></select></label>
+        <label for="nCustomWalls">Breakable walls<select id="nCustomWalls"><option value="free">Free holes · equal mining time</option><option value="weak">Free holes + quicker cracked spots</option></select></label>
+        <label for="nCustomCues">Nearby danger hints<select id="nCustomCues"><option value="on">Subtle arrows</option><option value="off">No arrows</option></select></label>
+        <button id="nCustomStart" class="nButton nButtonTeal" type="button">Play my mix ↗</button>
+      </div><p class="nHint">Fast monsters keep the same top speed. Dodge assist starts off in every comparison, so you choose the escape.</p></details>
+    </section>
     <section class="nFieldset nMapFieldset" aria-label="Your fixed maze">
       <div class="nCombinedMap"><span class="nMapPreview" aria-hidden="true"><canvas id="nPreview-rectangular-descent-v1" width="160" height="124"></canvas></span><div><h2>The Storm Hammer</h2><p>Four rectangular layers. Narrow loops and forked corridors. Copper → crystal → iron → obsidian. Each pickaxe matches its wall’s colour and material.</p><p class="nHint">Open the layers to face 2 → 4 → 7 → 10 monsters. Earlier monsters stay loose. All three lives keep your progress.</p><p class="nHint">Open two ways through before going deep. The sleeping hammer can stop one monster in front of you, but cannot save you from both sides. The refuge gives eight seconds of protection, then needs fifteen seconds to recharge after leaving.</p></div></div>
     </section>
-    <fieldset class="nFieldset">
-      <legend>Choose where the fast monsters live</legend>
-      <div class="nPursuerChoices">
-        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerMiddle" value="middle" checked><span class="nPursuerCardBody"><span class="nEnemyIcon nMixedIcon" aria-hidden="true"></span><span><b>Middle rush <span class="nRecommended">Start here</span></b><small>Regular monsters outside. Fast bursts in the middle two layers.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
-        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerDeep" value="deep"><span class="nPursuerCardBody"><span class="nEnemyIcon nRunnerIcon" aria-hidden="true"></span><span><b>Deep rush</b><small>Regular monsters in the outer two layers. Fast bursts near the hammer.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
-        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerHunter" value="goofy"><span class="nPursuerCardBody"><span class="nEnemyIcon nHunterIcon" aria-hidden="true"></span><span><b>Goofy regular</b><small>Regular monsters in every layer. Quick feet and wrong turns.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
-        <label class="nPursuerCard"><input type="radio" name="nPursuer" id="nPursuerRunner" value="runner"><span class="nPursuerCardBody"><span class="nEnemyIcon nRunnerIcon" aria-hidden="true"></span><span><b>Rush everywhere</b><small>Fast monsters in every layer. A much harder chase.</small></span><span class="nChoiceTick" aria-hidden="true">✓</span></span></label>
-      </div>
-      <p class="nMixHint nHint">Your choice stays fixed for this adventure. Try another mix from the menu.</p>
-    </fieldset>
-    <div class="nLaunchRow"><button id="nStart" class="nButton nButtonPrimary" type="button">Start this adventure <span aria-hidden="true">↗</span></button><button id="nSetupSettings" class="nButton nButtonQuiet" type="button" aria-haspopup="dialog" aria-controls="nSettings">Controls &amp; display</button></div>
-    <p id="nTitleNote" class="nFinePrint">A new adventure starts with three lives and replaces the current saved attempt.</p>
     <details class="nWoodsDetails"><summary>Visit the woods</summary><div><button class="nButton nButtonQuiet" id="startBtn" type="button">Play the original woods</button><button class="nButton nButtonQuiet hidden" id="contBtn" type="button">Continue Day <span id="contDay"></span></button><button class="nButton nButtonQuiet" id="howBtn" type="button">How the woods work</button><button class="nButton nButtonQuiet" id="fbBtn" type="button">Woods feedback</button></div></details>
-    <p class="nLocalNote">Four-layer trial · one Storm Hammer · your choices shape what comes next</p>
+    <p class="nLocalNote">Comparison lab · four rectangular layers · your choices shape what comes next</p>
   </div>
 </section>
 
@@ -65,11 +80,11 @@
      All .hidden panels must remain hidden with display:none, not opacity alone. -->
 <section id="nSettings" class="nModal nUi hidden" role="dialog" aria-modal="true" aria-labelledby="nSettingsTitle">
   <div class="nDialogCard nSettingsCard">
-    <header class="nDialogHeader"><div><p class="nEyebrow">MAKE IT FEEL RIGHT</p><h2 id="nSettingsTitle">Controls &amp; display</h2></div><button id="nSettingsClose" class="nButton nButtonIcon" type="button" aria-label="Close settings">✕</button></header>
+    <header class="nDialogHeader"><div><p class="nEyebrow">MAKE IT FEEL RIGHT</p><h2 id="nSettingsTitle">Camera &amp; display</h2></div><button id="nSettingsClose" class="nButton nButtonIcon" type="button" aria-label="Close settings">✕</button></header>
     <p id="nSettingsStatus" class="nHint">The chase is paused while this is open.</p>
     <label class="nSettingRow"><span><b>Dodge assist</b><small>Your route tries to go around nearby danger.</small></span><input id="nDodge" type="checkbox" role="switch" checked></label>
     <label class="nSettingRow"><span><b>Show my route</b><small>A dotted line shows where you are going.</small></span><input id="nRoute" type="checkbox" role="switch" checked></label>
-    <fieldset class="nFieldset nCameraFieldset"><legend>Board view</legend><div class="nSegmented"><label><input id="nCameraWhole" name="nCamera" value="whole" type="radio" checked><span>Whole maze</span></label><label><input id="nCameraClose" name="nCamera" value="close" type="radio"><span>Close camera</span></label></div><p class="nHint">Close camera makes you and the tiles bigger.</p></fieldset>
+    <fieldset class="nFieldset nCameraFieldset"><legend>Board view</legend><div class="nSegmented"><label><input id="nCameraWhole" name="nCamera" value="whole" type="radio" checked><span>Whole maze</span></label><label><input id="nCameraClose" name="nCamera" value="close" type="radio"><span>Close camera</span></label></div><p class="nHint">Pinch the board to zoom smoothly. Drag two fingers to look ahead; release to return to your character. Map view fills the same canvas.</p></fieldset>
     <label class="nSettingRow"><span><b>High contrast</b><small>Stronger outlines for walls, hazards and characters.</small></span><input id="nContrast" type="checkbox" role="switch"></label>
     <label class="nSettingRow"><span><b>Reduced motion</b><small>Fewer flashes and moving decorations.</small></span><input id="nReducedMotion" type="checkbox" role="switch"></label>
     <div class="nSettingRow"><span><b>Spooky beats &amp; sounds</b><small>The music grows more intense as you go deeper. Visual warnings stay on.</small></span><button id="nSound" class="nButton nButtonSmall" type="button" aria-pressed="true">Sound on</button></div>
@@ -97,9 +112,9 @@
     <h2 id="nEndTitle">You made it through.</h2><p id="nEndLine">Four cores carried out. A path you made yourself.</p>
     <p id="nEndStats" class="nEndStats">The Storm Hammer · Middle rush · 2 lives left</p>
     <button id="nReturnWoods" class="nButton nButtonTeal nWoodsReward hidden" type="button">Take the lightning hammer into the woods ↗</button>
-    <div class="nEndActions"><button id="nReplay" class="nButton nButtonPrimary" type="button">Retry this challenge</button><button id="nEndMenu" class="nButton nButtonQuiet" type="button">Compare chase choices</button></div>
+    <div class="nEndActions"><button id="nReplay" class="nButton nButtonPrimary" type="button">Retry this challenge</button><button id="nEndMenu" class="nButton nButtonQuiet" type="button">Choose another comparison</button></div>
     <form id="nFeedback" class="nFeedback">
-      <fieldset class="nFieldset"><legend>Which monster mix felt best? Did the music, refuge and hammer make your escape exciting or unfair?</legend><div class="nFeelings"><label><input id="nFeelFun" name="nFeeling" type="radio" value="fun"><span>Fun</span></label><label><input id="nFeelTense" name="nFeeling" type="radio" value="tense"><span>Tense</span></label><label><input id="nFeelUnfair" name="nFeeling" type="radio" value="unfair"><span>Unfair</span></label></div></fieldset>
+      <fieldset class="nFieldset"><legend>How did this version feel? What helped you escape — or got you caught?</legend><div class="nFeelings"><label><input id="nFeelFun" name="nFeeling" type="radio" value="fun"><span>Fun</span></label><label><input id="nFeelTense" name="nFeeling" type="radio" value="tense"><span>Tense</span></label><label><input id="nFeelUnfair" name="nFeeling" type="radio" value="unfair"><span>Unfair</span></label></div></fieldset>
       <label class="nNoteLabel" for="nFeedbackNote">Tell us about one moment <span>(optional)</span></label><textarea id="nFeedbackNote" rows="2" maxlength="500" placeholder="The chase, music or hammer moment where…"></textarea>
       <div class="nFeedbackFooter"><span id="nFeedbackStatus" role="status">Stays here. Nothing is sent.</span><button id="nDownloadNotes" class="nButton nButtonSmall" type="button">Download notes</button></div>
     </form>

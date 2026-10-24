@@ -8,8 +8,21 @@ function pathCost(f,entity,path,monster){if(path===null)return Infinity;let x=en
 let checked=0;for(let t=0;t<140;t++){const N=t<135?15:45,ROWS=t<135?11:37,map=Array.from({length:N*ROWS},(_,i)=>i%N===0||i%N===N-1||i<N||i>=N*(ROWS-1)||rand()<.27?'#':'.');const e={x:1+Math.floor(rand()*(N-3)),y:1+Math.floor(rand()*(ROWS-3))};map[e.y*N+e.x]='.';if(t%2){map[e.y*N+e.x+1]='.';e.x+=.37;}const tx=1+Math.floor(rand()*(N-2)),ty=1+Math.floor(rand()*(ROWS-2));map[ty*N+tx]=t%13===0?'v':'.';const f=fixture(N,ROWS,map,[{x:4,y:5,released:true},{x:7,y:8,released:true}]);for(const monster of [false,true]){const expected=reference(f,e,tx,ty,monster),actual=pathCost(f,e,f.route(e,tx,ty,monster),monster);assert(expected===Infinity?actual===Infinity:Math.abs(expected-actual)<1e-8,`${t} ${monster}: ${actual} != ${expected}`);checked++;}}
 const open=fixture(45,37,Array(45*37).fill('.'),Array.from({length:10},(_,i)=>({x:i+4,y:i+7,released:true})));let start=performance.now();for(let i=0;i<1000;i++)open.route({x:2.3,y:2},42,34,true);const monsterMs=performance.now()-start;start=performance.now();for(let i=0;i<100;i++)open.route({x:2.3,y:2},42,34,false);const playerMs=performance.now()-start;
 console.log(JSON.stringify({differentialRoutes:checked,monster1000Ms:+monsterMs.toFixed(1),dodge100Ms:+playerMs.toFixed(1)}));
-const prefs={closeView:false},state={hero:{x:2,y:34},map:Array(45*37).fill('.'),enemies:[],cores:[]},scene={width:45,height:37},targets=[];
-const input=fs.readFileSync(base+'/src/input.js','utf8');const f=new Function('prefs','state','scene','aim','cv','SIZE','TILE','idx',`let pointerId=null,lastPointer=null;const audioInit=()=>{},topModal=()=>false,setPreferences=c=>Object.assign(prefs,c);${input};return {camera,minimap,pointer};`)(prefs,state,scene,(x,y)=>{targets.push([x,y]);return true;},{getBoundingClientRect:()=>({left:0,top:0,width:640,height:640}),setPointerCapture(){}},640,32,(x,y)=>y*45+x);
-const click=(x,y)=>f.pointer('down',{clientX:x,clientY:y,pointerId:1,pointerType:'touch',button:0,preventDefault(){}});
-let c=f.camera();assert(Math.abs(c.offsetY-56.8888888889)<1e-6);click(100,20);assert.equal(targets.length,0);click((40.5)*32*c.zoom+c.offsetX,(30.5)*32*c.zoom+c.offsetY);assert.deepEqual(targets.pop(),[40,30]);prefs.closeView=true;state.hero={x:43,y:35};c=f.camera();assert(c.x>0&&c.y>0);click((40.5*32-c.x)*c.zoom+c.offsetX,(30.5*32-c.y)*c.zoom+c.offsetY);assert.deepEqual(targets.pop(),[40,30]);const m=f.minimap();click(m.x+5,m.y+5);assert.equal(prefs.closeView,false);assert.equal(targets.length,0);console.log('Camera overview, rectangular gutters, close-view inverse, edge clamp and minimap control PASS');
+// Exercise camera geometry through the same assembled public API as the game.
+const n=require('./harness').NetherTrial;
+n.start();n.setPreferences({closeView:false,zoom:2.2});
+let pointer=1;
+const click=(x,y)=>{const event={clientX:x,clientY:y,pointerId:pointer++,pointerType:'touch',button:0,preventDefault(){}};n.pointer('down',event);n.pointer('up',event);};
+let c=n.cameraState();assert(Math.abs(c.offsetY-56.8888888889)<1e-6);
+click(100,20);assert.equal(n.view().target,null,'overview letterbox is not a walking target');
+click(1.5*32*c.zoom+c.offsetX,30.5*32*c.zoom+c.offsetY);assert.deepEqual(n.view().target,{x:1,y:30});
+const edge=n.start();edge.hero={...edge.hero,x:43,y:35,path:[]};
+localStorage.setItem(n.options().saveKey,JSON.stringify(edge));assert.equal(n.resume(),true);n.setPaused(false);
+for(const zoom of [2.2,3.2]){
+  n.setPreferences({closeView:true,zoom});c=n.cameraState();assert(c.x>0&&c.y>0);
+  assert(Math.abs(c.x+c.viewWidth-c.width)<1e-6);assert(Math.abs(c.y+c.viewHeight-c.height)<1e-6);
+  click((43.5*32-c.x)*c.zoom+c.offsetX,(30.5*32-c.y)*c.zoom+c.offsetY);assert.deepEqual(n.view().target,{x:43,y:30});
+}
+console.log('Public camera overview, rectangular gutters, two zoom inverse mappings and edge clamps PASS');
+const state=n.view();
 const {drawNetherWorld}=require(base+'/src/art.js');let draws=0;const ctx=new Proxy({}, {get:(_,key)=>(...args)=>{draws++;if(['fillRect','strokeRect','arc','ellipse','moveTo','lineTo','arcTo','translate'].includes(key))for(const arg of args)assert(Number.isFinite(arg),`${key} nonfinite`);},set:()=>true});const artScene={width:45,height:37,map:Array.from({length:45*37},(_,i)=>['.','#','b','c','d','e','v'][i%7]),refuge:{x1:1,x2:2,y1:33,y2:35},recoveryExits:[{x:2,y:32},{x:3,y:34}],goal:{x:43,y:1},upgrades:[1,2,3,4].map(t=>({tier:t,x:t*6,y:5}))};const artState={...state,map:artScene.map,elapsed:1,upgrade:4,hero:{x:2,y:34,path:[45*34+3]},enemies:Array.from({length:10},(_,i)=>({id:String(i),x:i+4,y:10,layer:1+i%4,released:true,phase:'stalk'})),cores:[1,2,3,4].map(t=>({tier:t,x:t*6,y:7})),pursuer:'goofy'};drawNetherWorld(ctx,artState,artScene,{showRoute:true});const fullDraws=draws;draws=0;drawNetherWorld(ctx,artState,artScene,{showRoute:true},{x:0,y:600,width:650,height:580});assert(draws<fullDraws*.6);console.log(JSON.stringify({art:'finite coordinates with all four wall tiers and ten monsters',fullDrawCalls:fullDraws,closeDrawCalls:draws}));
